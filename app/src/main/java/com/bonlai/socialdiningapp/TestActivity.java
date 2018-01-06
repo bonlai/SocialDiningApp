@@ -47,6 +47,8 @@ public class TestActivity extends AppCompatActivity {
         // Create a toast show it.
 
         mElasticDownloadView.fail();
+        Intent intent = new Intent(this, ImageUploadActivity.class);
+        startActivity(intent);
     }
 
     public void nextActivity(View view){

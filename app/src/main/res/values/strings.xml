@@ -16,4 +16,5 @@
     <string name="title_activity_event">EventActivity</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="title_activity_user_profile">UserProfileActivity</string>
+    <string name="title_activity_image_upload">ImageUploadActivity</string>
 </resources>
