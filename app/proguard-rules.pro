@@ -24,10 +24,12 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -dontwarn retrofit2.**
--keep class retrofit2.** { *; }
+-keepclass retrofit2.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
-
 -keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+-keepclasseswithmembers interface * {
     @retrofit2.http.* <methods>;
 }
