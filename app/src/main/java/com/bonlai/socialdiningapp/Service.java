@@ -23,5 +23,9 @@ interface Service {
     Call<ResponseBody> postImage(
             @Part MultipartBody.Part image,
             @Path("id") Integer id);
-            //@Part("id") int id);
+
+    @POST("api/gathering/")
+    Call<ResponseBody> createGathering(
+            @Part MultipartBody.Part image,
+            @Path("id") Integer id);
 }

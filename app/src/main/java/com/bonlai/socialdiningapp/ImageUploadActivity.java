@@ -31,7 +31,7 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     public static final int PICK_IMAGE = 100;
 
-    Service service;
+    APIclient.APIService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,17 +39,8 @@ public class ImageUploadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_upload);
 
         Button btn = (Button) findViewById(R.id.btn_upload);
-
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-
-        // Change base URL to your upload server URL.
-        service = new Retrofit.Builder().
-                baseUrl("http://192.168.2.5:8000/").
-                addConverterFactory(GsonConverterFactory.create()).
-                client(client).build().
-                create(Service.class);
+        //AppClient.ApiStores apiStores = AppClient.retrofit().create(AppClient.ApiStores.class);
+        service=APIclient.retrofit().create(APIclient.APIService.class);
 
         if (btn != null) {
             btn.setOnClickListener(new View.OnClickListener() {
@@ -98,10 +89,8 @@ public class ImageUploadActivity extends AppCompatActivity {
             //RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
 
 //            Log.d("THIS", data.getData().getPath());
-            RequestBody id =
-                    RequestBody.create(
-                            okhttp3.MultipartBody.FORM, "8");
-            retrofit2.Call<okhttp3.ResponseBody> req = service.postImage(body,8);
+
+            Call<ResponseBody> req = service.postImage(body,8);
 
             req.enqueue(new Callback<ResponseBody>() {
                 @Override

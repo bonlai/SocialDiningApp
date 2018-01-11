@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,11 @@ import java.net.URLConnection;
 
 import android.os.AsyncTask;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class EventActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -35,7 +41,7 @@ public class EventActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     ArrayList<Event> eventList;
     ArrayList<String> myDataset;
-
+    APIclient.APIService service;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +70,21 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void run() {
                 new ReadJSON().execute("http://quocnguyen.16mb.com/products.json");
+            }
+        });
+
+        service=APIclient.retrofit().create(APIclient.APIService.class);
+        Call<ResponseBody> req = service.createGathering("App gathering","2018-01-01 11:11",1,1);
+
+        req.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.v("Upload", "success");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
             }
         });
     }
