@@ -14,6 +14,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -28,6 +29,7 @@ import retrofit2.http.Path;
 public class APIclient {
     //static Retrofit mRetrofit;
     static Retrofit mRetrofit;
+    static APIService mAPIService;
     public static Retrofit retrofit() {
         if (mRetrofit == null) {
             //add authorization information to interceptor
@@ -47,6 +49,12 @@ public class APIclient {
         }
         return mRetrofit;
     }
+
+    public static APIService getAPIService() {
+        mAPIService=APIclient.retrofit().create(APIService.class);
+        return mAPIService;
+    }
+
     interface APIService {
         @Multipart
         @PUT("api/profilePic/{id}/")
@@ -69,9 +77,9 @@ public class APIclient {
         @GET("api/gathering/")
         Call<List<Gathering>> getGatheringList();
 
-        @POST("rest-auth/")
+        @POST("/rest-auth/login/")
         Call<ResponseBody> login(
-                @Part("name") String name,
-                @Part("start_datetime") String dateTime);
+                @Field("username") String username,
+                @Field("password") String password);
     }
 }

@@ -20,9 +20,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -37,11 +34,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class EventActivity extends AppCompatActivity {
-    private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    //private RecyclerView mRecyclerView;
+    //private RecyclerView.Adapter mAdapter;
+    //private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView recyclerView;
-    ArrayList<Event> eventList;
+    //ArrayList<Event> eventList;
     ArrayList<String> myDataset;
     APIclient.APIService service;
     //Gathering gathering;
@@ -50,12 +47,12 @@ public class EventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
 
-        //data initial
+/*      //data initial
         eventList = new ArrayList<>();
         myDataset = new ArrayList<>();
         for(int i = 0; i < 8; i++){
             myDataset.add("Test"+i + "");
-        }
+        }*/
 
         //link views in XML to variables
         recyclerView = (RecyclerView) findViewById(R.id.list_view);
@@ -69,21 +66,23 @@ public class EventActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //read data from API service
-        runOnUiThread(new Runnable() {
+/*        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 new ReadJSON().execute("http://quocnguyen.16mb.com/products.json");
             }
-        });
+        });*/
 
+        //test for creating gathering
         Gathering gathering=new Gathering();
-        gathering.name="App gathering";
-        gathering.start_datetime="2018-01-01 11:11";
-        gathering.is_start=false;
-        gathering.created_by=1;
-        gathering.restaurant=1;
-        service=APIclient.retrofit().create(APIclient.APIService.class);
-        //Call<ResponseBody> req = service.createGathering("App gathering","2018-01-01 11:11",1,1);
+        gathering.setName("App gathering with APIService method");
+        gathering.setStartDatetime("2018-01-01 11:11");
+        gathering.setIsStart(false);
+        gathering.setCreatedBy(8);
+        gathering.setRestaurant(1);
+        //service=APIclient.retrofit().create(APIclient.APIService.class);
+        service=APIclient.getAPIService();
+        //post gathering test
         Call<ResponseBody> req = service.createGatheringB(gathering);
         req.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -106,6 +105,8 @@ public class EventActivity extends AppCompatActivity {
                 for(Gathering G: response.body()){
                     Log.v("loopresult",G.toString());
                 }
+                MyAdapter myAdapter = new MyAdapter(getApplicationContext(), response.body());
+                recyclerView.setAdapter(myAdapter);
             }
             @Override
             public void onFailure(Call<List<Gathering>> call, Throwable t) {
@@ -114,6 +115,76 @@ public class EventActivity extends AppCompatActivity {
         });
     }
 
+    //Jump to profile activity
+    public void nextActivity(View view){
+        Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
+    }
+
+    public void addGathering(View view){
+        Intent intent = new Intent(this, NewGatheringActivity.class);
+        startActivity(intent);
+    }
+
+    public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+        //private List<String> mData;
+        //private List<Event> mEvent;
+        private List<Gathering> mGathering;
+        Context context;
+
+        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+            public TextView mTextView;
+            public ImageView mImageView;
+
+            public ViewHolder(View v) {
+                super(v);
+                mTextView = (TextView) v.findViewById(R.id.info_text);
+                mImageView = (ImageView) v.findViewById(R.id.img);
+                itemView.setOnClickListener(this);
+
+            }
+
+            @Override
+            public void onClick (View v){
+                //to event detail activity
+                Toast toast = Toast.makeText(context, "Testing toast" + mGathering.get(getAdapterPosition()), Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
+
+        public MyAdapter(Context context, List<Gathering> gathering) {
+            this.context = context;
+            //mData = data;
+            //mEvent=event;
+            mGathering=gathering;
+        }
+
+        @Override
+        public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.gathering, parent, false);
+            ViewHolder vh = new ViewHolder(v);
+            return vh;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            //holder.mTextView.setText(mData.get(position));
+            //mEvent.get(position).getImage()
+            holder.mTextView.setText(mGathering.get(position).getName());
+            String testImageUrl="http://www.thoitrangtichtac.com/productimg/12000/11136/250_Dam_suong_tre_vai_tay_con_don_gian_b1136.jpg";
+            Picasso.with(context).load(testImageUrl).into(holder.mImageView);
+        }
+
+        @Override
+        public int getItemCount() {
+            return mGathering.size();
+        }
+    }
+
+
+
+    //dump classes and methods
     //read URL content
     private static String readURL(String theUrl) {
         StringBuilder content = new StringBuilder();
@@ -135,66 +206,6 @@ public class EventActivity extends AppCompatActivity {
         }
         return content.toString();
     }
-
-    //Jump to profile activity
-    public void nextActivity(View view){
-        Intent intent = new Intent(this, ProfileActivity.class);
-        startActivity(intent);
-    }
-
-    public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-        private List<String> mData;
-        private List<Event> mEvent;
-        Context context;
-
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-            public TextView mTextView;
-            public ImageView mImageView;
-
-            public ViewHolder(View v) {
-                super(v);
-                mTextView = (TextView) v.findViewById(R.id.info_text);
-                mImageView = (ImageView) v.findViewById(R.id.img);
-                itemView.setOnClickListener(this);
-
-            }
-
-            @Override
-            public void onClick (View v){
-                //to event detail activity
-                Toast toast = Toast.makeText(context, "Testing toast" + mData.get(getAdapterPosition()), Toast.LENGTH_LONG);
-                toast.show();
-            }
-        }
-
-        public MyAdapter(Context context, List<String> data, List<Event> event) {
-            this.context = context;
-            mData = data;
-            mEvent=event;
-        }
-
-        @Override
-        public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item, parent, false);
-            ViewHolder vh = new ViewHolder(v);
-            return vh;
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.mTextView.setText(mData.get(position));
-            //mEvent.get(position).getImage()
-            //String testImageUrl="http://www.thoitrangtichtac.com/productimg/12000/11136/250_Dam_suong_tre_vai_tay_con_don_gian_b1136.jpg";
-            Picasso.with(context).load(mEvent.get(position).getImage()).into(holder.mImageView);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mData.size();
-        }
-    }
-
     //AsyncTask for loading data to UI
     class ReadJSON extends AsyncTask<String, Integer, String> {
 
@@ -205,7 +216,7 @@ public class EventActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String content) {
-            try {
+/*            try {
                 JSONObject jsonObject = new JSONObject(content);
                 JSONArray jsonArray =  jsonObject.getJSONArray("products");
 
@@ -219,11 +230,10 @@ public class EventActivity extends AppCompatActivity {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
+            }*/
             //load data to adapter
-            MyAdapter myAdapter = new MyAdapter(getApplicationContext(),myDataset, eventList);
-            recyclerView.setAdapter(myAdapter);
+            //MyAdapter myAdapter = new MyAdapter(getApplicationContext(),myDataset, eventList);
+            //recyclerView.setAdapter(myAdapter);
         }
     }
-
 }

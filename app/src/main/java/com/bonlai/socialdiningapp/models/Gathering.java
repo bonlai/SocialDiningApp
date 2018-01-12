@@ -6,18 +6,53 @@ import com.google.gson.annotations.SerializedName;
 
 public class Gathering {
     @SerializedName("name")
-    public String name;
+    private String name;
     @SerializedName("start_datetime")
-    public String start_datetime;
+    private String startDatetime;
     @SerializedName("is_start")
-    public Boolean is_start;
+    private Boolean isStart;
     @SerializedName("created_by")
-    public int created_by;
+    private int createdBy;
     @SerializedName("restaurant")
-    public int restaurant;
+    private int restaurant;
 
-    @Override
-    public String toString() {
+    public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getStartDatetime() {
+        return startDatetime;
+    }
+
+    public void setStartDatetime(String startDatetime) {
+        this.startDatetime = startDatetime;
+    }
+
+    public Boolean getIsStart() {
+        return isStart;
+    }
+
+    public void setIsStart(Boolean isStart) {
+        this.isStart = isStart;
+    }
+
+    public Integer getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Integer createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Integer getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Integer restaurant) {
+        this.restaurant = restaurant;
     }
 }

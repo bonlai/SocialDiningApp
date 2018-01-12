@@ -49,6 +49,10 @@
         <activity
             android:name=".ImageUploadActivity"
             android:label="@string/title_activity_image_upload"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NewGatheringActivity"
+            android:label="@string/title_activity_new_gathering"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
