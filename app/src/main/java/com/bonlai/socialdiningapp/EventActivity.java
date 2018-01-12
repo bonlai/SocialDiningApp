@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ImageView;
+
+import com.bonlai.socialdiningapp.models.Gathering;
 import com.squareup.picasso.Picasso;
 import android.content.Context;
 import android.widget.Toast;
@@ -42,6 +44,7 @@ public class EventActivity extends AppCompatActivity {
     ArrayList<Event> eventList;
     ArrayList<String> myDataset;
     APIclient.APIService service;
+    //Gathering gathering;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,9 +76,15 @@ public class EventActivity extends AppCompatActivity {
             }
         });
 
+        Gathering gathering=new Gathering();
+        gathering.name="App gathering";
+        gathering.start_datetime="2018-01-01 11:11";
+        gathering.is_start=false;
+        gathering.created_by=1;
+        gathering.restaurant=1;
         service=APIclient.retrofit().create(APIclient.APIService.class);
-        Call<ResponseBody> req = service.createGathering("App gathering","2018-01-01 11:11",1,1);
-
+        //Call<ResponseBody> req = service.createGathering("App gathering","2018-01-01 11:11",1,1);
+        Call<ResponseBody> req = service.createGatheringB(gathering);
         req.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -84,6 +93,22 @@ public class EventActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        Call<List<Gathering>> req2 = service.getGatheringList();
+        req2.enqueue(new Callback<List<Gathering>>() {
+            @Override
+            public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
+                Log.v("Upload", "successlist");
+                //test for loading array to list
+                for(Gathering G: response.body()){
+                    Log.v("loopresult",G.toString());
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Gathering>> call, Throwable t) {
                 t.printStackTrace();
             }
         });

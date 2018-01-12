@@ -1,5 +1,11 @@
 package com.bonlai.socialdiningapp;
 
+import com.bonlai.socialdiningapp.models.Gathering;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.List;
+
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
@@ -8,6 +14,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -23,11 +30,18 @@ public class APIclient {
     static Retrofit mRetrofit;
     public static Retrofit retrofit() {
         if (mRetrofit == null) {
+            //add authorization information to interceptor
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            //HTTP connection
             OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
+            Gson gson = new GsonBuilder()
+                    .setDateFormat("yyyy-MM-dd hh:mm")
+                    .create();
+
             mRetrofit = new Retrofit.Builder().
-                    baseUrl("http://192.168.2.5:8000/").
+                    baseUrl("http://192.168.2.4:8000/").
                     addConverterFactory(GsonConverterFactory.create()).
                     client(client).build();
         }
@@ -47,5 +61,17 @@ public class APIclient {
                 @Part("start_datetime") String dateTime,
                 @Part("created_by") Integer createdBy,
                 @Part("restaurant") Integer restaurant);
+
+        @POST("api/gathering/")
+        Call<ResponseBody> createGatheringB(
+                @Body Gathering gathering);
+
+        @GET("api/gathering/")
+        Call<List<Gathering>> getGatheringList();
+
+        @POST("rest-auth/")
+        Call<ResponseBody> login(
+                @Part("name") String name,
+                @Part("start_datetime") String dateTime);
     }
 }
