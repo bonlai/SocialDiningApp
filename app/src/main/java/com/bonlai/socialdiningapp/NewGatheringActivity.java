@@ -7,13 +7,22 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.bonlai.socialdiningapp.models.Gathering;
+
 import java.util.Calendar;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class NewGatheringActivity extends AppCompatActivity {
     private Button dateButton;
@@ -21,6 +30,13 @@ public class NewGatheringActivity extends AppCompatActivity {
 
     private Button timeButton;
     private TextView timeText;
+
+    private EditText gatheringTitle;
+    private EditText restaurantID;
+    private EditText userID;
+
+    private String date;
+    private String time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +51,13 @@ public class NewGatheringActivity extends AppCompatActivity {
         timeText = (TextView)findViewById(R.id.showTime);
         timeButton = (Button)findViewById(R.id.timeButton);
 
+        gatheringTitle=(EditText)findViewById(R.id.gatheringTitle);
+        restaurantID=(EditText)findViewById(R.id.restaurantID);
+        userID=(EditText)findViewById(R.id.userID);
+
+        date="";
+        time="";
+
         dateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,7 +70,8 @@ public class NewGatheringActivity extends AppCompatActivity {
                 DatePickerDialog dpDialog = new DatePickerDialog(NewGatheringActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        dateText.setText(year + "/" + (monthOfYear+1) + "/" + dayOfMonth);
+                        date=year + "-" + (monthOfYear+1) + "-" + dayOfMonth;
+                        dateText.setText(date);
                     }
                 }, year, month, day);
                 dpDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
@@ -67,17 +91,43 @@ public class NewGatheringActivity extends AppCompatActivity {
 
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        timeText.setText(hourOfDay + ":" + minute);
+                        time=hourOfDay + ":" + minute;
+                        timeText.setText(time);
                     }
                 }, hour, minute, false).show();
             }
-
         });
 
     }
 
     public void setDate(View v){
 
+    }
+
+    public void submitGathering(View v){
+        String dateTime=date+" "+time;
+
+        Gathering gathering=new Gathering();
+        gathering.setName(gatheringTitle.getText().toString());
+        gathering.setStartDatetime(dateTime);
+        gathering.setIsStart(false);
+        gathering.setCreatedBy(Integer.valueOf(userID.getText().toString()));
+        gathering.setRestaurant(Integer.valueOf(restaurantID.getText().toString()));
+        //service=APIclient.retrofit().create(APIclient.APIService.class);
+        APIclient.APIService service=APIclient.getAPIService();
+        //post gathering test
+        Call<ResponseBody> req = service.createGatheringB(gathering);
+        req.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.v("Upload", "success");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
 }

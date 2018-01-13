@@ -15,6 +15,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -33,6 +34,7 @@ public class APIclient {
     public static Retrofit retrofit() {
         if (mRetrofit == null) {
             //add authorization information to interceptor
+            //set log history
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             //HTTP connection
@@ -42,10 +44,11 @@ public class APIclient {
                     .setDateFormat("yyyy-MM-dd hh:mm")
                     .create();
 
-            mRetrofit = new Retrofit.Builder().
+            Retrofit.Builder builder=new Retrofit.Builder().
                     baseUrl("http://192.168.2.4:8000/").
-                    addConverterFactory(GsonConverterFactory.create()).
-                    client(client).build();
+                    addConverterFactory(GsonConverterFactory.create());
+
+            mRetrofit = builder.client(client).build();
         }
         return mRetrofit;
     }
@@ -77,6 +80,7 @@ public class APIclient {
         @GET("api/gathering/")
         Call<List<Gathering>> getGatheringList();
 
+        @FormUrlEncoded
         @POST("/rest-auth/login/")
         Call<ResponseBody> login(
                 @Field("username") String username,

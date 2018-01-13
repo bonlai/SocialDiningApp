@@ -72,6 +72,20 @@
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 
+            <Button
+                android:id="@+id/profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="goToProfile"
+                android:text="profile" />
+
+            <Button
+                android:id="@+id/gathering"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="goToGatheringList"
+                android:text="gathering" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

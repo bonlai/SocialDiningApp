@@ -72,30 +72,7 @@ public class EventActivity extends AppCompatActivity {
                 new ReadJSON().execute("http://quocnguyen.16mb.com/products.json");
             }
         });*/
-
-        //test for creating gathering
-        Gathering gathering=new Gathering();
-        gathering.setName("App gathering with APIService method");
-        gathering.setStartDatetime("2018-01-01 11:11");
-        gathering.setIsStart(false);
-        gathering.setCreatedBy(8);
-        gathering.setRestaurant(1);
-        //service=APIclient.retrofit().create(APIclient.APIService.class);
         service=APIclient.getAPIService();
-        //post gathering test
-        Call<ResponseBody> req = service.createGatheringB(gathering);
-        req.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.v("Upload", "success");
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
-
         Call<List<Gathering>> req2 = service.getGatheringList();
         req2.enqueue(new Callback<List<Gathering>>() {
             @Override
