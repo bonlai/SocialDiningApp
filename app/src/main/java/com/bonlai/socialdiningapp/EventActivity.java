@@ -10,10 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ImageView;
 
 import com.bonlai.socialdiningapp.models.Gathering;
+import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.squareup.picasso.Picasso;
 import android.content.Context;
 import android.widget.Toast;
@@ -112,11 +114,13 @@ public class EventActivity extends AppCompatActivity {
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
             public TextView mTextView;
             public ImageView mImageView;
+            public Button join;
 
             public ViewHolder(View v) {
                 super(v);
                 mTextView = (TextView) v.findViewById(R.id.info_text);
                 mImageView = (ImageView) v.findViewById(R.id.img);
+                join = (Button) v.findViewById(R.id.join);
                 itemView.setOnClickListener(this);
 
             }
@@ -148,6 +152,26 @@ public class EventActivity extends AppCompatActivity {
         public void onBindViewHolder(ViewHolder holder, int position) {
             //holder.mTextView.setText(mData.get(position));
             //mEvent.get(position).getImage()
+            holder.join.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    APIclient.APIService service=APIclient.getAPIService();
+                    Call<ResponseBody> req = service.joinGathering(MyUserHolder.getInstance().getUser().getPk(),3);
+                    req.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if(response.isSuccessful()){
+                                Toast toast = Toast.makeText(context, "Joined Gathering 3" , Toast.LENGTH_LONG);
+                                toast.show();
+                            }
+                        }
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            t.printStackTrace();
+                        }
+                    });
+                }
+            });
             holder.mTextView.setText(mGathering.get(position).getName());
             String testImageUrl="http://www.thoitrangtichtac.com/productimg/12000/11136/250_Dam_suong_tre_vai_tay_con_don_gian_b1136.jpg";
             Picasso.with(context).load(testImageUrl).into(holder.mImageView);

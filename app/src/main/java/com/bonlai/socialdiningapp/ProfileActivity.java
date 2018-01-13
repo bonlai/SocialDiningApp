@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.bonlai.socialdiningapp.models.Gathering;
+import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.User;
 
 import java.util.List;
@@ -47,6 +48,11 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if(response.isSuccessful()){
+
+                    User user=response.body();
+                    MyUserHolder.getInstance().setUser(response.body());
+
+                    Log.v("test",""+MyUserHolder.getInstance().getUser().getPk());
                     collapsingToolbar.setTitle(response.body().getFirstName()+" "+response.body().getLastName());
                 }
             }

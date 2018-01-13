@@ -3,6 +3,7 @@ package com.bonlai.socialdiningapp;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -29,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bonlai.socialdiningapp.models.Gathering;
@@ -107,6 +109,7 @@ public class LoginActivity extends AppCompatActivity{
 
 
     public void attemptLogin(){
+        mProgressView.setVisibility(View.VISIBLE);
         APIclient.APIService service=APIclient.getAPIService();
         Call<Token> req = service.login(mEmailView.getText().toString(),mPasswordView.getText().toString());
         req.enqueue(new Callback<Token>() {
@@ -115,6 +118,7 @@ public class LoginActivity extends AppCompatActivity{
                 if(response.isSuccessful()){
                     Token.setToken(response.body());
                     APIclient.setToken();
+                    mProgressView.setVisibility(View.GONE);
                 }
             }
             @Override

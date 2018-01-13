@@ -106,5 +106,12 @@ public class APIclient {
 
         @GET("rest-auth/user/")
         Call<User> getMyDetail();
+
+        @FormUrlEncoded
+        @POST("api/participate/")
+        Call<ResponseBody> joinGathering(
+                @Field("user") int userId,
+                @Field("gathering") int gatheringId
+        );
     }
 }
