@@ -32,6 +32,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bonlai.socialdiningapp.models.Gathering;
+import com.bonlai.socialdiningapp.models.Token;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -107,18 +108,17 @@ public class LoginActivity extends AppCompatActivity{
 
     public void attemptLogin(){
         APIclient.APIService service=APIclient.getAPIService();
-        Call<ResponseBody> req = service.login(mEmailView.getText().toString(),mPasswordView.getText().toString());
-        req.enqueue(new Callback<ResponseBody>() {
+        Call<Token> req = service.login(mEmailView.getText().toString(),mPasswordView.getText().toString());
+        req.enqueue(new Callback<Token>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                try {
-                    Log.v("Token", response.body().string());
-                } catch (IOException e) {
-                    e.printStackTrace();
+            public void onResponse(Call<Token> call, Response<Token> response) {
+                if(response.isSuccessful()){
+                    Token.setToken(response.body());
+                    APIclient.setToken();
                 }
             }
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<Token> call, Throwable t) {
                 t.printStackTrace();
             }
         });
