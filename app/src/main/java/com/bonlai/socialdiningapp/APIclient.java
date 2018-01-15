@@ -36,7 +36,7 @@ public class APIclient {
     static APIService mAPIService;
     private static OkHttpClient.Builder OKHttpBuilder = new OkHttpClient.Builder();
     private static Retrofit.Builder builder=new Retrofit.Builder().
-            baseUrl("http://192.168.2.4:8000/").
+            baseUrl("http://192.168.2.5:8000/").
             addConverterFactory(GsonConverterFactory.create());
     public static Retrofit retrofit() {
         if (mRetrofit == null) {
@@ -99,12 +99,12 @@ public class APIclient {
         Call<List<Gathering>> getGatheringList();
 
         @FormUrlEncoded
-        @POST("/rest-auth/login/")
+        @POST("api/rest-auth/login/")
         Call<Token> login(
                 @Field("username") String username,
                 @Field("password") String password);
 
-        @GET("rest-auth/user/")
+        @GET("api/rest-auth/user/")
         Call<User> getMyDetail();
 
         @FormUrlEncoded
