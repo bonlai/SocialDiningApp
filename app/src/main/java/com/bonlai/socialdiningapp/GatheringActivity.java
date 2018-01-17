@@ -35,26 +35,17 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class EventActivity extends AppCompatActivity {
+public class GatheringActivity extends AppCompatActivity {
     //private RecyclerView mRecyclerView;
     //private RecyclerView.Adapter mAdapter;
     //private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView recyclerView;
-    //ArrayList<Event> eventList;
-    ArrayList<String> myDataset;
     APIclient.APIService service;
-    //Gathering gathering;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event);
-
-/*      //data initial
-        eventList = new ArrayList<>();
-        myDataset = new ArrayList<>();
-        for(int i = 0; i < 8; i++){
-            myDataset.add("Test"+i + "");
-        }*/
+        setContentView(R.layout.activity_gathering);
 
         //link views in XML to variables
         recyclerView = (RecyclerView) findViewById(R.id.list_view);
@@ -67,13 +58,6 @@ public class EventActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //read data from API service
-/*        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                new ReadJSON().execute("http://quocnguyen.16mb.com/products.json");
-            }
-        });*/
         service=APIclient.getAPIService();
         Call<List<Gathering>> req2 = service.getGatheringList();
         req2.enqueue(new Callback<List<Gathering>>() {
@@ -106,20 +90,22 @@ public class EventActivity extends AppCompatActivity {
     }
 
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-        //private List<String> mData;
-        //private List<Event> mEvent;
         private List<Gathering> mGathering;
         Context context;
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-            public TextView mTextView;
-            public ImageView mImageView;
+            public TextView mGatheringName;
+            public TextView mDescription;
+            public TextView mRestaurantName;
+            public ImageView mRestaurantImg;
             public Button join;
 
             public ViewHolder(View v) {
                 super(v);
-                mTextView = (TextView) v.findViewById(R.id.info_text);
-                mImageView = (ImageView) v.findViewById(R.id.img);
+                mGatheringName = (TextView) v.findViewById(R.id.gathering_name);
+                mRestaurantImg = (ImageView) v.findViewById(R.id.restaurant_img);
+                mDescription = (TextView) v.findViewById(R.id.description);
+                mRestaurantName=(TextView) v.findViewById(R.id.restaurant_name);
                 join = (Button) v.findViewById(R.id.join);
                 itemView.setOnClickListener(this);
 
@@ -135,8 +121,6 @@ public class EventActivity extends AppCompatActivity {
 
         public MyAdapter(Context context, List<Gathering> gathering) {
             this.context = context;
-            //mData = data;
-            //mEvent=event;
             mGathering=gathering;
         }
 
@@ -150,18 +134,30 @@ public class EventActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            //holder.mTextView.setText(mData.get(position));
-            //mEvent.get(position).getImage()
+            //holder.getBinding().setVariable(BR.item, mItemList.get(position));
+            //holder.getBinding().executePendingBindings();
+            holder.mGatheringName.setText(mGathering.get(position).getName());
+            holder.mGatheringName.setTag(mGathering.get(position).getId());
+
+            //holder.mRestaurantName.setText(mGathering.get(position).getRestaurant());
+            //holder.mDescription.setText(mGathering.get(position));
+            String testImageUrl="http://www.thoitrangtichtac.com/productimg/12000/11136/250_Dam_suong_tre_vai_tay_con_don_gian_b1136.jpg";
+            Picasso.with(context).load(testImageUrl).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
+
+            final int gatheringId=mGathering.get(position).getId();
             holder.join.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     APIclient.APIService service=APIclient.getAPIService();
-                    Call<ResponseBody> req = service.joinGathering(MyUserHolder.getInstance().getUser().getPk(),3);
+                    Call<ResponseBody> req = service.joinGathering(MyUserHolder.getInstance().getUser().getPk(), gatheringId);
                     req.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if(response.isSuccessful()){
-                                Toast toast = Toast.makeText(context, "Joined Gathering 3" , Toast.LENGTH_LONG);
+                                Toast toast = Toast.makeText(context, "Joined Gathering " , Toast.LENGTH_LONG);
+                                toast.show();
+                            }else{
+                                Toast toast = Toast.makeText(context, "Cant join" , Toast.LENGTH_LONG);
                                 toast.show();
                             }
                         }
@@ -172,9 +168,6 @@ public class EventActivity extends AppCompatActivity {
                     });
                 }
             });
-            holder.mTextView.setText(mGathering.get(position).getName());
-            String testImageUrl="http://www.thoitrangtichtac.com/productimg/12000/11136/250_Dam_suong_tre_vai_tay_con_don_gian_b1136.jpg";
-            Picasso.with(context).load(testImageUrl).into(holder.mImageView);
         }
 
         @Override

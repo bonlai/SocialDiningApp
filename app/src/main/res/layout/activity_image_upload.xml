@@ -9,9 +9,25 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.bonlai.socialdiningapp.ImageUploadActivity">
 
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textInputLayout3">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/my_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="My name" />
+    </android.support.design.widget.TextInputLayout>
+
     <Button
+        android:id="@+id/btn_upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Upload File"
-        android:id="@+id/btn_upload"/>
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textInputLayout3"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="23dp"
+        android:text="Upload File" />
 </RelativeLayout>

@@ -11,7 +11,6 @@ public class Token {
     @SerializedName("key")
     private String key;
 
-
     public static Token getToken(){
         if(mToken==null){
             mToken=new Token();

@@ -28,20 +28,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EventActivity"
+            android:name=".GatheringActivity"
             android:label="@string/title_activity_event"
-            android:parentActivityName=".TestActivity"
+            android:parentActivityName=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.bonlai.socialdiningapp.TestActivity" />
-        </activity>
-        <activity
-            android:name=".TestActivity"
-            android:label="@string/title_activity_test"
-            android:theme="@style/AppTheme.NoActionBar">
+                android:value="com.bonlai.socialdiningapp.LoginActivity" />
         </activity>
         <activity
             android:name=".ProfileActivity"

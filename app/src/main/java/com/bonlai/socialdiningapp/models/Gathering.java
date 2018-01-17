@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class Gathering {
+    @SerializedName("id")
+    private int id;
     @SerializedName("name")
     private String name;
     @SerializedName("start_datetime")
@@ -15,6 +17,14 @@ public class Gathering {
     private int createdBy;
     @SerializedName("restaurant")
     private int restaurant;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
