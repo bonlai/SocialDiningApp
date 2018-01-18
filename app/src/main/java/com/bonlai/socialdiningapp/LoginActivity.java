@@ -95,6 +95,10 @@ public class LoginActivity extends AppCompatActivity{
                     Token.setToken(response.body());
                     APIclient.setToken();
                     mProgressView.setVisibility(View.GONE);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
                 }else{
                     mProgressView.setVisibility(View.GONE);
                     Toast toast = Toast.makeText(LoginActivity.this, "Cant login ", Toast.LENGTH_LONG);
@@ -115,6 +119,11 @@ public class LoginActivity extends AppCompatActivity{
 
     public void goToProfile(View view){
         Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToBN(View view){
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 

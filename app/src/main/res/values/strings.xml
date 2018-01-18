@@ -18,4 +18,13 @@
     <string name="title_activity_user_profile">UserProfileActivity</string>
     <string name="title_activity_image_upload">ImageUploadActivity</string>
     <string name="title_activity_new_gathering">NewGatheringActivity</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="title_activity_restaurant_detail">RestaurantDetailActivity</string>
+    <string name="title_activity_bn">BNActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tab_1">Green</string>
+    <string name="tab_2">Red</string>
+    <string name="tab_3">Blue</string>
 </resources>

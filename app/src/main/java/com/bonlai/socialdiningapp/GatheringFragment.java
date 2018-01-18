@@ -1,64 +1,90 @@
 package com.bonlai.socialdiningapp;
 
-import android.content.Intent;
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
+import com.bonlai.socialdiningapp.models.User;
 import com.squareup.picasso.Picasso;
-import android.content.Context;
-import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-
-import android.os.AsyncTask;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class GatheringActivity extends AppCompatActivity {
-    //private RecyclerView mRecyclerView;
-    //private RecyclerView.Adapter mAdapter;
-    //private RecyclerView.LayoutManager mLayoutManager;
+
+public class GatheringFragment extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+
+
     private RecyclerView recyclerView;
-    APIclient.APIService service;
+
+    public GatheringFragment() {
+        // Required empty public constructor
+    }
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gathering);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+        }
+    }
 
-        //link views in XML to variables
-        recyclerView = (RecyclerView) findViewById(R.id.list_view);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_gathering, container, false);
+
+        //recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_square_recycler);
+        //recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
+        //SimpleAdapter adapter = new SimpleAdapter(getContext());
+        //recyclerView.setAdapter(adapter);
+
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        //Toolbar initial
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<User> req = service.getMyDetail();
+        req.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()){
+                    //User user=response.body();
+                    MyUserHolder.getInstance().setUser(response.body());
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
 
-        service=APIclient.getAPIService();
         Call<List<Gathering>> req2 = service.getGatheringList();
         req2.enqueue(new Callback<List<Gathering>>() {
             @Override
@@ -68,7 +94,7 @@ public class GatheringActivity extends AppCompatActivity {
                 for(Gathering G: response.body()){
                     Log.v("loopresult",G.toString());
                 }
-                MyAdapter myAdapter = new MyAdapter(getApplicationContext(), response.body());
+                MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
                 recyclerView.setAdapter(myAdapter);
             }
             @Override
@@ -76,17 +102,7 @@ public class GatheringActivity extends AppCompatActivity {
                 t.printStackTrace();
             }
         });
-    }
-
-    //Jump to profile activity
-    public void nextActivity(View view){
-        Intent intent = new Intent(this, ProfileActivity.class);
-        startActivity(intent);
-    }
-
-    public void addGathering(View view){
-        Intent intent = new Intent(this, NewGatheringActivity.class);
-        startActivity(intent);
+        return rootView;
     }
 
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
@@ -128,12 +144,12 @@ public class GatheringActivity extends AppCompatActivity {
         public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.gathering, parent, false);
-            ViewHolder vh = new ViewHolder(v);
+            MyAdapter.ViewHolder vh = new MyAdapter.ViewHolder(v);
             return vh;
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
+        public void onBindViewHolder(MyAdapter.ViewHolder holder, int position) {
             //holder.getBinding().setVariable(BR.item, mItemList.get(position));
             //holder.getBinding().executePendingBindings();
             holder.mGatheringName.setText(mGathering.get(position).getName());
@@ -175,4 +191,5 @@ public class GatheringActivity extends AppCompatActivity {
             return mGathering.size();
         }
     }
+
 }

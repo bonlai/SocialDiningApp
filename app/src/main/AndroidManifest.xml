@@ -49,6 +49,18 @@
         <activity
             android:name=".NewGatheringActivity"
             android:label="@string/title_activity_new_gathering"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RegisterActivity"
+            android:label="@string/title_activity_sign_up"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RestaurantDetailActivity"
+            android:label="@string/title_activity_restaurant_detail"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_bn"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
