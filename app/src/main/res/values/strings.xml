@@ -13,6 +13,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
     <string name="title_activity_event">EventActivity</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="title_activity_user_profile">UserProfileActivity</string>
@@ -24,7 +25,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="tab_1">Green</string>
-    <string name="tab_2">Red</string>
-    <string name="tab_3">Blue</string>
+    <string name="tab_1">Gathering</string>
+    <string name="tab_2">Joined Gathering</string>
+    <string name="tab_3">Restaurant</string>
+    <string name="tab_4">My Profile</string>
 </resources>

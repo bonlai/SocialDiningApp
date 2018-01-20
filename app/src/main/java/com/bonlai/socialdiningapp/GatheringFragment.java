@@ -1,11 +1,17 @@
 package com.bonlai.socialdiningapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class GatheringFragment extends Fragment {
+public class GatheringFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -39,9 +45,9 @@ public class GatheringFragment extends Fragment {
 
 
     private RecyclerView recyclerView;
+    private FloatingActionButton mAddGathering;
 
     public GatheringFragment() {
-        // Required empty public constructor
     }
 
 
@@ -49,20 +55,18 @@ public class GatheringFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            //mParam1 = getArguments().getString(ARG_PARAM1);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         View rootView = inflater.inflate(R.layout.fragment_gathering, container, false);
 
-        //recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_square_recycler);
-        //recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-
-        //SimpleAdapter adapter = new SimpleAdapter(getContext());
-        //recyclerView.setAdapter(adapter);
+        mAddGathering = (FloatingActionButton) rootView.findViewById(R.id.addNewGathering);
+        mAddGathering.setOnClickListener(this);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -103,6 +107,24 @@ public class GatheringFragment extends Fragment {
             }
         });
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppCompatActivity actionBar = (AppCompatActivity) getActivity();
+        Toolbar toolbar = (Toolbar) actionBar.findViewById(R.id.toolbar);
+        actionBar.setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.addNewGathering:
+                Intent intent = new Intent(getContext(), NewGatheringActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {

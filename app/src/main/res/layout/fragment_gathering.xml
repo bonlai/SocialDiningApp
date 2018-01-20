@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.bonlai.socialdiningapp.GatheringFragment">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -20,5 +21,18 @@
             android:layout_height="match_parent" />
 
     </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/addNewGathering"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="@dimen/activity_margin_half"
+        android:layout_marginLeft="@dimen/activity_margin_half"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:layout_anchor="@+id/include2"
+        app:layout_anchorGravity="bottom|right"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </FrameLayout>

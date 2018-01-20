@@ -24,15 +24,13 @@ public class MainActivity extends AppCompatActivity {
     private AHBottomNavigation bottomNavigation;
     private BottomBarAdapter pagerAdapter;
     private boolean notificationVisible = false;
-    private final int[] colors = {R.color.bottomtab_0, R.color.bottomtab_1, R.color.bottomtab_2};
+    //private final int[] colors = {R.color.bottomtab_0, R.color.bottomtab_1, R.color.bottomtab_2};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bn);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
 
         setupViewPager();
 
@@ -71,8 +69,9 @@ public class MainActivity extends AppCompatActivity {
         pagerAdapter = new BottomBarAdapter(getSupportFragmentManager());
 
         pagerAdapter.addFragments(new GatheringFragment());
-        pagerAdapter.addFragments(createFragment(R.color.bottomtab_1));
         pagerAdapter.addFragments(createFragment(R.color.bottomtab_2));
+        pagerAdapter.addFragments(createFragment(R.color.bottomtab_3));
+        pagerAdapter.addFragments(new ProfileFragment());
 
         viewPager.setAdapter(pagerAdapter);
     }
@@ -132,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         Will not be visible if setColored(true) and default current item is set.
          */
         bottomNavigation.setDefaultBackgroundColor(Color.WHITE);
-        bottomNavigation.setAccentColor(fetchColor(R.color.bottomtab_0));
+        bottomNavigation.setAccentColor(fetchColor(R.color.colorPrimary));
         bottomNavigation.setInactiveColor(fetchColor(R.color.bottomtab_item_resting));
 
         // Colors for selected (active) and non-selected items.
@@ -140,27 +139,27 @@ public class MainActivity extends AppCompatActivity {
                 fetchColor(R.color.bottomtab_item_resting));
 
         //  Enables Reveal effect
-        bottomNavigation.setColored(true);
+        bottomNavigation.setColored(false);
 
         //  Displays item Title always (for selected and non-selected items)
         bottomNavigation.setTitleState(AHBottomNavigation.TitleState.ALWAYS_SHOW);
     }
-
 
     /**
      * Adds (items) {@link AHBottomNavigationItem} to {@link AHBottomNavigation}
      * Also assigns a distinct color to each Bottom Navigation item, used for the color ripple.
      */
     private void addBottomNavigationItems() {
-        AHBottomNavigationItem item1 = new AHBottomNavigationItem(R.string.tab_1, R.drawable.ic_email_black, colors[0]);
-        AHBottomNavigationItem item2 = new AHBottomNavigationItem(R.string.tab_2, R.drawable.ic_email_black, colors[1]);
-        AHBottomNavigationItem item3 = new AHBottomNavigationItem(R.string.tab_3, R.drawable.ic_email_black, colors[2]);
+        AHBottomNavigationItem item1 = new AHBottomNavigationItem(R.string.tab_1, R.drawable.ic_all_gathering, R.color.bottomtab_1);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem(R.string.tab_2, R.drawable.ic_my_gathering, R.color.bottomtab_2);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem(R.string.tab_3, R.drawable.ic_restaurant, R.color.bottomtab_3);
+        AHBottomNavigationItem item4 = new AHBottomNavigationItem(R.string.tab_4, R.drawable.ic_profile, R.color.bottomtab_4);
 
         bottomNavigation.addItem(item1);
         bottomNavigation.addItem(item2);
         bottomNavigation.addItem(item3);
+        bottomNavigation.addItem(item4);
     }
-
 
     /**
      * Simple facade to fetch color resource, so I avoid writing a huge line every time.
