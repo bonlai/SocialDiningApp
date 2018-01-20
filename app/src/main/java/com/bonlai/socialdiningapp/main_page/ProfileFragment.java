@@ -1,4 +1,4 @@
-package com.bonlai.socialdiningapp;
+package com.bonlai.socialdiningapp.main_page;
 
 import android.content.Context;
 import android.net.Uri;
@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.User;
 

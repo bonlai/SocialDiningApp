@@ -5,7 +5,6 @@
     android:background="@color/bg_light"
     tools:context="com.bonlai.socialdiningapp.main_page.DummyFragment">
 
-    <!--By default, height of Toolbar and Bottom Navigation are equal-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fragment_square_recycler"
         android:layout_width="match_parent"

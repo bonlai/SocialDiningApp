@@ -9,6 +9,8 @@ public class Gathering {
     private int id;
     @SerializedName("name")
     private String name;
+    @SerializedName("details")
+    private String detail;
     @SerializedName("start_datetime")
     private String startDatetime;
     @SerializedName("is_start")
@@ -32,6 +34,14 @@ public class Gathering {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setdetail(String detail) {
+        this.detail = detail;
     }
 
     public String getStartDatetime() {

@@ -1,4 +1,4 @@
-package com.bonlai.socialdiningapp;
+package com.bonlai.socialdiningapp.main_page;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,8 +21,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bonlai.socialdiningapp.APIclient;
+import com.bonlai.socialdiningapp.NewGatheringActivity;
+import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
+import com.bonlai.socialdiningapp.models.Profile;
+import com.bonlai.socialdiningapp.models.Restaurant;
 import com.bonlai.socialdiningapp.models.User;
 import com.squareup.picasso.Picasso;
 
@@ -134,8 +139,10 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
             public TextView mGatheringName;
             public TextView mDescription;
+            public TextView mCategory;
             public TextView mRestaurantName;
             public ImageView mRestaurantImg;
+            public ImageView mCreator;
             public Button join;
 
             public ViewHolder(View v) {
@@ -144,6 +151,8 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 mRestaurantImg = (ImageView) v.findViewById(R.id.restaurant_img);
                 mDescription = (TextView) v.findViewById(R.id.description);
                 mRestaurantName=(TextView) v.findViewById(R.id.restaurant_name);
+                mCreator= (ImageView) v.findViewById(R.id.creator_img);
+                mCategory=(TextView) v.findViewById(R.id.category);
                 join = (Button) v.findViewById(R.id.join);
                 itemView.setOnClickListener(this);
 
@@ -172,16 +181,57 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
         @Override
         public void onBindViewHolder(MyAdapter.ViewHolder holder, int position) {
-            //holder.getBinding().setVariable(BR.item, mItemList.get(position));
-            //holder.getBinding().executePendingBindings();
+            APIclient.APIService service=APIclient.getAPIService();
+
+            final MyAdapter.ViewHolder mHolder=holder;
+            final int mPosition=position;
+
+            //get restaurant info
+            Call<Restaurant> getRestaurantInfo = service.getRestaurantInfo(mGathering.get(position).getRestaurant());
+            getRestaurantInfo.enqueue(new Callback<Restaurant>() {
+                @Override
+                public void onResponse(Call<Restaurant> call, Response<Restaurant> response) {
+                    if(response.isSuccessful()){
+                        mHolder.mRestaurantName.setText(response.body().getName());
+                        if(!response.body().getImage().isEmpty()){
+                            String restImg=response.body().getImage().get(0).getImage();
+                            Picasso.with(context).load(restImg).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mHolder.mRestaurantImg);
+                        }
+                        mHolder.mCategory.setText(response.body().getCategory());
+                    }else{
+
+                    }
+                }
+                @Override
+                public void onFailure(Call<Restaurant> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+
+            //get user img
+            Call<Profile> getUserImg = service.getProfile(mGathering.get(position).getId());
+            getUserImg.enqueue(new Callback<Profile>() {
+                @Override
+                public void onResponse(Call<Profile> call, Response<Profile> response) {
+                    if(response.isSuccessful()){
+                        String imgPath=response.body().getImage();
+                        Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mHolder.mCreator);
+                    }else{
+
+                    }
+                }
+                @Override
+                public void onFailure(Call<Profile> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+
+            //get gathering info
             holder.mGatheringName.setText(mGathering.get(position).getName());
             holder.mGatheringName.setTag(mGathering.get(position).getId());
+            holder.mDescription.setText(mGathering.get(position).getDetail());
 
-            //holder.mRestaurantName.setText(mGathering.get(position).getRestaurant());
-            //holder.mDescription.setText(mGathering.get(position));
-            String testImageUrl="http://www.thoitrangtichtac.com/productimg/12000/11136/250_Dam_suong_tre_vai_tay_con_don_gian_b1136.jpg";
-            Picasso.with(context).load(testImageUrl).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
-
+            //set join button event
             final int gatheringId=mGathering.get(position).getId();
             holder.join.setOnClickListener(new View.OnClickListener() {
                 @Override

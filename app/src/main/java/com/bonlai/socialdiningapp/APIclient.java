@@ -76,7 +76,7 @@ public class APIclient {
         return mAPIService;
     }
 
-    interface APIService {
+    public interface APIService {
         @Multipart
         @PUT("api/profilePic/{id}/")
         Call<ResponseBody> postImage(
@@ -112,6 +112,16 @@ public class APIclient {
         Call<ResponseBody> joinGathering(
                 @Field("user") int userId,
                 @Field("gathering") int gatheringId
+        );
+
+        @GET("api/restaurant/{id}/")
+        Call<Restaurant> getRestaurantInfo(
+                @Path("id") Integer id
+        );
+
+        @GET("api/user/{id}/profile/")
+        Call<Profile> getProfile(
+                @Path("id") Integer id
         );
     }
 }

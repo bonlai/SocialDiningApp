@@ -16,7 +16,9 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.aurelhubert.ahbottomnavigation.notification.AHNotification;
 import com.bonlai.socialdiningapp.main_page.BottomBarAdapter;
 import com.bonlai.socialdiningapp.main_page.DummyFragment;
+import com.bonlai.socialdiningapp.main_page.GatheringFragment;
 import com.bonlai.socialdiningapp.main_page.NoSwipePager;
+import com.bonlai.socialdiningapp.main_page.ProfileFragment;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -128,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         /*
         Set Bottom Navigation colors. Accent color for active item,
         Inactive color when its view is disabled.
-        Will not be visible if setColored(true) and default current item is set.
+        Will not be visible if setColored(true) and default_profile_pic current item is set.
          */
         bottomNavigation.setDefaultBackgroundColor(Color.WHITE);
         bottomNavigation.setAccentColor(fetchColor(R.color.colorPrimary));
