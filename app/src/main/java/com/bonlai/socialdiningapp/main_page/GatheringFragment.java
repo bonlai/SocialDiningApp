@@ -209,7 +209,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
             });
 
             //get user img
-            Call<Profile> getUserImg = service.getProfile(mGathering.get(position).getId());
+            Call<Profile> getUserImg = service.getProfile(mGathering.get(position).getCreatedBy());
             getUserImg.enqueue(new Callback<Profile>() {
                 @Override
                 public void onResponse(Call<Profile> call, Response<Profile> response) {

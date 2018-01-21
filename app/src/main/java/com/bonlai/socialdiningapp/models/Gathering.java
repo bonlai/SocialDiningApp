@@ -15,7 +15,7 @@ public class Gathering {
     private String startDatetime;
     @SerializedName("is_start")
     private Boolean isStart;
-    @SerializedName("created_by")
+    @SerializedName("user")
     private int createdBy;
     @SerializedName("restaurant")
     private int restaurant;
