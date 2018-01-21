@@ -78,7 +78,7 @@ public class APIclient {
 
     public interface APIService {
         @Multipart
-        @PUT("api/profilePic/{id}/")
+        @PUT("api/user/{id}/profile/profile_pic_udate/")
         Call<ResponseBody> postImage(
                 @Part MultipartBody.Part image,
                 @Path("id") Integer id);

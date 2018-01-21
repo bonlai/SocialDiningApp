@@ -37,8 +37,8 @@ public class ProfileActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ProfileActivity.this, ImageUploadActivity.class);
-                startActivity(intent);
+                //Intent intent = new Intent(ProfileActivity.this, ImageUploadActivity.class);
+                //startActivity(intent);
             }
         });
 

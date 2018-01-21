@@ -28,23 +28,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".GatheringActivity"
-            android:label="@string/title_activity_event"
-            android:parentActivityName=".LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.bonlai.socialdiningapp.LoginActivity" />
-        </activity>
-        <activity
             android:name=".ProfileActivity"
             android:label="@string/title_activity_user_profile"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ImageUploadActivity"
-            android:label="@string/title_activity_image_upload"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".NewGatheringActivity"
@@ -61,6 +46,10 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_bn"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".GatheringDetailActivity"
+            android:label="@string/title_activity_gathering_detail"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

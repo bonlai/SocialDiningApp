@@ -113,8 +113,8 @@ public class LoginActivity extends AppCompatActivity{
     }
 
     public void goToGatheringList(View view){
-        Intent intent = new Intent(this, GatheringActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(this, GatheringActivity.class);
+        //startActivity(intent);
     }
 
     public void goToProfile(View view){

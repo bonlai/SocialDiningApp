@@ -15,7 +15,6 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.aurelhubert.ahbottomnavigation.notification.AHNotification;
 import com.bonlai.socialdiningapp.main_page.BottomBarAdapter;
-import com.bonlai.socialdiningapp.main_page.DummyFragment;
 import com.bonlai.socialdiningapp.main_page.GatheringFragment;
 import com.bonlai.socialdiningapp.main_page.NoSwipePager;
 import com.bonlai.socialdiningapp.main_page.ProfileFragment;
@@ -71,19 +70,19 @@ public class MainActivity extends AppCompatActivity {
         pagerAdapter = new BottomBarAdapter(getSupportFragmentManager());
 
         pagerAdapter.addFragments(new GatheringFragment());
-        pagerAdapter.addFragments(createFragment(R.color.bottomtab_2));
-        pagerAdapter.addFragments(createFragment(R.color.bottomtab_3));
+        pagerAdapter.addFragments(new GatheringFragment());
+        pagerAdapter.addFragments(new GatheringFragment());
         pagerAdapter.addFragments(new ProfileFragment());
 
         viewPager.setAdapter(pagerAdapter);
     }
 
-    @NonNull
+/*    @NonNull
     private DummyFragment createFragment(int color) {
         DummyFragment fragment = new DummyFragment();
         fragment.setArguments(passFragmentArguments(fetchColor(color)));
         return fragment;
-    }
+    }*/
 
     @NonNull
     private Bundle passFragmentArguments(int color) {

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.bonlai.socialdiningapp.ImageUploadActivity"
-    tools:showIn="@layout/activity_image_upload">
+    tools:context="com.bonlai.socialdiningapp.GatheringDetailActivity"
+    tools:showIn="@layout/activity_gathering_detail">
 
 </android.support.constraint.ConstraintLayout>
