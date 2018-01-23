@@ -116,7 +116,7 @@ public class NewGatheringActivity extends AppCompatActivity {
         //service=APIclient.retrofit().create(APIclient.APIService.class);
         APIclient.APIService service=APIclient.getAPIService();
         //post gathering test
-        Call<ResponseBody> req = service.createGatheringB(gathering);
+        Call<ResponseBody> req = service.createGathering(gathering);
         req.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

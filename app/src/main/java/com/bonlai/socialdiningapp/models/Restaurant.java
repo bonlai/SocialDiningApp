@@ -10,8 +10,8 @@ import java.util.List;
 
 public class Restaurant {
 
-    @SerializedName("url")
-    private String url;
+    @SerializedName("id")
+    private int id;
     @SerializedName("name")
     private String name;
     @SerializedName("address")
@@ -34,12 +34,12 @@ public class Restaurant {
         this.image = image;
     }
 
-    public String getUrl() {
-        return url;
+    public int getId() {
+        return id;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setId(int url) {
+        this.id = url;
     }
 
     public String getName() {

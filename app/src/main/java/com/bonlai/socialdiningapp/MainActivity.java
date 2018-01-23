@@ -18,17 +18,29 @@ import com.bonlai.socialdiningapp.main_page.BottomBarAdapter;
 import com.bonlai.socialdiningapp.main_page.GatheringFragment;
 import com.bonlai.socialdiningapp.main_page.NoSwipePager;
 import com.bonlai.socialdiningapp.main_page.ProfileFragment;
+import com.bonlai.socialdiningapp.main_page.RestaurantFragment;
+import com.bonlai.socialdiningapp.main_page.dummy.DummyContent;
+import com.bonlai.socialdiningapp.models.MyUserHolder;
+import com.bonlai.socialdiningapp.models.User;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     private NoSwipePager viewPager;
     private AHBottomNavigation bottomNavigation;
     private BottomBarAdapter pagerAdapter;
     private boolean notificationVisible = false;
-    //private final int[] colors = {R.color.bottomtab_0, R.color.bottomtab_1, R.color.bottomtab_2};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //load user detail(e.g. user id) to singleton class:MyUserHolder
+        setUserDetail();
+
         setContentView(R.layout.activity_bn);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -42,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         createFakeNotification();
 
         addBottomNavigationItems();
+        //set the initial fragment to be displayed
         bottomNavigation.setCurrentItem(0);
 
 
@@ -63,6 +76,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setUserDetail(){
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<User> req = service.getMyDetail();
+        req.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()){
+                    MyUserHolder.getInstance().setUser(response.body());
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
 
     private void setupViewPager() {
         viewPager = (NoSwipePager) findViewById(R.id.viewpager);
@@ -70,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         pagerAdapter = new BottomBarAdapter(getSupportFragmentManager());
 
         pagerAdapter.addFragments(new GatheringFragment());
-        pagerAdapter.addFragments(new GatheringFragment());
+        pagerAdapter.addFragments(new RestaurantFragment());
         pagerAdapter.addFragments(new GatheringFragment());
         pagerAdapter.addFragments(new ProfileFragment());
 

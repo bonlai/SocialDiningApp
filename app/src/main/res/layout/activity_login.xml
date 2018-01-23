@@ -76,22 +76,8 @@
                 android:id="@+id/profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:onClick="goToProfile"
-                android:text="profile" />
-
-            <Button
-                android:id="@+id/gathering"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="goToGatheringList"
-                android:text="gathering" />
-
-            <Button
-                android:id="@+id/BN_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="goToBN"
-                android:text="Button" />
+                android:onClick="goToRegister"
+                android:text="register" />
 
         </LinearLayout>
 

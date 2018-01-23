@@ -26,6 +26,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by Bon Lai on 12/1/2018.
@@ -36,7 +37,7 @@ public class APIclient {
     static APIService mAPIService;
     private static OkHttpClient.Builder OKHttpBuilder = new OkHttpClient.Builder();
     private static Retrofit.Builder builder=new Retrofit.Builder().
-            baseUrl("http://192.168.2.5:8000/").
+            baseUrl("http://192.168.2.6:8000/").
             addConverterFactory(GsonConverterFactory.create());
     public static Retrofit retrofit() {
         if (mRetrofit == null) {
@@ -83,16 +84,8 @@ public class APIclient {
                 @Part MultipartBody.Part image,
                 @Path("id") Integer id);
 
-        @Multipart
         @POST("api/gathering/")
         Call<ResponseBody> createGathering(
-                @Part("name") String name,
-                @Part("start_datetime") String dateTime,
-                @Part("created_by") Integer createdBy,
-                @Part("restaurant") Integer restaurant);
-
-        @POST("api/gathering/")
-        Call<ResponseBody> createGatheringB(
                 @Body Gathering gathering);
 
         @GET("api/gathering/")
@@ -108,6 +101,13 @@ public class APIclient {
         Call<User> getMyDetail();
 
         @FormUrlEncoded
+        @POST("api/rest-auth/registration/")
+        Call<Token> register(
+                @Field("username") String username,
+                @Field("password1") String password1,
+                @Field("password2") String password2);
+
+        @FormUrlEncoded
         @POST("api/participate/")
         Call<ResponseBody> joinGathering(
                 @Field("user") int userId,
@@ -119,9 +119,24 @@ public class APIclient {
                 @Path("id") Integer id
         );
 
+        @GET("api/restaurant/")
+        Call<List<Restaurant>> getRestaurantList();
+
         @GET("api/user/{id}/profile/")
         Call<Profile> getProfile(
                 @Path("id") Integer id
+        );
+
+        @FormUrlEncoded
+        @PUT("api/user/{id}/profile/")
+        Call<Profile> editProfile(
+                @Path("id") Integer id,
+                @Field("self_introduction") String bio
+        );
+
+        @GET("api/review_filter/")
+        Call<List<Review>> getReview(
+                @Query("restaurant") Integer restaurantId
         );
     }
 }

@@ -79,21 +79,6 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         recyclerView.setLayoutManager(layoutManager);
 
         APIclient.APIService service=APIclient.getAPIService();
-        Call<User> req = service.getMyDetail();
-        req.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if(response.isSuccessful()){
-                    //User user=response.body();
-                    MyUserHolder.getInstance().setUser(response.body());
-                }
-            }
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
-
         Call<List<Gathering>> req2 = service.getGatheringList();
         req2.enqueue(new Callback<List<Gathering>>() {
             @Override
@@ -180,10 +165,10 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         }
 
         @Override
-        public void onBindViewHolder(MyAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(final MyAdapter.ViewHolder holder, int position) {
             APIclient.APIService service=APIclient.getAPIService();
 
-            final MyAdapter.ViewHolder mHolder=holder;
+            //final MyAdapter.ViewHolder mHolder=holder;
             final int mPosition=position;
 
             //get restaurant info
@@ -192,12 +177,12 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 @Override
                 public void onResponse(Call<Restaurant> call, Response<Restaurant> response) {
                     if(response.isSuccessful()){
-                        mHolder.mRestaurantName.setText(response.body().getName());
+                        holder.mRestaurantName.setText(response.body().getName());
                         if(!response.body().getImage().isEmpty()){
                             String restImg=response.body().getImage().get(0).getImage();
-                            Picasso.with(context).load(restImg).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mHolder.mRestaurantImg);
+                            Picasso.with(context).load(restImg).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
                         }
-                        mHolder.mCategory.setText(response.body().getCategory());
+                        holder.mCategory.setText(response.body().getCategory());
                     }else{
 
                     }
@@ -215,7 +200,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 public void onResponse(Call<Profile> call, Response<Profile> response) {
                     if(response.isSuccessful()){
                         String imgPath=response.body().getImage();
-                        Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mHolder.mCreator);
+                        Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mCreator);
                     }else{
 
                     }
