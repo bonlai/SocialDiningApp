@@ -37,7 +37,7 @@ public class APIclient {
     static APIService mAPIService;
     private static OkHttpClient.Builder OKHttpBuilder = new OkHttpClient.Builder();
     private static Retrofit.Builder builder=new Retrofit.Builder().
-            baseUrl("http://192.168.2.6:8000/").
+            baseUrl("http://192.168.2.5:8000/").
             addConverterFactory(GsonConverterFactory.create());
     public static Retrofit retrofit() {
         if (mRetrofit == null) {
@@ -78,19 +78,6 @@ public class APIclient {
     }
 
     public interface APIService {
-        @Multipart
-        @PUT("api/user/{id}/profile/profile_pic_udate/")
-        Call<ResponseBody> postImage(
-                @Part MultipartBody.Part image,
-                @Path("id") Integer id);
-
-        @POST("api/gathering/")
-        Call<ResponseBody> createGathering(
-                @Body Gathering gathering);
-
-        @GET("api/gathering/")
-        Call<List<Gathering>> getGatheringList();
-
         @FormUrlEncoded
         @POST("api/rest-auth/login/")
         Call<Token> login(
@@ -107,6 +94,38 @@ public class APIclient {
                 @Field("password1") String password1,
                 @Field("password2") String password2);
 
+        @GET("api/user/{id}/profile/")
+        Call<Profile> getProfile(
+                @Path("id") Integer id
+        );
+
+        @FormUrlEncoded
+        @PUT("api/user/{id}/profile/")
+        Call<Profile> editProfile(
+                @Path("id") Integer id,
+                @Field("self_introduction") String bio
+        );
+
+        @Multipart
+        @PUT("api/user/{id}/profile/profile_pic_udate/")
+        Call<ResponseBody> postImage(
+                @Part MultipartBody.Part image,
+                @Path("id") Integer id);
+
+        @FormUrlEncoded
+        @PUT("api/interest/")
+        Call<Profile> postInterest(
+                @Path("id") Integer id,
+                @Field("self_introduction") String bio
+        );
+
+        @POST("api/gathering/")
+        Call<ResponseBody> createGathering(
+                @Body Gathering gathering);
+
+        @GET("api/gathering/")
+        Call<List<Gathering>> getGatheringList();
+
         @FormUrlEncoded
         @POST("api/participate/")
         Call<ResponseBody> joinGathering(
@@ -122,21 +141,18 @@ public class APIclient {
         @GET("api/restaurant/")
         Call<List<Restaurant>> getRestaurantList();
 
-        @GET("api/user/{id}/profile/")
-        Call<Profile> getProfile(
-                @Path("id") Integer id
-        );
-
-        @FormUrlEncoded
-        @PUT("api/user/{id}/profile/")
-        Call<Profile> editProfile(
-                @Path("id") Integer id,
-                @Field("self_introduction") String bio
-        );
 
         @GET("api/review_filter/")
         Call<List<Review>> getReview(
                 @Query("restaurant") Integer restaurantId
+        );
+
+        @FormUrlEncoded
+        @POST("api/review/")
+        Call<ResponseBody> postReview(
+                @Field("comment") String comment,
+                @Field("rating") int rating,
+                @Field("restaurant") int restaurantId
         );
     }
 }

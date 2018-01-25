@@ -25,13 +25,16 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RestaurantDetailActivity extends AppCompatActivity {
+public class RestaurantDetailActivity extends AppCompatActivity implements ReviewDialogFragment.Callback {
 
     private RecyclerView recyclerView;
+    private int restaurantId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +49,12 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                ReviewDialogFragment viewDialogFragment = new ReviewDialogFragment();
+                viewDialogFragment.show(getFragmentManager());
             }
         });
 
-        int restaurantId = getIntent().getExtras().getInt("restaurantId");
+        restaurantId = getIntent().getExtras().getInt("restaurantId");
         getReview(this,restaurantId,recyclerView);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -85,6 +88,25 @@ public class RestaurantDetailActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onClick(String comment, int rating) {
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<ResponseBody> postReview = service.postReview(comment,rating,restaurantId);
+        postReview.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Toast.makeText(RestaurantDetailActivity.this, "Review posted", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+
     public class MyCommentRecyclerViewAdapter extends RecyclerView.Adapter<MyCommentRecyclerViewAdapter.ViewHolder> {
 
         private final List<Review> mReview;
@@ -115,25 +137,30 @@ public class RestaurantDetailActivity extends AppCompatActivity {
                     context.startActivity(intent);
                 }
             });*/
-            Log.d("onbind",""+position);
+            //Log.d("onbind",""+position);
             holder.mComment.setText(mReview.get(position).getComment());
+
+            holder.mRating.setIsIndicator(true);
+            holder.mRating.setRating(mReview.get(position).getRating());
+
         }
 
         @Override
         public int getItemCount() {
-            Log.d("itemcount",""+mReview.size());
+            //Log.d("itemcount",""+mReview.size());
             return mReview.size();
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-
+            public final MaterialRatingBar mRating;
             public TextView mComment;
             // Restaurant mRestaurant;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
+                mRating=(MaterialRatingBar) mView.findViewById(R.id.rating);
                 mComment=(TextView) mView.findViewById(R.id.comment);
                 //mRestaurantImg=(ImageView) mView.findViewById(R.id.restaurant_img);
             }
