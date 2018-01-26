@@ -15,12 +15,13 @@ import com.bonlai.socialdiningapp.R;
 
 import com.bonlai.socialdiningapp.RegisterActivity;
 import com.bonlai.socialdiningapp.RestaurantDetailActivity;
-import com.bonlai.socialdiningapp.main_page.dummy.DummyContent.DummyItem;
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.Restaurant;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 
 public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRestaurantRecyclerViewAdapter.ViewHolder> {
@@ -53,6 +54,9 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
                 context.startActivity(intent);
             }
         });
+        double rating=mRestaurant.get(position).getAverageRate();
+        holder.mAvgRating.setRating((float)rating);
+        holder.mAvgRating.setIsIndicator(true);
     }
 
     @Override
@@ -65,6 +69,7 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         //public final TextView mIdView;
         //public final TextView mContentView;
         public ImageView mRestaurantImg;
+        public MaterialRatingBar mAvgRating;
         public Restaurant mRestaurant;
         //public DummyItem mItem;
 
@@ -72,6 +77,7 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             super(view);
             mView = view;
             mRestaurantImg=(ImageView) mView.findViewById(R.id.restaurant_img);
+            mAvgRating=(MaterialRatingBar) mView.findViewById(R.id.average_rating);
             itemView.setOnClickListener(this);
         }
 

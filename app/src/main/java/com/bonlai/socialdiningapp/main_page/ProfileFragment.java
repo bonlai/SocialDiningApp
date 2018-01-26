@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,9 +26,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bonlai.socialdiningapp.APIclient;
+import com.bonlai.socialdiningapp.LoginActivity;
+import com.bonlai.socialdiningapp.MainActivity;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
+import com.bonlai.socialdiningapp.models.Token;
 import com.bonlai.socialdiningapp.models.User;
 import com.squareup.picasso.Picasso;
 
@@ -41,11 +45,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.bonlai.socialdiningapp.LoginActivity.SETTING_INFOS;
+
 public class ProfileFragment extends Fragment {
 
     private ImageView mProfilePic;
     private TextView mBio;
     private FloatingActionButton mEditButton;
+    private Button mLogout;
 
     public static final int PICK_IMAGE = 100;
     @Override
@@ -96,7 +103,7 @@ public class ProfileFragment extends Fragment {
         mProfilePic=(ImageView) rootView.findViewById(R.id.profile_pic);
         mBio=(TextView)rootView.findViewById(R.id.bioText);
         mEditButton=(FloatingActionButton)rootView.findViewById(R.id.edit_pic);
-
+        mLogout=(Button)rootView.findViewById(R.id.logout);
         if (mEditButton != null) {
             mEditButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -105,6 +112,25 @@ public class ProfileFragment extends Fragment {
                     intent.setType("image/*");
                     intent.setAction(Intent.ACTION_GET_CONTENT);
                     startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
+                }
+            });
+        }
+
+
+        if (mLogout != null) {
+            mLogout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    SharedPreferences settings = getActivity().getSharedPreferences(SETTING_INFOS, 0);
+                    settings.edit().remove("TOKEN").commit();
+
+                    Token.getToken().setKey(null);
+                    APIclient.reset();
+
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             });
         }

@@ -19,7 +19,6 @@ import com.bonlai.socialdiningapp.main_page.GatheringFragment;
 import com.bonlai.socialdiningapp.main_page.NoSwipePager;
 import com.bonlai.socialdiningapp.main_page.ProfileFragment;
 import com.bonlai.socialdiningapp.main_page.RestaurantFragment;
-import com.bonlai.socialdiningapp.main_page.dummy.DummyContent;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.User;
 
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity{
 
         pagerAdapter.addFragments(new GatheringFragment());
         pagerAdapter.addFragments(new RestaurantFragment());
-        pagerAdapter.addFragments(new GatheringFragment());
+        pagerAdapter.addFragments(new RestaurantFragment());
         pagerAdapter.addFragments(new ProfileFragment());
 
         viewPager.setAdapter(pagerAdapter);

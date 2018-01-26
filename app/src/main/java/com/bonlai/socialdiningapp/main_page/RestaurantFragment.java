@@ -14,8 +14,6 @@ import android.view.ViewGroup;
 
 import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.R;
-import com.bonlai.socialdiningapp.main_page.dummy.DummyContent;
-import com.bonlai.socialdiningapp.main_page.dummy.DummyContent.DummyItem;
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Restaurant;

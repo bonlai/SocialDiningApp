@@ -11,13 +11,18 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +67,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         if (getArguments() != null) {
             //mParam1 = getArguments().getString(ARG_PARAM1);
         }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -115,6 +121,26 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 startActivity(intent);
                 break;
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu,inflater);
+        inflater.inflate(R.menu.gatheirng_search, menu);
+        MenuItem item=menu.findItem(R.id.action_search);
+        SearchView searchView=(SearchView)item.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                //GatheringFragment.this.MyAdapter.getFilter().filter(s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
     }
 
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {

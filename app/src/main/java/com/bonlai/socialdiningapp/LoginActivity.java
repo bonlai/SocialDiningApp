@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bonlai.socialdiningapp.models.Token;
+import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,6 +36,7 @@ public class LoginActivity extends AppCompatActivity{
     public static final String SETTING_INFOS = "SETTING_Infos";
     public static final String NAME = "NAME";
     public static final String PASSWORD = "PASSWORD";
+    public static final String TOKEN = "TOKEN";
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -58,6 +61,27 @@ public class LoginActivity extends AppCompatActivity{
                 return false;
             }
         });*/
+        SharedPreferences settings = getSharedPreferences(SETTING_INFOS, 0);
+        if(settings.contains(TOKEN)){
+            Gson gson = new Gson();
+            String json = settings.getString(TOKEN, "");
+            Log.d("preference","token set");
+            Token.setToken(gson.fromJson(json, Token.class));
+            APIclient.setToken();
+
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
+
+        //Log.d("Token",Token.getToken().getKey());
+        if(Token.getToken().getKey()!= null ){
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
 
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -87,6 +111,7 @@ public class LoginActivity extends AppCompatActivity{
         final String username=mEmailView.getText().toString();
         final String password=mPasswordView.getText().toString();
 
+        //APIclient.reset();
         APIclient.APIService service=APIclient.getAPIService();
         Call<Token> login = service.login(username,password);
 
@@ -94,11 +119,14 @@ public class LoginActivity extends AppCompatActivity{
             @Override
             public void onResponse(Call<Token> call, Response<Token> response) {
                 if(response.isSuccessful()){
+                    Gson gson = new Gson();
+                    String json = gson.toJson(response.body());
                     //store credential to sharedpreferences
                     SharedPreferences settings = getSharedPreferences(SETTING_INFOS, 0);
                     settings.edit()
                             .putString(NAME, username)
                             .putString(PASSWORD, password)
+                            .putString(TOKEN, json)
                             .commit();
 
                     Token.setToken(response.body());
@@ -129,6 +157,10 @@ public class LoginActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
+    public void goToMap(View view){
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+    }
 
 
 }

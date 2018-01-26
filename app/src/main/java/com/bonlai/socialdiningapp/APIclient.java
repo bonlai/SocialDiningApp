@@ -1,5 +1,7 @@
 package com.bonlai.socialdiningapp;
 
+import android.util.Log;
+
 import com.bonlai.socialdiningapp.models.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,11 +39,11 @@ public class APIclient {
     static APIService mAPIService;
     private static OkHttpClient.Builder OKHttpBuilder = new OkHttpClient.Builder();
     private static Retrofit.Builder builder=new Retrofit.Builder().
-            baseUrl("http://192.168.2.5:8000/").
+            baseUrl("http://192.168.2.6:8000/").
             addConverterFactory(GsonConverterFactory.create());
     public static Retrofit retrofit() {
         if (mRetrofit == null) {
-
+            Log.d("RETROFIT","asg object");
             //set log history
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -61,10 +63,18 @@ public class APIclient {
         return mRetrofit;
     }
 
+    public static void reset(){
+        mRetrofit=null;
+        OKHttpBuilder=new OkHttpClient.Builder();
+    }
+
     public static void setToken(){
+        Log.d("set token","RETROFIT");
         OKHttpBuilder.addInterceptor(new Interceptor() {
             @Override public Response intercept(Chain chain) throws IOException {
+                Log.d("RETROFIT","add inter");
                 Request request = chain.request().newBuilder().addHeader("Authorization", "Token "+Token.getToken().getKey()).build();
+                Log.d("RETROFIT",Token.getToken().getKey());
                 return chain.proceed(request);
             }
         });
