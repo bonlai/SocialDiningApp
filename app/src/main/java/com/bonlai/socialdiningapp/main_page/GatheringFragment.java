@@ -112,7 +112,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser&&isPrepared) {
-            refresh();
+                refresh();
         }
     }
 

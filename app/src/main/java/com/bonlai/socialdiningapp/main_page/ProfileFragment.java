@@ -2,7 +2,6 @@ package com.bonlai.socialdiningapp.main_page;
 
 import android.app.Activity;
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -10,12 +9,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,16 +19,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.LoginActivity;
-import com.bonlai.socialdiningapp.MainActivity;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
 import com.bonlai.socialdiningapp.models.Token;
-import com.bonlai.socialdiningapp.models.User;
+import com.bonlai.socialdiningapp.profileEdit.EditBioActivity;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -47,14 +43,18 @@ import retrofit2.Response;
 
 import static com.bonlai.socialdiningapp.LoginActivity.SETTING_INFOS;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private ImageView mProfilePic;
     private TextView mBio;
     private FloatingActionButton mEditButton;
     private Button mLogout;
+    private RelativeLayout mBioHolder;
 
     public static final int PICK_IMAGE = 100;
+
+    private int myUserId;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +65,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        myUserId=MyUserHolder.getInstance().getUser().getPk();
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-
         AppCompatActivity actionBar = (AppCompatActivity) getActivity();
         Toolbar toolbar = (Toolbar) actionBar.findViewById(R.id.toolbar);
         actionBar.setSupportActionBar(toolbar);
@@ -74,10 +74,8 @@ public class ProfileFragment extends Fragment {
 
         initUI(rootView);
 
-        int myId=MyUserHolder.getInstance().getUser().getPk();
-
         APIclient.APIService service=APIclient.getAPIService();
-        Call<Profile> getUserImg = service.getProfile(myId);
+        Call<Profile> getUserImg = service.getProfile(myUserId);
         getUserImg.enqueue(new Callback<Profile>() {
             @Override
             public void onResponse(Call<Profile> call, Response<Profile> response) {
@@ -104,42 +102,17 @@ public class ProfileFragment extends Fragment {
         mBio=(TextView)rootView.findViewById(R.id.bioText);
         mEditButton=(FloatingActionButton)rootView.findViewById(R.id.edit_pic);
         mLogout=(Button)rootView.findViewById(R.id.logout);
-        if (mEditButton != null) {
-            mEditButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent();
-                    intent.setType("image/*");
-                    intent.setAction(Intent.ACTION_GET_CONTENT);
-                    startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
-                }
-            });
-        }
+        mBioHolder = (RelativeLayout) rootView.findViewById(R.id.bioHolder);
 
-
-        if (mLogout != null) {
-            mLogout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    SharedPreferences settings = getActivity().getSharedPreferences(SETTING_INFOS, 0);
-                    settings.edit().remove("TOKEN").commit();
-
-                    Token.getToken().setKey(null);
-                    APIclient.reset();
-
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    getActivity().finish();
-                }
-            });
-        }
+        mEditButton.setOnClickListener(this);
+        mBioHolder.setOnClickListener(this);
+        mLogout.setOnClickListener(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+        //((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
 
     @Override
@@ -167,17 +140,13 @@ public class ProfileFragment extends Fragment {
                 //Log.d(TAG, "content: " + uri.toString());
                 imagePath = getImagePath(uri, null);
             }
-
-            //"/storage/emulated/0/DCIM/100ANDRO/DSC_0001.jpg"
             File file = new File(imagePath);
 
             RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
             MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), reqFile);
-            //RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
 
-            int myId=MyUserHolder.getInstance().getUser().getPk();
             APIclient.APIService service=APIclient.getAPIService();
-            Call<ResponseBody> req = service.postImage(body,myId);
+            Call<ResponseBody> req = service.postImage(body,myUserId);
 
             req.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -205,5 +174,35 @@ public class ProfileFragment extends Fragment {
             cursor.close();
         }
         return path;
+    }
+
+    @Override
+    public void onClick(View view) {
+        Intent intent;
+        switch (view.getId()) {
+            case R.id.bioHolder:
+                intent = new Intent(getContext(), EditBioActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.edit_pic:
+                intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Image"), PICK_IMAGE);
+                break;
+            case R.id.logout:
+                SharedPreferences settings = getActivity().getSharedPreferences(SETTING_INFOS, 0);
+                settings.edit().remove("TOKEN").commit();
+
+                Token.getToken().setKey(null);
+                APIclient.reset();
+
+                intent = new Intent(getActivity(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                getActivity().finish();
+                break;
+
+        }
     }
 }
