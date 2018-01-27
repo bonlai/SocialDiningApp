@@ -37,6 +37,7 @@ public class LoginActivity extends AppCompatActivity{
     public static final String NAME = "NAME";
     public static final String PASSWORD = "PASSWORD";
     public static final String TOKEN = "TOKEN";
+    public static SharedPreferences settings;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -46,6 +47,7 @@ public class LoginActivity extends AppCompatActivity{
     private Button mEmailSignInButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        settings= getSharedPreferences(SETTING_INFOS, 0);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -61,7 +63,8 @@ public class LoginActivity extends AppCompatActivity{
                 return false;
             }
         });*/
-        SharedPreferences settings = getSharedPreferences(SETTING_INFOS, 0);
+
+
         if(settings.contains(TOKEN)){
             Gson gson = new Gson();
             String json = settings.getString(TOKEN, "");
@@ -69,18 +72,12 @@ public class LoginActivity extends AppCompatActivity{
             Token.setToken(gson.fromJson(json, Token.class));
             APIclient.setToken();
 
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
+            goToMain();
         }
 
         //Log.d("Token",Token.getToken().getKey());
         if(Token.getToken().getKey()!= null ){
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
+            goToMain();
         }
 
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
@@ -92,14 +89,13 @@ public class LoginActivity extends AppCompatActivity{
     }
 
     private void initUI(){
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mEmailView = (AutoCompleteTextView) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        mEmailSignInButton= (Button) findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton= (Button) findViewById(R.id.login_button);
 
         //restore previous successfully login credential
-        SharedPreferences settings = getSharedPreferences(SETTING_INFOS, 0);
         String name = settings.getString(NAME, "");
         String password = settings.getString(PASSWORD, "");
         mEmailView.setText(name);
@@ -134,10 +130,7 @@ public class LoginActivity extends AppCompatActivity{
                     mProgressView.setVisibility(View.GONE);
 
                     //jump to mainactivity
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                    finish();
+                    goToMain();
                 }else{
                     mProgressView.setVisibility(View.GONE);
                     Toast toast = Toast.makeText(LoginActivity.this, "Failed to login with the given credential", Toast.LENGTH_LONG);
@@ -151,6 +144,12 @@ public class LoginActivity extends AppCompatActivity{
         });
     }
 
+    private void goToMain(){
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    }
 
     public void goToRegister(View view){
         Intent intent = new Intent(this, RegisterActivity.class);

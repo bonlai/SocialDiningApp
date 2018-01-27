@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
@@ -16,6 +17,7 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.aurelhubert.ahbottomnavigation.notification.AHNotification;
 import com.bonlai.socialdiningapp.main_page.BottomBarAdapter;
 import com.bonlai.socialdiningapp.main_page.GatheringFragment;
+import com.bonlai.socialdiningapp.main_page.GatheringFragment.Mode;
 import com.bonlai.socialdiningapp.main_page.NoSwipePager;
 import com.bonlai.socialdiningapp.main_page.ProfileFragment;
 import com.bonlai.socialdiningapp.main_page.RestaurantFragment;
@@ -40,11 +42,10 @@ public class MainActivity extends AppCompatActivity{
         //load user detail(e.g. user id) to singleton class:MyUserHolder
         setUserDetail();
 
-        setContentView(R.layout.activity_bn);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        setupViewPager();
 
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
         setupBottomNavBehaviors();
@@ -75,6 +76,14 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
+    @Override
+    protected void onStop() {
+        // call the superclass method first
+        super.onStop();
+
+        Log.d("Activity","onstop");
+    }
+
     private void setUserDetail(){
         APIclient.APIService service=APIclient.getAPIService();
         Call<User> req = service.getMyDetail();
@@ -83,6 +92,7 @@ public class MainActivity extends AppCompatActivity{
             public void onResponse(Call<User> call, Response<User> response) {
                 if(response.isSuccessful()){
                     MyUserHolder.getInstance().setUser(response.body());
+                    setupViewPager();
                 }
             }
             @Override
@@ -98,20 +108,13 @@ public class MainActivity extends AppCompatActivity{
         viewPager.setPagingEnabled(false);
         pagerAdapter = new BottomBarAdapter(getSupportFragmentManager());
 
-        pagerAdapter.addFragments(new GatheringFragment());
-        pagerAdapter.addFragments(new RestaurantFragment());
+        pagerAdapter.addFragments(GatheringFragment.newInstance(Mode.ALL));
+        pagerAdapter.addFragments(GatheringFragment.newInstance(Mode.MY));
         pagerAdapter.addFragments(new RestaurantFragment());
         pagerAdapter.addFragments(new ProfileFragment());
 
         viewPager.setAdapter(pagerAdapter);
     }
-
-/*    @NonNull
-    private DummyFragment createFragment(int color) {
-        DummyFragment fragment = new DummyFragment();
-        fragment.setArguments(passFragmentArguments(fetchColor(color)));
-        return fragment;
-    }*/
 
     @NonNull
     private Bundle passFragmentArguments(int color) {

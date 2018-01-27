@@ -45,13 +45,18 @@ import retrofit2.Response;
 
 
 public class GatheringFragment extends Fragment implements View.OnClickListener {
+
+    public static enum Mode {
+        ALL,
+        MY
+    }
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_MODE = "mode";
 
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private Mode mMode;
 
 
     private RecyclerView recyclerView;
@@ -60,12 +65,21 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
     public GatheringFragment() {
     }
 
+    public static GatheringFragment newInstance(Mode mode) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_MODE, mode);
+
+        GatheringFragment fragment = new GatheringFragment();
+        fragment.setArguments(bundle);
+
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            //mParam1 = getArguments().getString(ARG_PARAM1);
+            mMode = (Mode)getArguments().getSerializable(ARG_MODE);
         }
         setHasOptionsMenu(true);
     }
@@ -84,24 +98,37 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        APIclient.APIService service=APIclient.getAPIService();
-        Call<List<Gathering>> req2 = service.getGatheringList();
-        req2.enqueue(new Callback<List<Gathering>>() {
-            @Override
-            public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
-                Log.v("Upload", "successlist");
-                //test for loading array to list
-                for(Gathering G: response.body()){
-                    Log.v("loopresult",G.toString());
+        if(mMode==Mode.ALL){
+            APIclient.APIService service=APIclient.getAPIService();
+            Call<List<Gathering>> getGatheringList = service.getGatheringList();
+            getGatheringList.enqueue(new Callback<List<Gathering>>() {
+                @Override
+                public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
+
+                    MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
+                    recyclerView.setAdapter(myAdapter);
                 }
-                MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
-                recyclerView.setAdapter(myAdapter);
-            }
-            @Override
-            public void onFailure(Call<List<Gathering>> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
+                @Override
+                public void onFailure(Call<List<Gathering>> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }else{
+            APIclient.APIService service=APIclient.getAPIService();
+            Call<List<Gathering>> getGatheringList = service.getMyGatheringList(MyUserHolder.getInstance().getUser().getPk());
+            getGatheringList.enqueue(new Callback<List<Gathering>>() {
+                @Override
+                public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
+
+                    MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
+                    recyclerView.setAdapter(myAdapter);
+                }
+                @Override
+                public void onFailure(Call<List<Gathering>> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }
         return rootView;
     }
 
