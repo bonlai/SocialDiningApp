@@ -1,5 +1,8 @@
 package com.bonlai.socialdiningapp.models;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
 /**
  * Created by Bon Lai on 3/1/2018.
  */
@@ -19,6 +22,8 @@ public class Gathering {
     private int createdBy;
     @SerializedName("restaurant")
     private int restaurant;
+    @SerializedName("member")
+    private List<Integer> member = null;
 
     public int getId() {
         return id;
@@ -74,5 +79,13 @@ public class Gathering {
 
     public void setRestaurant(Integer restaurant) {
         this.restaurant = restaurant;
+    }
+
+    public List<Integer> getMember() {
+        return member;
+    }
+
+    public void setMember(List<Integer> member) {
+        this.member = member;
     }
 }

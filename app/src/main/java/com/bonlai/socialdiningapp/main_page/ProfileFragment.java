@@ -175,7 +175,6 @@ public class ProfileFragment extends Fragment {
             MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), reqFile);
             //RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
 
-//            Log.d("THIS", data.getData().getPath());
             int myId=MyUserHolder.getInstance().getUser().getPk();
             APIclient.APIService service=APIclient.getAPIService();
             Call<ResponseBody> req = service.postImage(body,myId);

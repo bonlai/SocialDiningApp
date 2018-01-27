@@ -106,16 +106,16 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp" />
 
-        <Button
+        <Switch
             android:id="@+id/join"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"
-            android:onClick="nextActivity"
-            android:text="Join"
-            card_view:layout_constraintRight_toRightOf="parent"
+            android:text="Switch"
+            card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintTop_toTopOf="parent" />
+
     </android.support.constraint.ConstraintLayout>
 
 </android.support.v7.widget.CardView>

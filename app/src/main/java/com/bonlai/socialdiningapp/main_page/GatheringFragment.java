@@ -2,10 +2,7 @@ package com.bonlai.socialdiningapp.main_page;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -20,9 +17,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +31,6 @@ import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
 import com.bonlai.socialdiningapp.models.Restaurant;
-import com.bonlai.socialdiningapp.models.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -57,7 +54,8 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
     // TODO: Rename and change types of parameters
     private Mode mMode;
-
+    private int myUserId;
+    private boolean isPrepared;
 
     private RecyclerView recyclerView;
     private FloatingActionButton mAddGathering;
@@ -73,6 +71,12 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         fragment.setArguments(bundle);
 
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.d("FRAG", "onAttach");
     }
 
     @Override
@@ -98,46 +102,18 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-        if(mMode==Mode.ALL){
-            APIclient.APIService service=APIclient.getAPIService();
-            Call<List<Gathering>> getGatheringList = service.getGatheringList();
-            getGatheringList.enqueue(new Callback<List<Gathering>>() {
-                @Override
-                public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
-
-                    MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
-                    recyclerView.setAdapter(myAdapter);
-                }
-                @Override
-                public void onFailure(Call<List<Gathering>> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });
-        }else{
-            APIclient.APIService service=APIclient.getAPIService();
-            Call<List<Gathering>> getGatheringList = service.getMyGatheringList(MyUserHolder.getInstance().getUser().getPk());
-            getGatheringList.enqueue(new Callback<List<Gathering>>() {
-                @Override
-                public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
-
-                    MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
-                    recyclerView.setAdapter(myAdapter);
-                }
-                @Override
-                public void onFailure(Call<List<Gathering>> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });
-        }
+        myUserId=MyUserHolder.getInstance().getUser().getPk();
+        isPrepared=true;
+        refresh();
         return rootView;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        AppCompatActivity actionBar = (AppCompatActivity) getActivity();
-        Toolbar toolbar = (Toolbar) actionBar.findViewById(R.id.toolbar);
-        actionBar.setSupportActionBar(toolbar);
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser&&isPrepared) {
+            refresh();
+        }
     }
 
     @Override
@@ -170,6 +146,44 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         });
     }
 
+    public void refresh(){
+        if(mMode==Mode.ALL){
+            AppCompatActivity mainActivity = (AppCompatActivity) getActivity();
+            Toolbar toolbar = (Toolbar) mainActivity.findViewById(R.id.toolbar);
+            mainActivity.setSupportActionBar(toolbar);
+
+            APIclient.APIService service=APIclient.getAPIService();
+            Call<List<Gathering>> getGatheringList = service.getGatheringList();
+            getGatheringList.enqueue(new Callback<List<Gathering>>() {
+                @Override
+                public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
+
+                    MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
+                    recyclerView.setAdapter(myAdapter);
+                }
+                @Override
+                public void onFailure(Call<List<Gathering>> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }else{
+            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+            APIclient.APIService service=APIclient.getAPIService();
+            Call<List<Gathering>> getGatheringList = service.getMyGatheringList(myUserId);
+            getGatheringList.enqueue(new Callback<List<Gathering>>() {
+                @Override
+                public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
+
+                    MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
+                    recyclerView.setAdapter(myAdapter);
+                }
+                @Override
+                public void onFailure(Call<List<Gathering>> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }
+    }
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private List<Gathering> mGathering;
         Context context;
@@ -181,7 +195,8 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
             public TextView mRestaurantName;
             public ImageView mRestaurantImg;
             public ImageView mCreator;
-            public Button join;
+            //public Button join;
+            public Switch mJoin;
 
             public ViewHolder(View v) {
                 super(v);
@@ -191,7 +206,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 mRestaurantName=(TextView) v.findViewById(R.id.restaurant_name);
                 mCreator= (ImageView) v.findViewById(R.id.creator_img);
                 mCategory=(TextView) v.findViewById(R.id.category);
-                join = (Button) v.findViewById(R.id.join);
+                mJoin = (Switch) v.findViewById(R.id.join);
                 itemView.setOnClickListener(this);
 
             }
@@ -218,11 +233,8 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         }
 
         @Override
-        public void onBindViewHolder(final MyAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(final MyAdapter.ViewHolder holder, final int position) {
             APIclient.APIService service=APIclient.getAPIService();
-
-            //final MyAdapter.ViewHolder mHolder=holder;
-            final int mPosition=position;
 
             //get restaurant info
             Call<Restaurant> getRestaurantInfo = service.getRestaurantInfo(mGathering.get(position).getRestaurant());
@@ -233,7 +245,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                         holder.mRestaurantName.setText(response.body().getName());
                         if(!response.body().getImage().isEmpty()){
                             String restImg=response.body().getImage().get(0).getImage();
-                            Picasso.with(context).load(restImg).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
+                            Picasso.with(context).load(restImg).placeholder(R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
                         }
                         holder.mCategory.setText(response.body().getCategory());
                     }else{
@@ -271,27 +283,19 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
             //set join button event
             final int gatheringId=mGathering.get(position).getId();
-            holder.join.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+
+            if(mGathering.get(position).getMember().contains(myUserId)||mGathering.get(position).getCreatedBy()==myUserId){
+                holder.mJoin.setChecked(true);
+            }else{
+                holder.mJoin.setChecked(false);
+            }
+
+            holder.mJoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     APIclient.APIService service=APIclient.getAPIService();
-                    Call<ResponseBody> req = service.joinGathering(MyUserHolder.getInstance().getUser().getPk(), gatheringId);
-                    req.enqueue(new Callback<ResponseBody>() {
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            if(response.isSuccessful()){
-                                Toast toast = Toast.makeText(context, "Joined Gathering " , Toast.LENGTH_LONG);
-                                toast.show();
-                            }else{
-                                Toast toast = Toast.makeText(context, "Cant join" , Toast.LENGTH_LONG);
-                                toast.show();
-                            }
-                        }
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            t.printStackTrace();
-                        }
-                    });
+                    Call<ResponseBody> req = service.joinGathering(myUserId, gatheringId);
+                    callParticipateAPI(req);
+
                 }
             });
         }
@@ -300,6 +304,33 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         public int getItemCount() {
             return mGathering.size();
         }
+
+        private void callParticipateAPI(Call<ResponseBody> req){
+            req.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if(response.isSuccessful()){
+                        Toast toast = Toast.makeText(context, "Joined Gathering " , Toast.LENGTH_LONG);
+                        toast.show();
+                        if(mMode==Mode.MY){
+                            refresh();
+                        }
+
+                    }else{
+                        Toast toast = Toast.makeText(context, "Withdraw Gathering" , Toast.LENGTH_LONG);
+                        toast.show();
+                        if(mMode==Mode.MY){
+                            refresh();
+                        }
+                    }
+                }
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }
+
     }
 
 }
