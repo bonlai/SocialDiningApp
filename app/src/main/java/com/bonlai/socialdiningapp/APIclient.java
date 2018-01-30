@@ -66,6 +66,9 @@ public class APIclient {
     public static void reset(){
         mRetrofit=null;
         OKHttpBuilder=new OkHttpClient.Builder();
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OKHttpBuilder.addInterceptor(interceptor);
     }
 
     public static void setToken(){
@@ -97,6 +100,11 @@ public class APIclient {
         @GET("api/rest-auth/user/")
         Call<User> getMyDetail();
 
+        @GET("api/user_list/")
+        Call<User> getOthersDetail(
+            @Query("id") int userId
+        );
+
         @FormUrlEncoded
         @POST("api/rest-auth/registration/")
         Call<Token> register(
@@ -109,11 +117,10 @@ public class APIclient {
                 @Path("id") Integer id
         );
 
-        @FormUrlEncoded
         @PUT("api/user/{id}/profile/")
         Call<Profile> editProfile(
                 @Path("id") Integer id,
-                @Field("self_introduction") String bio
+                @Body Profile profile
         );
 
         @Multipart

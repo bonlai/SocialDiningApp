@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.R;
@@ -34,6 +36,7 @@ public class NewGatheringActivity extends AppCompatActivity {
 
     private EditText gatheringTitle;
     private EditText restaurantID;
+    private EditText mDetail;
 
     private int userID;
 
@@ -56,6 +59,7 @@ public class NewGatheringActivity extends AppCompatActivity {
 
         gatheringTitle=(EditText)findViewById(R.id.gatheringTitle);
         restaurantID=(EditText)findViewById(R.id.restaurantID);
+        mDetail=(EditText)findViewById(R.id.detail);
         //userID=(EditText)findViewById(R.id.userID);
 
         date="";
@@ -82,6 +86,8 @@ public class NewGatheringActivity extends AppCompatActivity {
             }
         });
 
+
+
         timeButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -101,6 +107,8 @@ public class NewGatheringActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
     public void setDate(View v){
@@ -108,29 +116,64 @@ public class NewGatheringActivity extends AppCompatActivity {
     }
 
     public void submitGathering(View v){
-        String dateTime=date+" "+time;
+        mDetail.setError(null);
+        //View focusView = null;
+        boolean isValidated=validation();
+        if(!isValidated){
 
-        Gathering gathering=new Gathering();
-        gathering.setName(gatheringTitle.getText().toString());
-        gathering.setStartDatetime(dateTime);
-        gathering.setIsStart(false);
-        gathering.setCreatedBy(userID);
-        gathering.setRestaurant(Integer.valueOf(restaurantID.getText().toString()));
-        //service=APIclient.retrofit().create(APIclient.APIService.class);
-        APIclient.APIService service=APIclient.getAPIService();
-        //post gathering test
-        Call<ResponseBody> req = service.createGathering(gathering);
-        req.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                Log.v("Upload", "success");
-            }
+            Log.v("CHECKING", "if statement");
+        }else{
+            String dateTime=date+" "+time;
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
+            Gathering gathering=new Gathering();
+            gathering.setName(gatheringTitle.getText().toString());
+            gathering.setStartDatetime(dateTime);
+            gathering.setdetail(mDetail.getText().toString());
+            gathering.setIsStart(false);
+            gathering.setCreatedBy(userID);
+            gathering.setRestaurant(Integer.valueOf(restaurantID.getText().toString()));
+
+            APIclient.APIService service=APIclient.getAPIService();
+            Call<ResponseBody> req = service.createGathering(gathering);
+            req.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Log.v("Upload", "success");
+                    Toast toast = Toast.makeText(getApplicationContext(), "Created gathering!", Toast.LENGTH_LONG);
+                    toast.show();
+                    finish();
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.printStackTrace();
+                    Toast toast = Toast.makeText(getApplicationContext(), "Some problem occur! Please try again later.", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            });
+        }
     }
+
+    public boolean validation(){
+        View focusView = null;
+        String detail=mDetail.getText().toString();
+        if (!isWritten(detail)) {
+            //Log.v("CHECKING", "success");
+            mDetail.setError("Write something pls<3");
+            focusView= mDetail;
+            return false;
+        }
+
+        if(focusView!=null){
+            focusView.requestFocus();
+        }
+        return true;
+    }
+
+    private boolean isWritten(String detail) {
+        return detail.length() > 4;
+    }
+
+
 
 }

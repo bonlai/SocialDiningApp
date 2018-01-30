@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -54,6 +55,10 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         double rating=mRestaurant.get(position).getAverageRate();
         holder.mAvgRating.setRating((float)rating);
         holder.mAvgRating.setIsIndicator(true);
+
+        holder.mCategory.setText(mRestaurant.get(position).getCategory());
+        holder.mAddress.setText(mRestaurant.get(position).getAddress());
+        holder.mRestaurantName.setText(mRestaurant.get(position).getName());
     }
 
     @Override
@@ -67,7 +72,10 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         //public final TextView mContentView;
         public ImageView mRestaurantImg;
         public MaterialRatingBar mAvgRating;
-        public Restaurant mRestaurant;
+        public TextView mCategory;
+        public TextView mAddress;
+        public TextView mRestaurantName;
+        //public Restaurant mRestaurant;
         //public DummyItem mItem;
 
         public ViewHolder(View view) {
@@ -75,6 +83,9 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             mView = view;
             mRestaurantImg=(ImageView) mView.findViewById(R.id.restaurant_img);
             mAvgRating=(MaterialRatingBar) mView.findViewById(R.id.average_rating);
+            mCategory=(TextView) mView.findViewById(R.id.category);
+            mAddress=(TextView) mView.findViewById(R.id.address);
+            mRestaurantName=(TextView) mView.findViewById(R.id.restaurant_name);
             itemView.setOnClickListener(this);
         }
 

@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,26 +75,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         initUI(rootView);
 
-        APIclient.APIService service=APIclient.getAPIService();
-        Call<Profile> getUserImg = service.getProfile(myUserId);
-        getUserImg.enqueue(new Callback<Profile>() {
-            @Override
-            public void onResponse(Call<Profile> call, Response<Profile> response) {
-                if(response.isSuccessful()){
-                    //load image
-                    String imgPath=response.body().getImage();
-                    Picasso.with(getActivity()).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mProfilePic);
 
-                    mBio.setText(response.body().getSelfIntroduction());
-                }else{
 
-                }
-            }
-            @Override
-            public void onFailure(Call<Profile> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
+        Profile myProfile=MyUserHolder.getInstance().getUser().getProfile();
+        String imgPath=myProfile.getImage();
+        Picasso.with(getActivity()).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mProfilePic);
+        mBio.setText(myProfile.getSelfIntroduction());
+
         return rootView;
     }
 
@@ -107,6 +95,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mEditButton.setOnClickListener(this);
         mBioHolder.setOnClickListener(this);
         mLogout.setOnClickListener(this);
+
+
     }
 
     @Override

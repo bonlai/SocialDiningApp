@@ -17,6 +17,10 @@ public class User {
         private String firstName;
         @SerializedName("last_name")
         private String lastName;
+        @SerializedName("profile")
+        private Profile profile;
+        @SerializedName("id")
+        private Integer id;
 
         public Integer getPk() {
             return pk;
@@ -58,4 +62,19 @@ public class User {
             this.lastName = lastName;
         }
 
+        public Profile getProfile() {
+            return profile;
+        }
+
+        public void setProfile(Profile profile) {
+            this.profile = profile;
+        }
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
 }

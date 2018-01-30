@@ -1,6 +1,7 @@
 package com.bonlai.socialdiningapp.detail.restaurant;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,12 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.R;
+import com.bonlai.socialdiningapp.models.Restaurant;
 import com.bonlai.socialdiningapp.models.Review;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -30,6 +34,13 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
 
     private RecyclerView recyclerView;
     private int restaurantId;
+    private Restaurant restaurant;
+
+    public ImageView mRestaurantImg;
+    public MaterialRatingBar mAvgRating;
+    public TextView mCategory;
+    public TextView mAddress;
+    public TextView mRestaurantName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +48,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
         setContentView(R.layout.activity_restaurant_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         initUI();
 
@@ -51,6 +63,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
 
         restaurantId = getIntent().getExtras().getInt("restaurantId");
         getReview(this,restaurantId,recyclerView);
+        getRestaurantInfo(restaurantId);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -62,6 +75,11 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
 
     private void initUI(){
         recyclerView=(RecyclerView)findViewById(R.id.list_view);
+        mRestaurantImg=(ImageView)findViewById(R.id.restaurant_img);
+        mAvgRating=(MaterialRatingBar)findViewById(R.id.average_rating);
+        mCategory=(TextView)findViewById(R.id.category);
+        mAddress=(TextView)findViewById(R.id.address);
+        mRestaurantName=(TextView)findViewById(R.id.restaurant_name);
     }
 
     private void getReview(final Context context,int restaurantId, final RecyclerView recyclerView){
@@ -72,7 +90,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
             public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
                 if(response.isSuccessful()){
                     List<Review> review=response.body();
-                    Log.d("array lentgh",""+review.size());
+                    //Log.d("array lentgh",""+review.size());
                     recyclerView.setAdapter(new MyCommentRecyclerViewAdapter(context,review));
                 }
             }
@@ -81,6 +99,37 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
                 t.printStackTrace();
             }
         });
+    }
+
+    private void getRestaurantInfo(int restaurantId){
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<Restaurant> getRestaurantInfo = service.getRestaurantInfo(restaurantId);
+        getRestaurantInfo.enqueue(new Callback<Restaurant>() {
+            @Override
+            public void onResponse(Call<Restaurant> call, Response<Restaurant> response) {
+                if(response.isSuccessful()){
+                    restaurant=response.body();
+                    updateCard();
+                }
+            }
+            @Override
+            public void onFailure(Call<Restaurant> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void updateCard(){
+        String imgPath = restaurant.getImage().get(0).getImage();
+        final int restaurantId=restaurant.getId();
+        Picasso.with(getApplicationContext()).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mRestaurantImg);
+        double rating=restaurant.getAverageRate();
+        mAvgRating.setRating((float)rating);
+        mAvgRating.setIsIndicator(true);
+
+        mCategory.setText(restaurant.getCategory());
+        mAddress.setText(restaurant.getAddress());
+        mRestaurantName.setText(restaurant.getName());
     }
 
     @Override
@@ -134,6 +183,10 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
             });*/
             //Log.d("onbind",""+position);
             holder.mComment.setText(mReview.get(position).getComment());
+            holder.mUsername.setText(mReview.get(position).getUser().getUsername());
+
+            APIclient.APIService service=APIclient.getAPIService();
+            //Call<ResponseBody> postReview = service.postReview(mReview.get(position).getUser());
 
             holder.mRating.setIsIndicator(true);
             holder.mRating.setRating(mReview.get(position).getRating());
@@ -150,6 +203,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
             public final View mView;
             public final MaterialRatingBar mRating;
             public TextView mComment;
+            public TextView mUsername;
             // Restaurant mRestaurant;
 
             public ViewHolder(View view) {
@@ -157,6 +211,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
                 mView = view;
                 mRating=(MaterialRatingBar) mView.findViewById(R.id.rating);
                 mComment=(TextView) mView.findViewById(R.id.comment);
+                mUsername=(TextView) mView.findViewById(R.id.username);
                 //mRestaurantImg=(ImageView) mView.findViewById(R.id.restaurant_img);
             }
         }

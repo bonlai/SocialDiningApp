@@ -22,7 +22,9 @@ import com.bonlai.socialdiningapp.main.NoSwipePager;
 import com.bonlai.socialdiningapp.main.ProfileFragment;
 import com.bonlai.socialdiningapp.main.RestaurantFragment;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
+import com.bonlai.socialdiningapp.models.Profile;
 import com.bonlai.socialdiningapp.models.User;
+import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity{
             public void onResponse(Call<User> call, Response<User> response) {
                 if(response.isSuccessful()){
                     MyUserHolder.getInstance().setUser(response.body());
+                    setProfile();
                     setupViewPager();
                 }
             }
@@ -102,6 +105,24 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
+    private void setProfile(){
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<Profile> getUserProfile = service.getProfile(MyUserHolder.getInstance().getUser().getPk());
+        getUserProfile.enqueue(new Callback<Profile>() {
+            @Override
+            public void onResponse(Call<Profile> call, Response<Profile> response) {
+                if(response.isSuccessful()){
+                    MyUserHolder.getInstance().getUser().setProfile(response.body());
+                }else{
+
+                }
+            }
+            @Override
+            public void onFailure(Call<Profile> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
 
     private void setupViewPager() {
         viewPager = (NoSwipePager) findViewById(R.id.viewpager);

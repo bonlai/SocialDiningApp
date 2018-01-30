@@ -10,7 +10,7 @@ public class Review {
     @SerializedName("id")
     private Integer id;
     @SerializedName("user")
-    private Integer user;
+    private User user;
     @SerializedName("comment")
     private String comment;
     @SerializedName("rating")
@@ -26,11 +26,11 @@ public class Review {
         this.id = id;
     }
 
-    public Integer getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(Integer user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
