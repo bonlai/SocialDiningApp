@@ -14,7 +14,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Username" />
+            android:text="Username"
+            android:textColor="@color/appText"
+            android:textSize="18sp" />
 
         <me.zhanghai.android.materialratingbar.MaterialRatingBar
             android:id="@+id/rating"

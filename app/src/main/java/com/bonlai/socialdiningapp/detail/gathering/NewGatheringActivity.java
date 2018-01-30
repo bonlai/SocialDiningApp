@@ -16,6 +16,7 @@ import android.widget.TimePicker;
 import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Gathering;
+import com.bonlai.socialdiningapp.models.MyUserHolder;
 
 import java.util.Calendar;
 
@@ -33,7 +34,8 @@ public class NewGatheringActivity extends AppCompatActivity {
 
     private EditText gatheringTitle;
     private EditText restaurantID;
-    private EditText userID;
+
+    private int userID;
 
     private String date;
     private String time;
@@ -41,6 +43,7 @@ public class NewGatheringActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userID= MyUserHolder.getInstance().getUser().getPk();
         setContentView(R.layout.activity_new_gathering);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -53,7 +56,7 @@ public class NewGatheringActivity extends AppCompatActivity {
 
         gatheringTitle=(EditText)findViewById(R.id.gatheringTitle);
         restaurantID=(EditText)findViewById(R.id.restaurantID);
-        userID=(EditText)findViewById(R.id.userID);
+        //userID=(EditText)findViewById(R.id.userID);
 
         date="";
         time="";
@@ -111,7 +114,7 @@ public class NewGatheringActivity extends AppCompatActivity {
         gathering.setName(gatheringTitle.getText().toString());
         gathering.setStartDatetime(dateTime);
         gathering.setIsStart(false);
-        gathering.setCreatedBy(Integer.valueOf(userID.getText().toString()));
+        gathering.setCreatedBy(userID);
         gathering.setRestaurant(Integer.valueOf(restaurantID.getText().toString()));
         //service=APIclient.retrofit().create(APIclient.APIService.class);
         APIclient.APIService service=APIclient.getAPIService();
