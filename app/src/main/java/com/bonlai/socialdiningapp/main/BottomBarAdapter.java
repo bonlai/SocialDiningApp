@@ -1,12 +1,10 @@
-package com.bonlai.socialdiningapp.main_page;
+package com.bonlai.socialdiningapp.main;
 
 /**
  * Created by Bon Lai on 18/1/2018.
  */
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-
-import com.bonlai.socialdiningapp.main_page.SmartFragmentStatePagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

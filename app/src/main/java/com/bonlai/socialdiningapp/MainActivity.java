@@ -15,12 +15,12 @@ import android.util.Log;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.aurelhubert.ahbottomnavigation.notification.AHNotification;
-import com.bonlai.socialdiningapp.main_page.BottomBarAdapter;
-import com.bonlai.socialdiningapp.main_page.GatheringFragment;
-import com.bonlai.socialdiningapp.main_page.GatheringFragment.Mode;
-import com.bonlai.socialdiningapp.main_page.NoSwipePager;
-import com.bonlai.socialdiningapp.main_page.ProfileFragment;
-import com.bonlai.socialdiningapp.main_page.RestaurantFragment;
+import com.bonlai.socialdiningapp.main.BottomBarAdapter;
+import com.bonlai.socialdiningapp.main.GatheringFragment;
+import com.bonlai.socialdiningapp.main.GatheringFragment.Mode;
+import com.bonlai.socialdiningapp.main.NoSwipePager;
+import com.bonlai.socialdiningapp.main.ProfileFragment;
+import com.bonlai.socialdiningapp.main.RestaurantFragment;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.User;
 
@@ -161,10 +161,10 @@ public class MainActivity extends AppCompatActivity{
         /*
         Set Bottom Navigation colors. Accent color for active item,
         Inactive color when its view is disabled.
-        Will not be visible if setColored(true) and default_profile_pic current item is set.
+        Will not be visible if setColored(true) and profile_default_profile_pic current item is set.
          */
         bottomNavigation.setDefaultBackgroundColor(Color.WHITE);
-        bottomNavigation.setAccentColor(fetchColor(R.color.colorPrimary));
+        bottomNavigation.setAccentColor(fetchColor(R.color.colorAccent));
         bottomNavigation.setInactiveColor(fetchColor(R.color.bottomtab_item_resting));
 
         // Colors for selected (active) and non-selected items.

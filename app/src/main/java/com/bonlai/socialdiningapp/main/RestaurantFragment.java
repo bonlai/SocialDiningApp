@@ -1,23 +1,16 @@
-package com.bonlai.socialdiningapp.main_page;
+package com.bonlai.socialdiningapp.main;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.R;
-import com.bonlai.socialdiningapp.models.Gathering;
-import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Restaurant;
-import com.bonlai.socialdiningapp.models.User;
 
 import java.util.List;
 

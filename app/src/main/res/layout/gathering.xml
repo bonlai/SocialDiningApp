@@ -18,16 +18,18 @@
 
         <TextView
             android:id="@+id/restaurant_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="Red Blue Restaurant"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            card_view:layout_constraintHorizontal_bias="0.025"
+            android:text="Restaurant Name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            android:textColor="@color/appText"
+            card_view:layout_constraintEnd_toStartOf="@+id/join"
             card_view:layout_constraintLeft_toLeftOf="parent"
-            card_view:layout_constraintRight_toRightOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -37,7 +39,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:text="#Yuen Long#Self#Eat"
+            android:text="#category"
             card_view:layout_constraintHorizontal_bias="0.027"
             card_view:layout_constraintLeft_toLeftOf="parent"
             card_view:layout_constraintRight_toRightOf="parent"
@@ -63,14 +65,16 @@
             android:id="@+id/gathering_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            card_view:layout_constraintLeft_toLeftOf="@+id/restaurant_img"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@+id/restaurant_img"
             tools:layout_constraintLeft_creator="1"
             tools:layout_constraintTop_creator="1"
-            tools:text="元朗聚" />
+            tools:text="Gathering Theme"
+            android:textColor="@color/appText"/>
 
         <TextView
             android:id="@+id/description"
@@ -111,9 +115,28 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"
-            android:text="Switch"
+            android:splitTrack="false"
+            android:text="Join"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintTop_toTopOf="parent" />
+
+        <!--
+        <ToggleButton
+            android:id="@+id/chkState1"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/toggle_selector"
+            android:checked="true"
+            android:padding="6dp"
+            android:textOff=""
+            android:textOn=""
+            card_view:layout_constraintEnd_toStartOf="@+id/join"
+            card_view:layout_constraintTop_toTopOf="parent" />
+           -->
 
     </android.support.constraint.ConstraintLayout>
 

@@ -1,4 +1,4 @@
-package com.bonlai.socialdiningapp.main_page;
+package com.bonlai.socialdiningapp.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,15 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bonlai.socialdiningapp.LoginActivity;
+
 import com.bonlai.socialdiningapp.R;
 
-import com.bonlai.socialdiningapp.RegisterActivity;
-import com.bonlai.socialdiningapp.RestaurantDetailActivity;
-import com.bonlai.socialdiningapp.models.Gathering;
+import com.bonlai.socialdiningapp.detail.restaurant.RestaurantDetailActivity;
 import com.bonlai.socialdiningapp.models.Restaurant;
 import com.squareup.picasso.Picasso;
 

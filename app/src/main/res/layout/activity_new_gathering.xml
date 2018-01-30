@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.bonlai.socialdiningapp.NewGatheringActivity">
+    tools:context="com.bonlai.socialdiningapp.detail.gathering.NewGatheringActivity">
 
     <include layout="@layout/content_new_gathering"
         android:layout_height="512dp" />

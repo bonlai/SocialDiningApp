@@ -1,4 +1,4 @@
-package com.bonlai.socialdiningapp.main_page;
+package com.bonlai.socialdiningapp.main;
 
 import android.app.Activity;
 import android.content.ContentUris;

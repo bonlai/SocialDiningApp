@@ -39,7 +39,7 @@ public class APIclient {
     static APIService mAPIService;
     private static OkHttpClient.Builder OKHttpBuilder = new OkHttpClient.Builder();
     private static Retrofit.Builder builder=new Retrofit.Builder().
-            baseUrl("http://192.168.2.6:8000/").
+            baseUrl("http://192.168.2.5:8000/").
             addConverterFactory(GsonConverterFactory.create());
     public static Retrofit retrofit() {
         if (mRetrofit == null) {
@@ -130,8 +130,7 @@ public class APIclient {
         @FormUrlEncoded
         @PUT("api/interest/")
         Call<Profile> postInterest(
-                @Path("id") Integer id,
-                @Field("self_introduction") String bio
+                @Field("name") String bio
         );
 
         @POST("api/gathering/")
@@ -157,7 +156,7 @@ public class APIclient {
         Call<List<Restaurant>> getRestaurantList();
 
 
-        @GET("api/review_filter/")
+        @GET("api/review/")
         Call<List<Review>> getReview(
                 @Query("restaurant") Integer restaurantId
         );

@@ -18,11 +18,16 @@
 
         <TextView
             android:id="@+id/restaurant_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:text="Red Blue Restaurant"
+            android:layout_marginTop="8dp"
+            android:text="Restaurant name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/appText"
+            android:textSize="18sp"
+            card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toEndOf="@+id/restaurant_img"
             card_view:layout_constraintTop_toTopOf="parent" />
 
@@ -33,11 +38,32 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="#Yuen Long#Self#Eat"
+            android:text="Category"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintStart_toEndOf="@+id/restaurant_img"
+            card_view:layout_constraintStart_toEndOf="@+id/tagIC"
             card_view:layout_constraintTop_toBottomOf="@+id/restaurant_name" />
 
+        <ImageView
+            android:id="@+id/addressIC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_location_on_black"
+            card_view:layout_constraintStart_toEndOf="@+id/restaurant_img"
+            card_view:layout_constraintTop_toBottomOf="@+id/category" />
+
+        <ImageView
+            android:id="@+id/tagIC"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_tag"
+            card_view:layout_constraintStart_toEndOf="@+id/restaurant_img"
+            card_view:layout_constraintTop_toBottomOf="@+id/restaurant_name" />
         <ImageView
             android:id="@+id/restaurant_img"
             android:layout_width="177dp"
@@ -55,12 +81,12 @@
         <me.zhanghai.android.materialratingbar.MaterialRatingBar
             android:id="@+id/average_rating"
             style="@style/Widget.MaterialRatingBar.RatingBar"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent" />
+            android:background="#99FFFFFF"
+            card_view:layout_constraintEnd_toEndOf="@+id/restaurant_img"
+            card_view:layout_constraintStart_toStartOf="@+id/restaurant_img"
+            card_view:layout_constraintTop_toTopOf="@+id/restaurant_img" />
 
         <TextView
             android:id="@+id/address"
@@ -69,9 +95,9 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="1919, ABC rod, Yuen Long"
+            android:text="Address"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintStart_toEndOf="@+id/restaurant_img"
+            card_view:layout_constraintStart_toEndOf="@+id/addressIC"
             card_view:layout_constraintTop_toBottomOf="@+id/category" />
 
     </android.support.constraint.ConstraintLayout>

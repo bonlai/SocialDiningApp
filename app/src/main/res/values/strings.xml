@@ -3,16 +3,20 @@
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
+    <string name="action_register">Register</string>
+    <string name="error_field_required">This field is required</string>
+    <!--
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    -->
 
     <string name="title_activity_event">EventActivity</string>
     <string name="title_activity_test">TestActivity</string>
@@ -22,6 +26,8 @@
     <string name="title_activity_sign_up">SignUpActivity</string>
     <string name="title_activity_restaurant_detail">RestaurantDetailActivity</string>
     <string name="title_activity_bn">BNActivity</string>
+    <string name="title_activity_gathering_detail">GatheringDetailActivity</string>
+    <string name="title_activity_maps">Map</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -29,6 +35,5 @@
     <string name="tab_2">Joined Gathering</string>
     <string name="tab_3">Restaurant</string>
     <string name="tab_4">My Profile</string>
-    <string name="title_activity_gathering_detail">GatheringDetailActivity</string>
-    <string name="title_activity_maps">Map</string>
+
 </resources>

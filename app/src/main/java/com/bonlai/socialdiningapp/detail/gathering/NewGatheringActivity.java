@@ -1,10 +1,8 @@
-package com.bonlai.socialdiningapp;
+package com.bonlai.socialdiningapp.detail.gathering;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.bonlai.socialdiningapp.APIclient;
+import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Gathering;
 
 import java.util.Calendar;

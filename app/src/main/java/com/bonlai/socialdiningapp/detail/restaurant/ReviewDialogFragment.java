@@ -1,4 +1,4 @@
-package com.bonlai.socialdiningapp;
+package com.bonlai.socialdiningapp.detail.restaurant;
 
 
 import android.app.Activity;
@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+
+import com.bonlai.socialdiningapp.R;
 
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 

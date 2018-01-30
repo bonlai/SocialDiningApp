@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity"
-    tools:showIn="@layout/activity_gathering_detail">
+    tools:context="com.bonlai.socialdiningapp.profileEdit.EditHobbyActivity">
 
 </android.support.constraint.ConstraintLayout>

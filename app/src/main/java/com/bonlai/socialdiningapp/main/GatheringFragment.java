@@ -1,4 +1,4 @@
-package com.bonlai.socialdiningapp.main_page;
+package com.bonlai.socialdiningapp.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bonlai.socialdiningapp.APIclient;
-import com.bonlai.socialdiningapp.NewGatheringActivity;
+import com.bonlai.socialdiningapp.detail.gathering.NewGatheringActivity;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
@@ -155,9 +155,10 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
             APIclient.APIService service=APIclient.getAPIService();
             Call<List<Gathering>> getGatheringList = service.getGatheringList();
             getGatheringList.enqueue(new Callback<List<Gathering>>() {
+
                 @Override
                 public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
-
+                    Log.d("fragment","called");
                     MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
                     recyclerView.setAdapter(myAdapter);
                 }

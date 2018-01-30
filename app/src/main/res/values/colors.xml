@@ -20,4 +20,9 @@
     <color name="bg_dark">#263238</color>
 
     <color name="divider_light">#0c000000</color>
+
+    <color name="appText">#F77062</color>
+    <color name="greyText">#878787</color>
+
+
 </resources>

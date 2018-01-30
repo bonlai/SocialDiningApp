@@ -24,10 +24,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:windowSoftInputMode="stateVisible|adjustPan">
         <activity
             android:name=".LoginActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,11 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ProfileActivity"
-            android:label="@string/title_activity_user_profile"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".NewGatheringActivity"
+            android:name=".detail.gathering.NewGatheringActivity"
             android:label="@string/title_activity_new_gathering"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -47,7 +45,7 @@
             android:label="@string/title_activity_sign_up"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".RestaurantDetailActivity"
+            android:name=".detail.restaurant.RestaurantDetailActivity"
             android:label="@string/title_activity_restaurant_detail"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -55,7 +53,7 @@
             android:label="@string/title_activity_bn"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".GatheringDetailActivity"
+            android:name=".detail.gathering.GatheringDetailActivity"
             android:label="@string/title_activity_gathering_detail"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--
@@ -73,7 +71,9 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".profileEdit.EditBioActivity"></activity>
+        <activity android:name=".profileEdit.EditBioActivity" />
+        <activity android:name=".profileEdit.EditDOBActivity" />
+        <activity android:name=".profileEdit.EditHobbyActivity"></activity>
     </application>
 
 </manifest>
