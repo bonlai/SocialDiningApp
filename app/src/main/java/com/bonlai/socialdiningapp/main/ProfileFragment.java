@@ -68,21 +68,28 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         myUserId=MyUserHolder.getInstance().getUser().getPk();
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-        AppCompatActivity actionBar = (AppCompatActivity) getActivity();
-        Toolbar toolbar = (Toolbar) actionBar.findViewById(R.id.toolbar);
-        actionBar.setSupportActionBar(toolbar);
-        actionBar.getSupportActionBar().hide();
+
 
         initUI(rootView);
 
+        updateProfile();
 
+        return rootView;
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        AppCompatActivity mainActivity = (AppCompatActivity) getActivity();
+        mainActivity.getSupportActionBar().hide();
+        updateProfile();
+    }
+
+    private void updateProfile(){
         Profile myProfile=MyUserHolder.getInstance().getUser().getProfile();
         String imgPath=myProfile.getImage();
         Picasso.with(getActivity()).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mProfilePic);
         mBio.setText(myProfile.getSelfIntroduction());
-
-        return rootView;
     }
 
     private void initUI(View rootView ){
@@ -95,8 +102,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mEditButton.setOnClickListener(this);
         mBioHolder.setOnClickListener(this);
         mLogout.setOnClickListener(this);
-
-
     }
 
     @Override
@@ -142,6 +147,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     Log.v("Upload", "success");
+
                 }
 
                 @Override

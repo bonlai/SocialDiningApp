@@ -24,6 +24,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baoyz.widget.PullRefreshLayout;
 import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.detail.gathering.NewGatheringActivity;
 import com.bonlai.socialdiningapp.R;
@@ -59,6 +60,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
     private RecyclerView recyclerView;
     private FloatingActionButton mAddGathering;
+    private PullRefreshLayout pullRefresh;
 
     public GatheringFragment() {
     }
@@ -104,10 +106,28 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
         myUserId=MyUserHolder.getInstance().getUser().getPk();
         isPrepared=true;
+
+        pullRefresh = (PullRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
+
+// listen refresh event
+        pullRefresh.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
+
+
+
         refresh();
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+    }
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -148,9 +168,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
     public void refresh(){
         if(mMode==Mode.ALL){
-            AppCompatActivity mainActivity = (AppCompatActivity) getActivity();
+/*            AppCompatActivity mainActivity = (AppCompatActivity) getActivity();
             Toolbar toolbar = (Toolbar) mainActivity.findViewById(R.id.toolbar);
-            mainActivity.setSupportActionBar(toolbar);
+            mainActivity.setSupportActionBar(toolbar);*/
 
             APIclient.APIService service=APIclient.getAPIService();
             Call<List<Gathering>> getGatheringList = service.getGatheringList();
@@ -161,6 +181,8 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                     Log.d("fragment","called");
                     MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
                     recyclerView.setAdapter(myAdapter);
+                    // refresh complete
+                    pullRefresh.setRefreshing(false);
                 }
                 @Override
                 public void onFailure(Call<List<Gathering>> call, Throwable t) {
@@ -168,7 +190,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 }
             });
         }else{
-            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+            //((AppCompatActivity) getActivity()).getSupportActionBar().hide();
             APIclient.APIService service=APIclient.getAPIService();
             Call<List<Gathering>> getGatheringList = service.getMyGatheringList(myUserId);
             getGatheringList.enqueue(new Callback<List<Gathering>>() {
@@ -177,6 +199,8 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
                     MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
                     recyclerView.setAdapter(myAdapter);
+                    // refresh complete
+                    pullRefresh.setRefreshing(false);
                 }
                 @Override
                 public void onFailure(Call<List<Gathering>> call, Throwable t) {
