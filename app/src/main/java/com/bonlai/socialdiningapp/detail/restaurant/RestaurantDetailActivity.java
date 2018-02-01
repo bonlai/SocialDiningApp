@@ -41,6 +41,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
     public TextView mCategory;
     public TextView mAddress;
     public TextView mRestaurantName;
+    public TextView mCountNo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +81,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
         mCategory=(TextView)findViewById(R.id.category);
         mAddress=(TextView)findViewById(R.id.address);
         mRestaurantName=(TextView)findViewById(R.id.restaurant_name);
+        mCountNo=(TextView)findViewById(R.id.count_no);
     }
 
     private void getReview(final Context context,int restaurantId, final RecyclerView recyclerView){
@@ -130,6 +132,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
         mCategory.setText(restaurant.getCategory());
         mAddress.setText(restaurant.getAddress());
         mRestaurantName.setText(restaurant.getName());
+        mCountNo.setText(""+restaurant.getReviewCount());
     }
 
     @Override

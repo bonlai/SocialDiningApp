@@ -171,7 +171,6 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 /*            AppCompatActivity mainActivity = (AppCompatActivity) getActivity();
             Toolbar toolbar = (Toolbar) mainActivity.findViewById(R.id.toolbar);
             mainActivity.setSupportActionBar(toolbar);*/
-
             APIclient.APIService service=APIclient.getAPIService();
             Call<List<Gathering>> getGatheringList = service.getGatheringList();
             getGatheringList.enqueue(new Callback<List<Gathering>>() {
