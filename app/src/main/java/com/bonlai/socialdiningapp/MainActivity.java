@@ -2,6 +2,7 @@ package com.bonlai.socialdiningapp;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -60,12 +61,10 @@ public class MainActivity extends AppCompatActivity{
         //set the initial fragment to be displayed
         bottomNavigation.setCurrentItem(0);
 
-
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
 //                fragment.updateColor(ContextCompat.getColor(MainActivity.this, colors[position]));
-
                 if (!wasSelected)
                     viewPager.setCurrentItem(position);
 
@@ -77,6 +76,7 @@ public class MainActivity extends AppCompatActivity{
                 return true;
             }
         });
+
     }
 
     @Override
@@ -135,7 +135,14 @@ public class MainActivity extends AppCompatActivity{
         pagerAdapter.addFragments(new RestaurantFragment());
         pagerAdapter.addFragments(new ProfileFragment());
 
+
         viewPager.setAdapter(pagerAdapter);
+
+ /*       viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+            @Override public void onPageSelected(int position) {
+                supportInvalidateOptionsMenu();
+            }
+        });*/
     }
 
     @NonNull
@@ -165,7 +172,7 @@ public class MainActivity extends AppCompatActivity{
 
 
     public void setupBottomNavBehaviors() {
-//        bottomNavigation.setBehaviorTranslationEnabled(false);
+        bottomNavigation.setBehaviorTranslationEnabled(false);
 
         /*
         Before enabling this. Change MainActivity theme to MyTheme.TranslucentNavigation in

@@ -60,7 +60,7 @@ public class RestaurantFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
         setHasOptionsMenu(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        //((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
 
     @Override
@@ -93,8 +93,16 @@ public class RestaurantFragment extends Fragment {
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            //((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu,inflater);
+
         inflater.inflate(R.menu.restaurant_search, menu);
         MenuItem item=menu.findItem(R.id.action_search);
         SearchView searchView=(SearchView)item.getActionView();
@@ -110,6 +118,7 @@ public class RestaurantFragment extends Fragment {
                 return false;
             }
         });
+        super.onCreateOptionsMenu(menu,inflater);
     }
 
     @Override

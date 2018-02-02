@@ -93,7 +93,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
+
         View rootView = inflater.inflate(R.layout.fragment_gathering, container, false);
 
         mAddGathering = (FloatingActionButton) rootView.findViewById(R.id.addNewGathering);
@@ -126,7 +126,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onResume() {
         super.onResume();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        //((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -148,8 +148,10 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu,inflater);
+
         inflater.inflate(R.menu.gatheirng_search, menu);
+
+        //set searchview in action bar
         MenuItem item=menu.findItem(R.id.action_search);
         SearchView searchView=(SearchView)item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -164,13 +166,11 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 return false;
             }
         });
+        super.onCreateOptionsMenu(menu,inflater);
     }
 
     public void refresh(){
         if(mMode==Mode.ALL){
-/*            AppCompatActivity mainActivity = (AppCompatActivity) getActivity();
-            Toolbar toolbar = (Toolbar) mainActivity.findViewById(R.id.toolbar);
-            mainActivity.setSupportActionBar(toolbar);*/
             APIclient.APIService service=APIclient.getAPIService();
             Call<List<Gathering>> getGatheringList = service.getGatheringList();
             getGatheringList.enqueue(new Callback<List<Gathering>>() {
@@ -189,7 +189,6 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 }
             });
         }else{
-            //((AppCompatActivity) getActivity()).getSupportActionBar().hide();
             APIclient.APIService service=APIclient.getAPIService();
             Call<List<Gathering>> getGatheringList = service.getMyGatheringList(myUserId);
             getGatheringList.enqueue(new Callback<List<Gathering>>() {

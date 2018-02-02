@@ -81,7 +81,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         AppCompatActivity mainActivity = (AppCompatActivity) getActivity();
-        mainActivity.getSupportActionBar().hide();
+        //mainActivity.getSupportActionBar().hide();
         updateProfile();
     }
 
