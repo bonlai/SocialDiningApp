@@ -1,15 +1,15 @@
-package com.bonlai.socialdiningapp.profileEdit;
+package com.bonlai.socialdiningapp.detail.profileEdit;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.bonlai.socialdiningapp.R;
 
-public class EditDOBActivity extends AppCompatActivity {
+public class EditHobbyActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_dob);
+        setContentView(R.layout.activity_edit_hobby);
     }
 }

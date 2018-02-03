@@ -3,7 +3,6 @@ package com.bonlai.socialdiningapp.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -15,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bonlai.socialdiningapp.APIclient;
-import com.bonlai.socialdiningapp.MapsActivity;
+import com.bonlai.socialdiningapp.helpers.MapsActivity;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Restaurant;
 
@@ -93,10 +92,14 @@ public class RestaurantFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            //((AppCompatActivity) getActivity()).getSupportActionBar().show();
         }
     }
 

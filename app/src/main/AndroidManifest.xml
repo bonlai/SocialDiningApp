@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -70,11 +71,11 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".helpers.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".profileEdit.EditBioActivity" />
-        <activity android:name=".profileEdit.EditDOBActivity" />
-        <activity android:name=".profileEdit.EditHobbyActivity"></activity>
+        <activity android:name=".detail.profileEdit.EditBioActivity" />
+        <activity android:name=".detail.profileEdit.EditDOBActivity" />
+        <activity android:name=".detail.profileEdit.EditHobbyActivity"></activity>
     </application>
 
 </manifest>

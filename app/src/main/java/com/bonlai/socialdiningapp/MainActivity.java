@@ -16,16 +16,15 @@ import android.util.Log;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.aurelhubert.ahbottomnavigation.notification.AHNotification;
-import com.bonlai.socialdiningapp.main.BottomBarAdapter;
+import com.bonlai.socialdiningapp.helpers.BottomBarAdapter;
 import com.bonlai.socialdiningapp.main.GatheringFragment;
 import com.bonlai.socialdiningapp.main.GatheringFragment.Mode;
-import com.bonlai.socialdiningapp.main.NoSwipePager;
+import com.bonlai.socialdiningapp.helpers.NoSwipePager;
 import com.bonlai.socialdiningapp.main.ProfileFragment;
 import com.bonlai.socialdiningapp.main.RestaurantFragment;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
 import com.bonlai.socialdiningapp.models.User;
-import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -138,11 +137,16 @@ public class MainActivity extends AppCompatActivity{
 
         viewPager.setAdapter(pagerAdapter);
 
- /*       viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
             @Override public void onPageSelected(int position) {
                 supportInvalidateOptionsMenu();
+                if(position==3){
+                    getSupportActionBar().hide();
+                }else{
+                    getSupportActionBar().show();
+                }
             }
-        });*/
+        });
     }
 
     @NonNull

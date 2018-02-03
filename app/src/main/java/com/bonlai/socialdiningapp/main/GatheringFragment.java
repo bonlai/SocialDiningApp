@@ -126,7 +126,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onResume() {
         super.onResume();
-        //((AppCompatActivity) getActivity()).getSupportActionBar().show();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -270,7 +270,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                             String restImg=response.body().getImage().get(0).getImage();
                             Picasso.with(context).load(restImg).placeholder(R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
                         }
-                        holder.mCategory.setText(response.body().getCategory());
+                        holder.mCategory.setText("# "+response.body().getCategory());
                     }else{
 
                     }

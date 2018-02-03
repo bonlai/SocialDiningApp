@@ -1,4 +1,4 @@
-package com.bonlai.socialdiningapp.main;
+package com.bonlai.socialdiningapp.helpers;
 
 /**
  * Created by Bon Lai on 18/1/2018.
