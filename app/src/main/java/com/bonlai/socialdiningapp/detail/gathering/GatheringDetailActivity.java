@@ -1,31 +1,301 @@
 package com.bonlai.socialdiningapp.detail.gathering;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.R;
+import com.bonlai.socialdiningapp.detail.restaurant.RestaurantDetailActivity;
+import com.bonlai.socialdiningapp.main.GatheringFragment;
+import com.bonlai.socialdiningapp.models.Gathering;
+import com.bonlai.socialdiningapp.models.MyUserHolder;
+import com.bonlai.socialdiningapp.models.Restaurant;
+import com.bonlai.socialdiningapp.models.User;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import me.zhanghai.android.materialratingbar.MaterialRatingBar;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class GatheringDetailActivity extends AppCompatActivity {
+    private RecyclerView recyclerView;
+    private int gatheringId;
+    private Gathering mGathering;
+    private List<User> mParticipants;
+    private MyParticipantRecyclerViewAdapter adapter;
 
+    private ImageView mRestaurantImg;
+    private MaterialRatingBar mAvgRating;
+    private TextView mCategory;
+    private TextView mAddress;
+    private TextView mRestaurantName;
+    private View mRestaurantHolder;
+
+    private TextView mGatheringName;
+    private TextView mDescription;
+    private Switch mJoin;
+
+    private int myUserId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gathering_detail);
+
+        initUI();
+        initVar();
+
+        getGatheringInfo(this);
+
+    }
+
+    private void initVar(){
+        mParticipants=new ArrayList<>();
+        gatheringId = getIntent().getExtras().getInt("gatheringId");
+        myUserId= MyUserHolder.getInstance().getUser().getPk();
+    }
+
+    private void initUI(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        recyclerView=(RecyclerView)findViewById(R.id.list_view);
+
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+
+
+        mRestaurantImg=(ImageView) findViewById(R.id.restaurant_img);
+        mAvgRating=(MaterialRatingBar) findViewById(R.id.average_rating);
+        mCategory=(TextView) findViewById(R.id.category);
+        mAddress=(TextView) findViewById(R.id.address);
+        mRestaurantName=(TextView) findViewById(R.id.restaurant_name);
+        mRestaurantHolder=(View)findViewById(R.id.restaurant_holder);
+
+        mGatheringName = (TextView) findViewById(R.id.gathering_name);
+        mDescription = (TextView) findViewById(R.id.description);
+        mJoin = (Switch) findViewById(R.id.join);
+    }
+
+    private void getGatheringInfo(final Context context){
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<Gathering> getGatheringDetail = service.getGatheringDetail(gatheringId);
+        getGatheringDetail.enqueue(new Callback<Gathering>() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onResponse(Call<Gathering> call, Response<Gathering> response) {
+                if(response.isSuccessful()){
+                    mGathering=response.body();
+                    updateGathering();
+                    for(Integer id:mGathering.getMember()){
+                        Log.d("looping id ",""+id);
+                        getParticipants(id);
+                    }
+                    getRestaurantInfo(mGathering.getRestaurant());
+                    adapter=new MyParticipantRecyclerViewAdapter(context,mParticipants);
+                    recyclerView.setAdapter(adapter);
+                }else{
+
+                }
+            }
+            @Override
+            public void onFailure(Call<Gathering> call, Throwable t) {
+                t.printStackTrace();
             }
         });
     }
 
+    private void getParticipants(final int id){
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<List<User>> getOthersDetail = service.getOthersDetail(id);
+        getOthersDetail.enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if(response.isSuccessful()){
+                    Log.d("adding ",""+id);
+                    mParticipants.add(response.body().get(0));
+                    adapter.notifyDataSetChanged();
+
+                }else{
+
+                }
+            }
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void getRestaurantInfo(int id){
+        APIclient.APIService service=APIclient.getAPIService();
+
+        //get restaurant info
+        Call<Restaurant> getRestaurantInfo = service.getRestaurantInfo(id);
+        getRestaurantInfo.enqueue(new Callback<Restaurant>() {
+            @Override
+            public void onResponse(Call<Restaurant> call, Response<Restaurant> response) {
+                if(response.isSuccessful()){
+                    updateRestaurant(response.body());
+                }
+            }
+            @Override
+            public void onFailure(Call<Restaurant> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void startRestaurantDetail(int restaurantId){
+        Intent intent = new Intent (this, RestaurantDetailActivity.class);
+        intent.putExtra("restaurantId", restaurantId);
+        this.startActivity(intent);
+    }
+
+    private void updateRestaurant(Restaurant mRestaurant){
+        String imgPath = mRestaurant.getImage().get(0).getImage();
+        final int restaurantId=mRestaurant.getId();
+        Picasso.with(this).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mRestaurantImg);
+        mRestaurantHolder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startRestaurantDetail(restaurantId);
+            }
+        });
+        double rating=mRestaurant.getAverageRate();
+        mAvgRating.setRating((float)rating);
+        mAvgRating.setIsIndicator(true);
+
+        mCategory.setText(mRestaurant.getCategory());
+        mAddress.setText(mRestaurant.getAddress());
+        mRestaurantName.setText(mRestaurant.getName());
+    }
+
+    private void updateGathering(){
+        mGatheringName.setText(mGathering.getName());
+        mGatheringName.setTag(mGathering.getId());
+        mDescription.setText(mGathering.getDetail());
+
+        if(mGathering.getMember().contains(myUserId)||mGathering.getCreatedBy()==myUserId){
+            mJoin.setChecked(true);
+        }else{
+            mJoin.setChecked(false);
+        }
+
+        mJoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                APIclient.APIService service=APIclient.getAPIService();
+                Call<ResponseBody> req = service.joinGathering(myUserId, gatheringId);
+                callParticipateAPI();
+
+            }
+        });
+    }
+
+    private void callParticipateAPI(){
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<ResponseBody> req = service.joinGathering(myUserId, gatheringId);
+        req.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Toast toast = Toast.makeText(GatheringDetailActivity.this, "Joined Gathering " , Toast.LENGTH_LONG);
+                    toast.show();
+                }else{
+                    Toast toast = Toast.makeText(GatheringDetailActivity.this, "Withdraw Gathering" , Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public class MyParticipantRecyclerViewAdapter extends RecyclerView.Adapter<MyParticipantRecyclerViewAdapter.ViewHolder> {
+        private final List<User> mParticipants;
+        Context context;
+
+        public MyParticipantRecyclerViewAdapter(final Context context,List<User> participants) {
+            this.context = context;
+            mParticipants=participants;
+        }
+
+        @Override
+        public MyParticipantRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.participant, parent, false);
+            return new MyParticipantRecyclerViewAdapter.ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(final MyParticipantRecyclerViewAdapter.ViewHolder holder, int position) {
+ /*           //String imgPath = mReview.get(position).getImage().get(0).getImage();
+            final int restaurantId=mRestaurant.get(position).getId();
+            Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
+            holder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent (context, RestaurantDetailActivity.class);
+                    intent.putExtra("restaurantId", restaurantId);
+                    context.startActivity(intent);
+                }
+            });*/
+
+
+/*            holder.mComment.setText(mReview.get(position).getComment());
+
+
+            APIclient.APIService service=APIclient.getAPIService();
+            //Call<ResponseBody> postReview = service.postReview(mReview.get(position).getUser());
+
+            holder.mRating.setIsIndicator(true);
+            holder.mRating.setRating(mReview.get(position).getRating());*/
+            holder.mUsername.setText(mParticipants.get(position).getUsername());
+            holder.mBio.setText(mParticipants.get(position).getProfile().getSelfIntroduction());
+
+            String userProfilePic=mParticipants.get(position).getProfile().getImage();
+            Picasso.with(context).load(userProfilePic).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mProfilePic);
+        }
+
+        @Override
+        public int getItemCount() {
+            //Log.d("itemcount",""+mReview.size());
+            return mParticipants.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public final View mView;
+            public TextView mBio;
+            public TextView mUsername;
+            public ImageView mProfilePic;
+
+            public ViewHolder(View view) {
+                super(view);
+                mView = view;
+                mUsername=(TextView) mView.findViewById(R.id.username);
+                mBio=(TextView) mView.findViewById(R.id.description);
+                mProfilePic=(ImageView) mView.findViewById(R.id.user_img);
+            }
+        }
+    }
 }

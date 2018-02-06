@@ -32,7 +32,7 @@
                     android:src="@drawable/profile_default_profile_pic"/>
 
                 <RelativeLayout
-                    android:id="@+id/bioHolder"
+                    android:id="@+id/bio_holder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
@@ -167,6 +167,7 @@
                 <include layout="@layout/item_divider" />
 
                 <RelativeLayout
+                    android:id="@+id/hobby_holder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"

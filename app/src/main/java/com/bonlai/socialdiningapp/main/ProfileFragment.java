@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.LoginActivity;
 import com.bonlai.socialdiningapp.R;
+import com.bonlai.socialdiningapp.detail.profileEdit.EditHobbyActivity;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
 import com.bonlai.socialdiningapp.models.Token;
@@ -52,6 +53,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private FloatingActionButton mEditButton;
     private Button mLogout;
     private RelativeLayout mBioHolder;
+    private RelativeLayout mHobbyHolder;
 
     public static final int PICK_IMAGE = 100;
 
@@ -62,17 +64,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
         }
+        isStoragePermissionGranted();
+    }
+
+    public  void isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             int REQUEST_CODE_CONTACT = 101;
             String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
             for (String str : permissions) {
                 if (getActivity().checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
                     this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
-                    return;
                 }
             }
         }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,10 +114,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mBio=(TextView)rootView.findViewById(R.id.bioText);
         mEditButton=(FloatingActionButton)rootView.findViewById(R.id.edit_pic);
         mLogout=(Button)rootView.findViewById(R.id.logout);
-        mBioHolder = (RelativeLayout) rootView.findViewById(R.id.bioHolder);
+        mBioHolder = (RelativeLayout) rootView.findViewById(R.id.bio_holder);
+        mHobbyHolder = (RelativeLayout) rootView.findViewById(R.id.hobby_holder);
 
         mEditButton.setOnClickListener(this);
         mBioHolder.setOnClickListener(this);
+        mHobbyHolder.setOnClickListener(this);
         mLogout.setOnClickListener(this);
     }
 
@@ -187,10 +195,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()) {
-            case R.id.bioHolder:
+            case R.id.bio_holder:
                 intent = new Intent(getContext(), EditBioActivity.class);
                 startActivity(intent);
                 break;
+
+            case R.id.hobby_holder:
+                intent = new Intent(getContext(), EditHobbyActivity.class);
+                startActivity(intent);
+                break;
+
             case R.id.edit_pic:
                 intent = new Intent();
                 intent.setType("image/*");
@@ -201,7 +215,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 SharedPreferences settings = getActivity().getSharedPreferences(SETTING_INFOS, 0);
                 settings.edit().remove("TOKEN").commit();
 
-                Token.getToken().setKey(null);
                 APIclient.reset();
 
                 intent = new Intent(getActivity(), LoginActivity.class);

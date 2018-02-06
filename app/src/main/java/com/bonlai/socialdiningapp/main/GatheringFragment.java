@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,12 +19,15 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.widget.PullRefreshLayout;
 import com.bonlai.socialdiningapp.APIclient;
+import com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity;
 import com.bonlai.socialdiningapp.detail.gathering.NewGatheringActivity;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Gathering;
@@ -60,7 +62,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
     private RecyclerView recyclerView;
     private FloatingActionButton mAddGathering;
-    private PullRefreshLayout pullRefresh;
+    private PullRefreshLayout mPullRefresh;
+    private ProgressBar mProgress;
+    private RelativeLayout mContainer;
 
     public GatheringFragment() {
     }
@@ -100,6 +104,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         mAddGathering.setOnClickListener(this);
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
+        mProgress= (ProgressBar) rootView.findViewById(R.id.progress_bar);
+        mContainer=(RelativeLayout) rootView.findViewById(R.id.container);
+
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
@@ -107,10 +114,10 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         myUserId=MyUserHolder.getInstance().getUser().getPk();
         isPrepared=true;
 
-        pullRefresh = (PullRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
+        mPullRefresh = (PullRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
 
 // listen refresh event
-        pullRefresh.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
+        mPullRefresh.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refresh();
@@ -170,6 +177,8 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
     }
 
     public void refresh(){
+        mProgress.setVisibility(View.VISIBLE);
+        mContainer.setVisibility(View.GONE);
         if(mMode==Mode.ALL){
             APIclient.APIService service=APIclient.getAPIService();
             Call<List<Gathering>> getGatheringList = service.getGatheringList();
@@ -181,7 +190,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                     MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
                     recyclerView.setAdapter(myAdapter);
                     // refresh complete
-                    pullRefresh.setRefreshing(false);
+                    mProgress.setVisibility(View.GONE);
+                    mContainer.setVisibility(View.VISIBLE);
+                    mPullRefresh.setRefreshing(false);
                 }
                 @Override
                 public void onFailure(Call<List<Gathering>> call, Throwable t) {
@@ -198,7 +209,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                     MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
                     recyclerView.setAdapter(myAdapter);
                     // refresh complete
-                    pullRefresh.setRefreshing(false);
+                    mProgress.setVisibility(View.GONE);
+                    mContainer.setVisibility(View.VISIBLE);
+                    mPullRefresh.setRefreshing(false);
                 }
                 @Override
                 public void onFailure(Call<List<Gathering>> call, Throwable t) {
@@ -207,27 +220,32 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
             });
         }
     }
+
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private List<Gathering> mGathering;
         Context context;
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+            public final View mView;
             public TextView mGatheringName;
             public TextView mDescription;
-            public TextView mCategory;
+            public Switch mJoin;
+
             public TextView mRestaurantName;
             public ImageView mRestaurantImg;
+            public TextView mCategory;
+
             public ImageView mCreator;
-            //public Button join;
-            public Switch mJoin;
+
 
             public ViewHolder(View v) {
                 super(v);
+                mView = v;
                 mGatheringName = (TextView) v.findViewById(R.id.gathering_name);
                 mRestaurantImg = (ImageView) v.findViewById(R.id.restaurant_img);
                 mDescription = (TextView) v.findViewById(R.id.description);
                 mRestaurantName=(TextView) v.findViewById(R.id.restaurant_name);
-                mCreator= (ImageView) v.findViewById(R.id.creator_img);
+                mCreator= (ImageView) v.findViewById(R.id.user_img);
                 mCategory=(TextView) v.findViewById(R.id.category);
                 mJoin = (Switch) v.findViewById(R.id.join);
                 itemView.setOnClickListener(this);
@@ -319,6 +337,15 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                     Call<ResponseBody> req = service.joinGathering(myUserId, gatheringId);
                     callParticipateAPI(req);
 
+                }
+            });
+
+            holder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent (context, GatheringDetailActivity.class);
+                    intent.putExtra("gatheringId", gatheringId);
+                    context.startActivity(intent);
                 }
             });
         }

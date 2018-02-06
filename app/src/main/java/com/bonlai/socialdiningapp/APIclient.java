@@ -39,7 +39,7 @@ public class APIclient {
     static APIService mAPIService;
     private static OkHttpClient.Builder OKHttpBuilder = new OkHttpClient.Builder();
     private static Retrofit.Builder builder=new Retrofit.Builder().
-            baseUrl("http://192.168.2.6:8000/").
+            baseUrl("http://192.168.2.5:8000/").
             addConverterFactory(GsonConverterFactory.create());
     public static Retrofit retrofit() {
         if (mRetrofit == null) {
@@ -69,6 +69,7 @@ public class APIclient {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OKHttpBuilder.addInterceptor(interceptor);
+        Token.getToken().setKey(null);
     }
 
     public static void setToken(){
@@ -100,8 +101,8 @@ public class APIclient {
         @GET("api/rest-auth/user/")
         Call<User> getMyDetail();
 
-        @GET("api/user_list/")
-        Call<User> getOthersDetail(
+        @GET("api/user/")
+        Call<List<User>> getOthersDetail(
             @Query("id") int userId
         );
 
@@ -146,6 +147,11 @@ public class APIclient {
 
         @GET("api/gathering/")
         Call<List<Gathering>> getGatheringList();
+
+        @GET("api/gathering/{id}")
+        Call<Gathering> getGatheringDetail(
+                @Path("id") Integer id
+        );
 
         @FormUrlEncoded
         @POST("api/participate/")

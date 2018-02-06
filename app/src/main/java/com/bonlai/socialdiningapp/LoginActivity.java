@@ -62,22 +62,21 @@ public class LoginActivity extends AppCompatActivity{
             }
         });*/
 
+        if(Token.getToken().getKey()!= null ){
+            goToMain();
+        }
 
         if(settings.contains(TOKEN)){
+            Log.d("preference","token set"+Token.getToken().getKey());
             Gson gson = new Gson();
             String json = settings.getString(TOKEN, "");
+            Log.d("preference","token setting"+json);
             Log.d("preference","token set");
             Token.setToken(gson.fromJson(json, Token.class));
             APIclient.setToken();
 
             goToMain();
         }
-
-        //Log.d("Token",Token.getToken().getKey());
-        if(Token.getToken().getKey()!= null ){
-            goToMain();
-        }
-
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {

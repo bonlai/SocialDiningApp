@@ -24,6 +24,7 @@ import com.bonlai.socialdiningapp.main.ProfileFragment;
 import com.bonlai.socialdiningapp.main.RestaurantFragment;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
+import com.bonlai.socialdiningapp.models.Token;
 import com.bonlai.socialdiningapp.models.User;
 
 import retrofit2.Call;
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity{
                 return true;
             }
         });
-
+        Log.d("Activity","create");
     }
 
     @Override
@@ -84,6 +85,23 @@ public class MainActivity extends AppCompatActivity{
         super.onStop();
 
         Log.d("Activity","onstop");
+    }
+
+    @Override
+    protected void onResume() {
+        // call the superclass method first
+        super.onResume();
+
+        Log.d("Activity","onResume");
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        // call the superclass method first
+        super.onDestroy();
+        APIclient.reset();
+        Log.d("Activity","onDestroy");
     }
 
     private void setUserDetail(){
