@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.R;
+import com.bonlai.socialdiningapp.detail.profileEdit.OtherProfileActivity;
 import com.bonlai.socialdiningapp.detail.restaurant.RestaurantDetailActivity;
 import com.bonlai.socialdiningapp.main.GatheringFragment;
 import com.bonlai.socialdiningapp.models.Gathering;
@@ -248,18 +249,11 @@ public class GatheringDetailActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(final MyParticipantRecyclerViewAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(final MyParticipantRecyclerViewAdapter.ViewHolder holder, final int position) {
  /*           //String imgPath = mReview.get(position).getImage().get(0).getImage();
             final int restaurantId=mRestaurant.get(position).getId();
             Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent (context, RestaurantDetailActivity.class);
-                    intent.putExtra("restaurantId", restaurantId);
-                    context.startActivity(intent);
-                }
-            });*/
+          */
 
 
 /*            holder.mComment.setText(mReview.get(position).getComment());
@@ -270,6 +264,15 @@ public class GatheringDetailActivity extends AppCompatActivity {
 
             holder.mRating.setIsIndicator(true);
             holder.mRating.setRating(mReview.get(position).getRating());*/
+            holder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent (context, OtherProfileActivity.class);
+                    intent.putExtra("userId", mParticipants.get(position).getId());
+                    context.startActivity(intent);
+                }
+            });
+
             holder.mUsername.setText(mParticipants.get(position).getUsername());
             holder.mBio.setText(mParticipants.get(position).getProfile().getSelfIntroduction());
 

@@ -29,13 +29,16 @@ import com.bonlai.socialdiningapp.LoginActivity;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.detail.profileEdit.EditDOBActivity;
 import com.bonlai.socialdiningapp.detail.profileEdit.EditHobbyActivity;
+import com.bonlai.socialdiningapp.detail.profileEdit.OtherProfileActivity;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
 import com.bonlai.socialdiningapp.models.Token;
 import com.bonlai.socialdiningapp.detail.profileEdit.EditBioActivity;
+import com.bonlai.socialdiningapp.models.User;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -61,14 +64,45 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
 
     public static final int PICK_IMAGE = 100;
-
     private int myUserId;
+    private ProfileMode mMode;
+
+    private Profile mProfile;
+
+    private static final String ARG_MODE = "mode";
+
+    public static enum ProfileMode {
+        OTHER,
+        MY
+    }
+
+    public ProfileFragment() {
+    }
+
+    public static ProfileFragment newInstance(ProfileMode mode) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_MODE, mode);
+
+        ProfileFragment fragment = new ProfileFragment();
+        fragment.setArguments(bundle);
+
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            mMode = (ProfileMode)getArguments().getSerializable(ARG_MODE);
         }
+
+        if (getActivity() instanceof OtherProfileActivity) {
+            int userId = getActivity().getIntent().getExtras().getInt("userId");
+            getOtherUserProfile(userId);
+        }else{
+            mProfile=MyUserHolder.getInstance().getUser().getProfile();
+        }
+
         isStoragePermissionGranted();
     }
 
@@ -94,7 +128,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         initUI(rootView);
 
-        updateProfile();
+        if(mMode!=ProfileMode.MY){
+            mLogout.setVisibility(View.GONE);
+            mEditButton.setVisibility(View.GONE);
+
+        }else{
+            updateProfile();
+        }
 
         return rootView;
     }
@@ -102,18 +142,36 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        AppCompatActivity mainActivity = (AppCompatActivity) getActivity();
-        mainActivity.getSupportActionBar().hide();
-        updateProfile();
+        //updateProfile();
     }
 
     private void updateProfile(){
-        Profile myProfile=MyUserHolder.getInstance().getUser().getProfile();
-        String imgPath=myProfile.getImage();
+        String imgPath=mProfile.getImage();
         Picasso.with(getActivity()).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mProfilePic);
-        mBio.setText(myProfile.getSelfIntroduction());
-        mDOB.setText(myProfile.getDob());
-        mGender.setText(myProfile.getGender());
+        mBio.setText(mProfile.getSelfIntroduction());
+        mDOB.setText(mProfile.getDob());
+        mGender.setText(mProfile.getGender());
+    }
+
+    private void getOtherUserProfile(final int userId){
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<List<User>> getOthersDetail = service.getOthersDetail(userId);
+        getOthersDetail.enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if(response.isSuccessful()){
+                    Log.d("adding ",""+userId);
+                    mProfile=response.body().get(0).getProfile();
+                    updateProfile();
+                }else{
+
+                }
+            }
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     private void initUI(View rootView ){
@@ -121,18 +179,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mBio=(TextView)rootView.findViewById(R.id.bioText);
         mDOB=(TextView)rootView.findViewById(R.id.DOB);
         mGender=(TextView)rootView.findViewById(R.id.gender);
+
         mEditButton=(FloatingActionButton)rootView.findViewById(R.id.edit_pic);
         mLogout=(Button)rootView.findViewById(R.id.logout);
+
         mBioHolder = (RelativeLayout) rootView.findViewById(R.id.bio_holder);
         mHobbyHolder = (RelativeLayout) rootView.findViewById(R.id.hobby_holder);
         mDOBHolder = (RelativeLayout) rootView.findViewById(R.id.DOB_holder);
 
-
-        mEditButton.setOnClickListener(this);
-        mBioHolder.setOnClickListener(this);
-        mHobbyHolder.setOnClickListener(this);
-        mDOBHolder.setOnClickListener(this);
-        mLogout.setOnClickListener(this);
+        if(mMode==ProfileMode.MY){
+            mEditButton.setOnClickListener(this);
+            mBioHolder.setOnClickListener(this);
+            mHobbyHolder.setOnClickListener(this);
+            mDOBHolder.setOnClickListener(this);
+            mLogout.setOnClickListener(this);
+        }
     }
 
     @Override

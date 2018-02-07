@@ -19,6 +19,7 @@ import com.aurelhubert.ahbottomnavigation.notification.AHNotification;
 import com.bonlai.socialdiningapp.helpers.BottomBarAdapter;
 import com.bonlai.socialdiningapp.main.GatheringFragment;
 import com.bonlai.socialdiningapp.main.GatheringFragment.Mode;
+import com.bonlai.socialdiningapp.main.ProfileFragment.ProfileMode;
 import com.bonlai.socialdiningapp.helpers.NoSwipePager;
 import com.bonlai.socialdiningapp.main.ProfileFragment;
 import com.bonlai.socialdiningapp.main.RestaurantFragment;
@@ -150,8 +151,7 @@ public class MainActivity extends AppCompatActivity{
         pagerAdapter.addFragments(GatheringFragment.newInstance(Mode.ALL));
         pagerAdapter.addFragments(GatheringFragment.newInstance(Mode.MY));
         pagerAdapter.addFragments(new RestaurantFragment());
-        pagerAdapter.addFragments(new ProfileFragment());
-
+        pagerAdapter.addFragments(ProfileFragment.newInstance(ProfileMode.MY));
 
         viewPager.setAdapter(pagerAdapter);
 
