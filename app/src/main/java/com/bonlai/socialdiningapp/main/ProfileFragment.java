@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.LoginActivity;
 import com.bonlai.socialdiningapp.R;
+import com.bonlai.socialdiningapp.detail.profileEdit.EditDOBActivity;
 import com.bonlai.socialdiningapp.detail.profileEdit.EditHobbyActivity;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
@@ -50,10 +51,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private ImageView mProfilePic;
     private TextView mBio;
+    private TextView mDOB;
+    private TextView mGender;
     private FloatingActionButton mEditButton;
     private Button mLogout;
     private RelativeLayout mBioHolder;
     private RelativeLayout mHobbyHolder;
+    private RelativeLayout mDOBHolder;
+
 
     public static final int PICK_IMAGE = 100;
 
@@ -107,26 +112,32 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         String imgPath=myProfile.getImage();
         Picasso.with(getActivity()).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mProfilePic);
         mBio.setText(myProfile.getSelfIntroduction());
+        mDOB.setText(myProfile.getDob());
+        mGender.setText(myProfile.getGender());
     }
 
     private void initUI(View rootView ){
         mProfilePic=(ImageView) rootView.findViewById(R.id.profile_pic);
         mBio=(TextView)rootView.findViewById(R.id.bioText);
+        mDOB=(TextView)rootView.findViewById(R.id.DOB);
+        mGender=(TextView)rootView.findViewById(R.id.gender);
         mEditButton=(FloatingActionButton)rootView.findViewById(R.id.edit_pic);
         mLogout=(Button)rootView.findViewById(R.id.logout);
         mBioHolder = (RelativeLayout) rootView.findViewById(R.id.bio_holder);
         mHobbyHolder = (RelativeLayout) rootView.findViewById(R.id.hobby_holder);
+        mDOBHolder = (RelativeLayout) rootView.findViewById(R.id.DOB_holder);
+
 
         mEditButton.setOnClickListener(this);
         mBioHolder.setOnClickListener(this);
         mHobbyHolder.setOnClickListener(this);
+        mDOBHolder.setOnClickListener(this);
         mLogout.setOnClickListener(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        //((AppCompatActivity)getActivity()).getSupportActionBar().show();
     }
 
     @Override
@@ -202,6 +213,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
             case R.id.hobby_holder:
                 intent = new Intent(getContext(), EditHobbyActivity.class);
+                startActivity(intent);
+                break;
+
+
+            case R.id.DOB_holder:
+                intent = new Intent(getContext(), EditDOBActivity.class);
                 startActivity(intent);
                 break;
 

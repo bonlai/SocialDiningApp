@@ -12,7 +12,7 @@ public class Profile {
     private Integer userId;
     @SerializedName("dob")
 
-    private Object dob;
+    private String dob;
     @SerializedName("location")
 
     private String location;
@@ -34,11 +34,11 @@ public class Profile {
         this.userId = userId;
     }
 
-    public Object getDob() {
+    public String getDob() {
         return dob;
     }
 
-    public void setDob(Object dob) {
+    public void setDob(String dob) {
         this.dob = dob;
     }
 

@@ -32,6 +32,53 @@
                     android:src="@drawable/profile_default_profile_pic"/>
 
                 <RelativeLayout
+                    android:id="@+id/gender_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:padding="@dimen/activity_horizontal_margin">
+
+                    <ImageView
+                        android:id="@+id/ic_gender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                        android:adjustViewBounds="true"
+                        android:maxHeight="24dp"
+                        android:maxWidth="24dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_gender"
+                        android:tint="@color/colorAccent"/>
+
+                    <TextView
+                        android:id="@+id/gender_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/activity_horizontal_margin"
+                        android:layout_toEndOf="@id/ic_gender"
+                        android:text="Gender"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="#212121" />
+
+                    <TextView
+                        android:id="@+id/gender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/gender_title"
+                        android:layout_marginStart="@dimen/activity_horizontal_margin"
+                        android:layout_marginTop="8dp"
+                        android:layout_toEndOf="@id/ic_gender"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textColor="#727272" />
+
+
+                </RelativeLayout>
+
+                <include layout="@layout/item_divider" />
+
+                <RelativeLayout
                     android:id="@+id/bio_holder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -90,7 +137,7 @@
                         android:src="@drawable/ic_phone_black" />
 
                     <TextView
-                        android:id="@+id/tvNumber3"
+                        android:id="@+id/contact_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/activity_horizontal_margin"
@@ -105,11 +152,62 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/tvNumber3"
+                        android:layout_below="@id/contact_title"
                         android:layout_marginStart="@dimen/activity_horizontal_margin"
                         android:layout_marginTop="8dp"
                         android:layout_toEndOf="@id/ivContactItem3"
                         android:text="/@hah"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textColor="#727272" />
+
+
+                </RelativeLayout>
+
+                <include layout="@layout/item_divider" />
+
+                <RelativeLayout
+                    android:id="@+id/DOB_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:padding="@dimen/activity_horizontal_margin">
+
+                    <ImageView
+                        android:id="@+id/ic_DOB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                        android:adjustViewBounds="true"
+                        android:maxHeight="24dp"
+                        android:maxWidth="24dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_birthday"
+                        android:tint="@color/colorAccent" />
+
+                    <TextView
+                        android:id="@+id/dob_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/activity_horizontal_margin"
+                        android:layout_toEndOf="@id/ic_DOB"
+
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Date of Birth"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="#212121" />
+
+                    <TextView
+                        android:id="@+id/DOB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/dob_title"
+                        android:layout_marginStart="@dimen/activity_horizontal_margin"
+                        android:layout_marginTop="8dp"
+                        android:layout_toEndOf="@id/ic_DOB"
+                        android:text="2018-01-01"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="#727272" />
 
