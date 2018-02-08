@@ -43,17 +43,19 @@
                 android:id="@+id/gathering_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_weight="1"
                 android:text="Gathering Theme"
                 android:textColor="@color/appText"
                 android:textSize="18sp"
+                card_view:layout_constraintEnd_toStartOf="@+id/join"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/description"
+                android:id="@+id/bio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -63,7 +65,7 @@
                 android:text="This is the description. Testing TestingTestingTestingTestingTestingTestingTesting"
                 android:textColor="#666"
                 android:textSize="14dp"
-                card_view:layout_constraintStart_toEndOf="@+id/user_img"
+                card_view:layout_constraintStart_toEndOf="@+id/creater_img"
                 card_view:layout_constraintTop_toBottomOf="@+id/gathering_name"
                 tools:layout_constraintLeft_creator="1"
                 tools:layout_constraintTop_creator="1" />
@@ -79,12 +81,12 @@
                 android:textColor="#666"
                 android:textSize="14dp"
                 card_view:layout_constraintLeft_toRightOf="@+id/user_img"
-                card_view:layout_constraintTop_toBottomOf="@+id/description"
+                card_view:layout_constraintTop_toBottomOf="@+id/bio"
                 tools:layout_constraintLeft_creator="1"
                 tools:layout_constraintTop_creator="1" />
 
             <ImageView
-                android:id="@+id/user_img"
+                android:id="@+id/creater_img"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"

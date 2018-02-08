@@ -17,6 +17,15 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/date_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            card_view:layout_constraintRight_toRightOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/restaurant_name" />
+
+        <TextView
             android:id="@+id/restaurant_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -77,7 +86,7 @@
             android:textColor="@color/appText"/>
 
         <TextView
-            android:id="@+id/description"
+            android:id="@+id/bio"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="7dp"

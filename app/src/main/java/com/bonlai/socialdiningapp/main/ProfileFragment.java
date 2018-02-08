@@ -100,24 +100,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             int userId = getActivity().getIntent().getExtras().getInt("userId");
             getOtherUserProfile(userId);
         }else{
-            mProfile=MyUserHolder.getInstance().getUser().getProfile();
+            getMyProfile();
         }
 
         isStoragePermissionGranted();
     }
-
-    public  void isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            int REQUEST_CODE_CONTACT = 101;
-            String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
-            for (String str : permissions) {
-                if (getActivity().checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
-                    this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
-                }
-            }
-        }
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -131,9 +118,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         if(mMode!=ProfileMode.MY){
             mLogout.setVisibility(View.GONE);
             mEditButton.setVisibility(View.GONE);
-
-        }else{
-            updateProfile();
         }
 
         return rootView;
@@ -143,6 +127,28 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         //updateProfile();
+    }
+
+    private void initUI(View rootView ){
+        mProfilePic=(ImageView) rootView.findViewById(R.id.profile_pic);
+        mBio=(TextView)rootView.findViewById(R.id.bioText);
+        mDOB=(TextView)rootView.findViewById(R.id.DOB);
+        mGender=(TextView)rootView.findViewById(R.id.gender);
+
+        mEditButton=(FloatingActionButton)rootView.findViewById(R.id.edit_pic);
+        mLogout=(Button)rootView.findViewById(R.id.logout);
+
+        mBioHolder = (RelativeLayout) rootView.findViewById(R.id.bio_holder);
+        mHobbyHolder = (RelativeLayout) rootView.findViewById(R.id.hobby_holder);
+        mDOBHolder = (RelativeLayout) rootView.findViewById(R.id.DOB_holder);
+
+        if(mMode==ProfileMode.MY){
+            mEditButton.setOnClickListener(this);
+            mBioHolder.setOnClickListener(this);
+            mHobbyHolder.setOnClickListener(this);
+            mDOBHolder.setOnClickListener(this);
+            mLogout.setOnClickListener(this);
+        }
     }
 
     private void updateProfile(){
@@ -174,27 +180,25 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    private void initUI(View rootView ){
-        mProfilePic=(ImageView) rootView.findViewById(R.id.profile_pic);
-        mBio=(TextView)rootView.findViewById(R.id.bioText);
-        mDOB=(TextView)rootView.findViewById(R.id.DOB);
-        mGender=(TextView)rootView.findViewById(R.id.gender);
-
-        mEditButton=(FloatingActionButton)rootView.findViewById(R.id.edit_pic);
-        mLogout=(Button)rootView.findViewById(R.id.logout);
-
-        mBioHolder = (RelativeLayout) rootView.findViewById(R.id.bio_holder);
-        mHobbyHolder = (RelativeLayout) rootView.findViewById(R.id.hobby_holder);
-        mDOBHolder = (RelativeLayout) rootView.findViewById(R.id.DOB_holder);
-
-        if(mMode==ProfileMode.MY){
-            mEditButton.setOnClickListener(this);
-            mBioHolder.setOnClickListener(this);
-            mHobbyHolder.setOnClickListener(this);
-            mDOBHolder.setOnClickListener(this);
-            mLogout.setOnClickListener(this);
-        }
+    private void getMyProfile(){
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<Profile> getUserProfile = service.getProfile(MyUserHolder.getInstance().getUser().getPk());
+        getUserProfile.enqueue(new Callback<Profile>() {
+            @Override
+            public void onResponse(Call<Profile> call, Response<Profile> response) {
+                if(response.isSuccessful()){
+                    MyUserHolder.getInstance().getUser().setProfile(response.body());
+                    mProfile=response.body();
+                    updateProfile();
+                }
+            }
+            @Override
+            public void onFailure(Call<Profile> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
+
 
     @Override
     public void onStop() {
@@ -228,25 +232,29 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             }
             File file = new File(imagePath);
 
-            RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), reqFile);
-
-            APIclient.APIService service=APIclient.getAPIService();
-            Call<ResponseBody> req = service.postImage(body,myUserId);
-
-            req.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Log.v("Upload", "success");
-
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });
+            postImage(file);
         }
+    }
+
+    private void postImage(File file){
+        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), reqFile);
+
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<ResponseBody> req = service.postImage(body,myUserId);
+
+        req.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.v("Upload", "success");
+                getMyProfile();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     private String getImagePath(Uri uri, String selection) {
@@ -257,10 +265,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             if (cursor.moveToFirst()) {
                 path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
             }
-
             cursor.close();
         }
         return path;
+    }
+
+    private void isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            int REQUEST_CODE_CONTACT = 101;
+            String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+            for (String str : permissions) {
+                if (getActivity().checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                    this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
+                }
+            }
+        }
     }
 
     @Override

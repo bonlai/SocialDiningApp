@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 
 import android.widget.ProgressBar;
@@ -36,6 +38,7 @@ import com.bonlai.socialdiningapp.models.Profile;
 import com.bonlai.socialdiningapp.models.Restaurant;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -66,6 +69,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
     private ProgressBar mProgress;
     private RelativeLayout mContainer;
 
+    private MyGatheringAdapter myAdapter;
     public GatheringFragment() {
     }
 
@@ -163,13 +167,14 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         SearchView searchView=(SearchView)item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
-                //GatheringFragment.this.MyAdapter.getFilter().filter(s);
+            public boolean onQueryTextSubmit(String query) {
+                myAdapter.getFilter().filter(query);
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
+            public boolean onQueryTextChange(String query) {
+                myAdapter.getFilter().filter(query);
                 return false;
             }
         });
@@ -187,7 +192,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 @Override
                 public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
                     Log.d("fragment","called");
-                    MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
+                    myAdapter = new MyGatheringAdapter(getContext(), response.body());
                     recyclerView.setAdapter(myAdapter);
                     // refresh complete
                     mProgress.setVisibility(View.GONE);
@@ -206,7 +211,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 @Override
                 public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
 
-                    MyAdapter myAdapter = new MyAdapter(getContext(), response.body());
+                    myAdapter = new MyGatheringAdapter(getContext(), response.body());
                     recyclerView.setAdapter(myAdapter);
                     // refresh complete
                     mProgress.setVisibility(View.GONE);
@@ -221,8 +226,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         }
     }
 
-    public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+    public class MyGatheringAdapter extends RecyclerView.Adapter<MyGatheringAdapter.ViewHolder>implements Filterable {
         private List<Gathering> mGathering;
+        private List<Gathering> mGatheringFiltered;
         Context context;
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -234,6 +240,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
             public TextView mRestaurantName;
             public ImageView mRestaurantImg;
             public TextView mCategory;
+            public TextView mDateTime;
 
             public ImageView mCreator;
 
@@ -243,10 +250,11 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 mView = v;
                 mGatheringName = (TextView) v.findViewById(R.id.gathering_name);
                 mRestaurantImg = (ImageView) v.findViewById(R.id.restaurant_img);
-                mDescription = (TextView) v.findViewById(R.id.description);
+                mDescription = (TextView) v.findViewById(R.id.bio);
                 mRestaurantName=(TextView) v.findViewById(R.id.restaurant_name);
                 mCreator= (ImageView) v.findViewById(R.id.user_img);
                 mCategory=(TextView) v.findViewById(R.id.category);
+                mDateTime=(TextView) v.findViewById(R.id.date_time);
                 mJoin = (Switch) v.findViewById(R.id.join);
                 itemView.setOnClickListener(this);
 
@@ -260,25 +268,26 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
             }
         }
 
-        public MyAdapter(Context context, List<Gathering> gathering) {
+        public MyGatheringAdapter(Context context, List<Gathering> gathering) {
             this.context = context;
             mGathering=gathering;
+            mGatheringFiltered=gathering;
         }
 
         @Override
-        public MyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public MyGatheringAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.gathering, parent, false);
-            MyAdapter.ViewHolder vh = new MyAdapter.ViewHolder(v);
+            MyGatheringAdapter.ViewHolder vh = new MyGatheringAdapter.ViewHolder(v);
             return vh;
         }
 
         @Override
-        public void onBindViewHolder(final MyAdapter.ViewHolder holder, final int position) {
+        public void onBindViewHolder(final MyGatheringAdapter.ViewHolder holder, final int position) {
             APIclient.APIService service=APIclient.getAPIService();
 
             //get restaurant info
-            Call<Restaurant> getRestaurantInfo = service.getRestaurantInfo(mGathering.get(position).getRestaurant());
+            Call<Restaurant> getRestaurantInfo = service.getRestaurantInfo(mGatheringFiltered.get(position).getRestaurant());
             getRestaurantInfo.enqueue(new Callback<Restaurant>() {
                 @Override
                 public void onResponse(Call<Restaurant> call, Response<Restaurant> response) {
@@ -321,6 +330,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
             holder.mGatheringName.setText(mGathering.get(position).getName());
             holder.mGatheringName.setTag(mGathering.get(position).getId());
             holder.mDescription.setText(mGathering.get(position).getDetail());
+            holder.mDateTime.setText(mGathering.get(position).getStartDatetime());
 
             //set join button event
             final int gatheringId=mGathering.get(position).getId();
@@ -352,9 +362,43 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
         @Override
         public int getItemCount() {
-            return mGathering.size();
+            return mGatheringFiltered.size();
         }
 
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence charSequence) {
+                    String charString = charSequence.toString();
+                    if (charString.isEmpty()) {
+                        mGatheringFiltered = mGathering;
+                    } else {
+                        List<Gathering> filteredList = new ArrayList<>();
+                        for (Gathering gathering : mGathering) {
+
+                            // name match condition. this might differ depending on your requirement
+                            // here we are looking for name or phone number match
+                            if (gathering.getName().toLowerCase().contains(charString.toLowerCase()) || gathering.getDetail().contains(charSequence)) {
+                                filteredList.add(gathering);
+                            }
+                        }
+
+                        mGatheringFiltered = filteredList;
+                    }
+
+                    FilterResults filterResults = new FilterResults();
+                    filterResults.values = mGatheringFiltered;
+                    return filterResults;
+                }
+
+                @Override
+                protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                    mGatheringFiltered = (ArrayList<Gathering>) filterResults.values;
+                    notifyDataSetChanged();
+                }
+            };
+        }
         private void callParticipateAPI(Call<ResponseBody> req){
             req.enqueue(new Callback<ResponseBody>() {
                 @Override

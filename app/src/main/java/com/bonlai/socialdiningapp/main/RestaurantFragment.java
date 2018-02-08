@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bonlai.socialdiningapp.APIclient;
+import com.bonlai.socialdiningapp.adapter.MyRestaurantRecyclerViewAdapter;
 import com.bonlai.socialdiningapp.helpers.MapsActivity;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Restaurant;
@@ -112,7 +113,7 @@ public class RestaurantFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //GatheringFragment.this.MyAdapter.getFilter().filter(s);
+                //GatheringFragment.this.MyGatheringAdapter.getFilter().filter(s);
                 return false;
             }
 

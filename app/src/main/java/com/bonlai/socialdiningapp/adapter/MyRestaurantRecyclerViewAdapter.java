@@ -1,4 +1,4 @@
-package com.bonlai.socialdiningapp.main;
+package com.bonlai.socialdiningapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;

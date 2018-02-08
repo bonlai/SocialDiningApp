@@ -26,7 +26,7 @@ public class EditBioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_bio);
 
-        mBio=(TextView)findViewById(R.id.description);
+        mBio=(TextView)findViewById(R.id.bio);
         mSave=(Button)findViewById(R.id.save);
 
         mSave.setOnClickListener(new View.OnClickListener() {

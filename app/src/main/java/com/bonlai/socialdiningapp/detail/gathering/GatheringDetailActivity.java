@@ -21,7 +21,6 @@ import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.detail.profileEdit.OtherProfileActivity;
 import com.bonlai.socialdiningapp.detail.restaurant.RestaurantDetailActivity;
-import com.bonlai.socialdiningapp.main.GatheringFragment;
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Restaurant;
@@ -52,7 +51,9 @@ public class GatheringDetailActivity extends AppCompatActivity {
     private View mRestaurantHolder;
 
     private TextView mGatheringName;
+    private ImageView mCreaterImg;
     private TextView mDescription;
+    private TextView mDateTime;
     private Switch mJoin;
 
     private int myUserId;
@@ -93,8 +94,29 @@ public class GatheringDetailActivity extends AppCompatActivity {
         mRestaurantHolder=(View)findViewById(R.id.restaurant_holder);
 
         mGatheringName = (TextView) findViewById(R.id.gathering_name);
-        mDescription = (TextView) findViewById(R.id.description);
+        mCreaterImg = (ImageView) findViewById(R.id.creater_img);
+        mDescription = (TextView) findViewById(R.id.bio);
+        mDateTime= (TextView) findViewById(R.id.date_time);
         mJoin = (Switch) findViewById(R.id.join);
+    }
+
+    private void getCreater(){
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<List<User>> getOthersDetail = service.getOthersDetail(mGathering.getCreatedBy());
+        getOthersDetail.enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if(response.isSuccessful()){
+                    updateCreater(response.body().get(0));
+                }else{
+
+                }
+            }
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     private void getGatheringInfo(final Context context){
@@ -111,6 +133,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
                         getParticipants(id);
                     }
                     getRestaurantInfo(mGathering.getRestaurant());
+                    getCreater();
                     adapter=new MyParticipantRecyclerViewAdapter(context,mParticipants);
                     recyclerView.setAdapter(adapter);
                 }else{
@@ -171,6 +194,20 @@ public class GatheringDetailActivity extends AppCompatActivity {
         this.startActivity(intent);
     }
 
+    private void updateCreater(final User creater){
+
+        mCreaterImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent (GatheringDetailActivity.this, OtherProfileActivity.class);
+                intent.putExtra("userId", creater.getId());
+                GatheringDetailActivity.this.startActivity(intent);
+            }
+        });
+        String imgPath=creater.getProfile().getImage();
+        Picasso.with(GatheringDetailActivity.this).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mCreaterImg);
+    }
+
     private void updateRestaurant(Restaurant mRestaurant){
         String imgPath = mRestaurant.getImage().get(0).getImage();
         final int restaurantId=mRestaurant.getId();
@@ -194,6 +231,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
         mGatheringName.setText(mGathering.getName());
         mGatheringName.setTag(mGathering.getId());
         mDescription.setText(mGathering.getDetail());
+        mDateTime.setText(mGathering.getStartDatetime());
 
         if(mGathering.getMember().contains(myUserId)||mGathering.getCreatedBy()==myUserId){
             mJoin.setChecked(true);
@@ -203,10 +241,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
 
         mJoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                APIclient.APIService service=APIclient.getAPIService();
-                Call<ResponseBody> req = service.joinGathering(myUserId, gatheringId);
                 callParticipateAPI();
-
             }
         });
     }
@@ -250,20 +285,6 @@ public class GatheringDetailActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final MyParticipantRecyclerViewAdapter.ViewHolder holder, final int position) {
- /*           //String imgPath = mReview.get(position).getImage().get(0).getImage();
-            final int restaurantId=mRestaurant.get(position).getId();
-            Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
-          */
-
-
-/*            holder.mComment.setText(mReview.get(position).getComment());
-
-
-            APIclient.APIService service=APIclient.getAPIService();
-            //Call<ResponseBody> postReview = service.postReview(mReview.get(position).getUser());
-
-            holder.mRating.setIsIndicator(true);
-            holder.mRating.setRating(mReview.get(position).getRating());*/
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -275,7 +296,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
 
             holder.mUsername.setText(mParticipants.get(position).getUsername());
             holder.mBio.setText(mParticipants.get(position).getProfile().getSelfIntroduction());
-
+            holder.mGender.setText(mParticipants.get(position).getProfile().getGender());
             String userProfilePic=mParticipants.get(position).getProfile().getImage();
             Picasso.with(context).load(userProfilePic).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mProfilePic);
         }
@@ -290,13 +311,15 @@ public class GatheringDetailActivity extends AppCompatActivity {
             public final View mView;
             public TextView mBio;
             public TextView mUsername;
+            public TextView mGender;
             public ImageView mProfilePic;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
                 mUsername=(TextView) mView.findViewById(R.id.username);
-                mBio=(TextView) mView.findViewById(R.id.description);
+                mBio=(TextView) mView.findViewById(R.id.bio);
+                mGender=(TextView) mView.findViewById(R.id.gender);
                 mProfilePic=(ImageView) mView.findViewById(R.id.user_img);
             }
         }

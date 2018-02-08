@@ -63,8 +63,8 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
         });
 
         restaurantId = getIntent().getExtras().getInt("restaurantId");
-        getReview(this,restaurantId,recyclerView);
-        getRestaurantInfo(restaurantId);
+        getReview();
+        getRestaurantInfo();
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -84,7 +84,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
         mCountNo=(TextView)findViewById(R.id.count_no);
     }
 
-    private void getReview(final Context context,int restaurantId, final RecyclerView recyclerView){
+    private void getReview(){
         APIclient.APIService service=APIclient.getAPIService();
         Call<List<Review>> getReview = service.getReview(restaurantId);
         getReview.enqueue(new Callback<List<Review>>() {
@@ -93,7 +93,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
                 if(response.isSuccessful()){
                     List<Review> review=response.body();
                     //Log.d("array lentgh",""+review.size());
-                    recyclerView.setAdapter(new MyCommentRecyclerViewAdapter(context,review));
+                    recyclerView.setAdapter(new MyCommentRecyclerViewAdapter(RestaurantDetailActivity.this,review));
                 }
             }
             @Override
@@ -103,7 +103,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
         });
     }
 
-    private void getRestaurantInfo(int restaurantId){
+    private void getRestaurantInfo(){
         APIclient.APIService service=APIclient.getAPIService();
         Call<Restaurant> getRestaurantInfo = service.getRestaurantInfo(restaurantId);
         getRestaurantInfo.enqueue(new Callback<Restaurant>() {
@@ -111,6 +111,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
             public void onResponse(Call<Restaurant> call, Response<Restaurant> response) {
                 if(response.isSuccessful()){
                     restaurant=response.body();
+                    getReview();
                     updateCard();
                 }
             }
@@ -144,6 +145,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
                     Toast.makeText(RestaurantDetailActivity.this, "Review posted", Toast.LENGTH_SHORT).show();
+                    getRestaurantInfo();
                 }
             }
             @Override
