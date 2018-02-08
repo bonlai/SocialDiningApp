@@ -1,9 +1,5 @@
 package com.bonlai.socialdiningapp.helpers;
 
-/**
- * Created by Bon Lai on 18/1/2018.
- */
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;

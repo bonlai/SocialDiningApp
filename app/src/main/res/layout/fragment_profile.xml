@@ -32,6 +32,51 @@
                     android:src="@drawable/profile_default_profile_pic"/>
 
                 <RelativeLayout
+                    android:id="@+id/username_holder"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:padding="@dimen/activity_horizontal_margin">
+
+                    <ImageView
+                        android:id="@+id/ic_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                        android:adjustViewBounds="true"
+                        android:maxHeight="24dp"
+                        android:maxWidth="24dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_gender"
+                        android:tint="@color/colorAccent"/>
+
+                    <TextView
+                        android:id="@+id/username_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/activity_horizontal_margin"
+                        android:layout_toEndOf="@id/ic_username"
+                        android:text="Username"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        android:textColor="#212121" />
+
+                    <TextView
+                        android:id="@+id/username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/username_title"
+                        android:layout_marginStart="@dimen/activity_horizontal_margin"
+                        android:layout_marginTop="8dp"
+                        android:layout_toEndOf="@id/ic_username"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textColor="#727272" />
+                </RelativeLayout>
+
+                <include layout="@layout/item_divider" />
+
+                <RelativeLayout
                     android:id="@+id/gender_holder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

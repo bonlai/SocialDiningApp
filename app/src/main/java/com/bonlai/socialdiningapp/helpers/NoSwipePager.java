@@ -1,19 +1,9 @@
 package com.bonlai.socialdiningapp.helpers;
 
-/**
- * Created by Bon Lai on 18/1/2018.
- */
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-
-/**
- * BottomNav
- * Created by Suleiman19 on 6/12/17.
- * Copyright (c) 2017. Suleiman Ali Shakir. All rights reserved.
- */
-
 public class NoSwipePager extends ViewPager {
     private boolean enabled;
 

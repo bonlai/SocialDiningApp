@@ -92,6 +92,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         if (getArguments() != null) {
             mMode = (Mode)getArguments().getSerializable(ARG_MODE);
         }

@@ -134,6 +134,8 @@ public class APIclient {
         Call<List<Gathering>> getMyGatheringList(
                 @Path("id") Integer id);
 
+        @GET("api/interest/")
+        Call<List<Interest>> getInterestList();
 
         @FormUrlEncoded
         @PUT("api/interest/")
