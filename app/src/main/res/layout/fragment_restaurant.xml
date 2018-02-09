@@ -96,19 +96,22 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="Address"
+            android:ellipsize="end"
+            android:maxLines="3"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toEndOf="@+id/addressIC"
             card_view:layout_constraintTop_toBottomOf="@+id/category" />
 
         <Button
             android:id="@+id/addNewGathering"
-            android:layout_width="wrap_content"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="Button"
+            android:layout_marginStart="8dp"
+            android:text="+"
             card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintEnd_toEndOf="parent" />
+            card_view:layout_constraintStart_toStartOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 

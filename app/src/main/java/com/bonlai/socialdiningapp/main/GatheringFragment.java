@@ -309,6 +309,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 }
             });
 
+            if(mGatheringFiltered.get(position).getCreatedBy()==myUserId){
+                holder.mJoin.setVisibility(View.GONE);
+            }
             //get user img
             Call<Profile> getUserImg = service.getProfile(mGathering.get(position).getCreatedBy());
             getUserImg.enqueue(new Callback<Profile>() {
