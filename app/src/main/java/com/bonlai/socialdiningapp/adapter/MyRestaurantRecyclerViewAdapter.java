@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 
 import com.bonlai.socialdiningapp.R;
 
+import com.bonlai.socialdiningapp.detail.gathering.NewGatheringActivity;
+import com.bonlai.socialdiningapp.detail.profileEdit.EditBioActivity;
 import com.bonlai.socialdiningapp.detail.restaurant.RestaurantDetailActivity;
 import com.bonlai.socialdiningapp.models.Restaurant;
 import com.squareup.picasso.Picasso;
@@ -40,7 +43,7 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         String imgPath = mRestaurant.get(position).getImage().get(0).getImage();
         final int restaurantId=mRestaurant.get(position).getId();
         Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
@@ -52,6 +55,16 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
                 context.startActivity(intent);
             }
         });
+        holder.mCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, NewGatheringActivity.class);
+                intent.putExtra("restaurantId", restaurantId);
+                intent.putExtra("restaurantName", mRestaurant.get(position).getName());
+                context.startActivity(intent);
+            }
+        });
+
         double rating=mRestaurant.get(position).getAverageRate();
         holder.mAvgRating.setRating((float)rating);
         holder.mAvgRating.setIsIndicator(true);
@@ -75,6 +88,7 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         public TextView mCategory;
         public TextView mAddress;
         public TextView mRestaurantName;
+        public Button mCreate;
         //public Restaurant mRestaurant;
         //public DummyItem mItem;
 
@@ -86,16 +100,20 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             mCategory=(TextView) mView.findViewById(R.id.category);
             mAddress=(TextView) mView.findViewById(R.id.address);
             mRestaurantName=(TextView) mView.findViewById(R.id.restaurant_name);
+            mCreate=(Button) mView.findViewById(R.id.addNewGathering);
+
+            mCreate.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent (context, RestaurantDetailActivity.class);
-            context.startActivity(intent);
+            Intent intent;
+            switch (view.getId()) {
+                case R.id.addNewGathering:
 
-            Toast toast = Toast.makeText(context, "Testing toast" , Toast.LENGTH_LONG);
-            toast.show();
+                    break;
+            }
         }
     }
 }

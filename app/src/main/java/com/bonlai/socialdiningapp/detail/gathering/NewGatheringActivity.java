@@ -39,6 +39,7 @@ public class NewGatheringActivity extends AppCompatActivity {
     private EditText mDetail;
 
     private int userID;
+    private int restaurantId;
 
     private String date;
     private String time;
@@ -51,6 +52,7 @@ public class NewGatheringActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         dateText = (TextView)findViewById(R.id.showDate);
         dateButton = (Button)findViewById(R.id.dateButton);
 
@@ -61,7 +63,10 @@ public class NewGatheringActivity extends AppCompatActivity {
         restaurantID=(EditText)findViewById(R.id.restaurantID);
         mDetail=(EditText)findViewById(R.id.detail);
         //userID=(EditText)findViewById(R.id.userID);
-
+        if(getIntent()!=null){
+            restaurantId = getIntent().getIntExtra("restaurantId",0);
+            restaurantID.setText(getIntent().getStringExtra("restaurantName"));
+        }
         date="";
         time="";
 
@@ -131,7 +136,7 @@ public class NewGatheringActivity extends AppCompatActivity {
             gathering.setdetail(mDetail.getText().toString());
             gathering.setIsStart(false);
             gathering.setCreatedBy(userID);
-            gathering.setRestaurant(Integer.valueOf(restaurantID.getText().toString()));
+            gathering.setRestaurant(restaurantId);
 
             APIclient.APIService service=APIclient.getAPIService();
             Call<ResponseBody> req = service.createGathering(gathering);
