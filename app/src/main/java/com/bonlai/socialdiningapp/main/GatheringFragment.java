@@ -358,7 +358,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent (context, GatheringDetailActivity.class);
-                    intent.putExtra("gatheringId", gatheringId);
+                    intent.putExtra(GatheringDetailActivity.GATHERING_ID, gatheringId);
                     context.startActivity(intent);
                 }
             });

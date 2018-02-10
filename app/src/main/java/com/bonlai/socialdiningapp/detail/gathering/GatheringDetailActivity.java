@@ -57,6 +57,9 @@ public class GatheringDetailActivity extends AppCompatActivity {
     private Switch mJoin;
 
     private int myUserId;
+
+    public static final String GATHERING_ID="gatheringId";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,7 +74,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
 
     private void initVar(){
         mParticipants=new ArrayList<>();
-        gatheringId = getIntent().getExtras().getInt("gatheringId");
+        gatheringId = getIntent().getExtras().getInt(GATHERING_ID);
         myUserId= MyUserHolder.getInstance().getUser().getPk();
     }
 

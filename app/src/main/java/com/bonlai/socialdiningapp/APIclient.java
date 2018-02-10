@@ -39,7 +39,7 @@ public class APIclient {
     static APIService mAPIService;
     private static OkHttpClient.Builder OKHttpBuilder = new OkHttpClient.Builder();
     private static Retrofit.Builder builder=new Retrofit.Builder().
-            baseUrl("http://192.168.2.5:8000/").
+            baseUrl("http://192.168.2.2:8000/").
             addConverterFactory(GsonConverterFactory.create());
     public static Retrofit retrofit() {
         if (mRetrofit == null) {
@@ -149,6 +149,9 @@ public class APIclient {
 
         @GET("api/gathering/")
         Call<List<Gathering>> getGatheringList();
+
+        @GET("api/gathering/location/")
+        Call<List<MapMarker>> getGatheringLocationList();
 
         @GET("api/gathering/{id}")
         Call<Gathering> getGatheringDetail(

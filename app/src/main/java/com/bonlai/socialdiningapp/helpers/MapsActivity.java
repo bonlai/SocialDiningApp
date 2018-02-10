@@ -20,7 +20,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.bonlai.socialdiningapp.APIclient;
+import com.bonlai.socialdiningapp.GeocodeAPIclient;
 import com.bonlai.socialdiningapp.R;
+import com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity;
+import com.bonlai.socialdiningapp.main.GatheringFragment;
+import com.bonlai.socialdiningapp.models.Gathering;
+import com.bonlai.socialdiningapp.models.MapMarker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -47,8 +53,21 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.os.Build;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks{
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleMap.OnInfoWindowClickListener {
 
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     private static final int PLACE_PICKER_REQUEST = 1000;
@@ -60,7 +79,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FusedLocationProviderClient mFusedLocationClient;
     private Marker mCurrLocationMarker;
     private Circle mCircle;
-    double lat = 0, lng = 0;
+
+    private List<MapMarker> mMarkers;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +101,70 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        //buildGoogleAPIClient();
+        getGathering();
+    }
 
+    private void getGathering(){
+        APIclient.APIService service=APIclient.getAPIService();
+        Call<List<MapMarker>> getGatheringLocationList = service.getGatheringLocationList();
+        getGatheringLocationList.enqueue(new Callback<List<MapMarker>>() {
+            @Override
+            public void onResponse(Call<List<MapMarker>> call, Response<List<MapMarker>> response) {
+                mMarkers=response.body();
+
+                for(MapMarker marker:mMarkers){
+                    getLatLng(marker);
+                }
+            }
+            @Override
+            public void onFailure(Call<List<MapMarker>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void getLatLng(final MapMarker marker){
+        GeocodeAPIclient.APIService mService=GeocodeAPIclient.getAPIService();
+        String key = getString(R.string.google_maps_key);
+        Call<ResponseBody> service=mService.getCityResults(marker.getRestaurant().getAddress(),key);
+
+        Callback<ResponseBody> responseBodyCallback=new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    try {
+                        JSONObject jsonObj = new JSONObject(response.body().string());
+                        Log.d("JSON obj", "JSON obj: " + jsonObj);
+
+                        double longitude = ((JSONArray)jsonObj.get("results")).getJSONObject(0)
+                                .getJSONObject("geometry").getJSONObject("location")
+                                .getDouble("lng");
+                        Log.d("JSON longitude", "JSON longitude: " + longitude);
+
+                        double latitude = ((JSONArray)jsonObj.get("results")).getJSONObject(0)
+                                .getJSONObject("geometry").getJSONObject("location")
+                                .getDouble("lat");
+                        LatLng latLng=new LatLng(latitude,longitude);
+                        createMarker(marker,latLng);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+            }
+        };
+        service.enqueue(responseBodyCallback);
+    }
+
+    private void createMarker(MapMarker marker,LatLng latLng){
+        mMap.addMarker(new MarkerOptions().position(latLng)
+                .title(marker.getName()).snippet(marker.getRestaurant().getAddress())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))).setTag(marker.getId());
     }
 
     private void buildGoogleAPIClient() {
@@ -128,7 +211,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        mMap.setOnInfoWindowClickListener(this);
         buildGoogleAPIClient();
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(120000); // two minute interval
@@ -236,4 +319,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Intent intent = new Intent (this, GatheringDetailActivity.class);
+        intent.putExtra(GatheringDetailActivity.GATHERING_ID, (int)marker.getTag());
+        this.startActivity(intent);
+    }
 }
