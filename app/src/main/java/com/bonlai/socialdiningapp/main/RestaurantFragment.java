@@ -106,7 +106,7 @@ public class RestaurantFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-
+        menu.clear();
         inflater.inflate(R.menu.restaurant_search, menu);
         MenuItem item=menu.findItem(R.id.action_search);
         SearchView searchView=(SearchView)item.getActionView();
