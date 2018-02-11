@@ -262,6 +262,7 @@
                 <include layout="@layout/item_divider" />
 
                 <RelativeLayout
+                    android:id="@+id/districts_holder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"

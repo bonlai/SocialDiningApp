@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.LoginActivity;
 import com.bonlai.socialdiningapp.R;
+import com.bonlai.socialdiningapp.detail.profileEdit.EditActiveDistrictActivity;
 import com.bonlai.socialdiningapp.detail.profileEdit.EditDOBActivity;
 import com.bonlai.socialdiningapp.detail.profileEdit.EditHobbyActivity;
 import com.bonlai.socialdiningapp.detail.profileEdit.OtherProfileActivity;
@@ -61,7 +62,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private RelativeLayout mBioHolder;
     private RelativeLayout mHobbyHolder;
     private RelativeLayout mDOBHolder;
-
+    private RelativeLayout mDistrictsHolder;
 
     public static final int PICK_IMAGE = 100;
     private int myUserId;
@@ -141,12 +142,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mBioHolder = (RelativeLayout) rootView.findViewById(R.id.bio_holder);
         mHobbyHolder = (RelativeLayout) rootView.findViewById(R.id.hobby_holder);
         mDOBHolder = (RelativeLayout) rootView.findViewById(R.id.DOB_holder);
+        mDistrictsHolder = (RelativeLayout) rootView.findViewById(R.id.districts_holder);
 
         if(mMode==ProfileMode.MY){
             mEditButton.setOnClickListener(this);
             mBioHolder.setOnClickListener(this);
             mHobbyHolder.setOnClickListener(this);
             mDOBHolder.setOnClickListener(this);
+            mDistrictsHolder.setOnClickListener(this);
             mLogout.setOnClickListener(this);
         }
     }
@@ -299,6 +302,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
             case R.id.DOB_holder:
                 intent = new Intent(getContext(), EditDOBActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.districts_holder:
+                intent = new Intent(getContext(), EditActiveDistrictActivity.class);
                 startActivity(intent);
                 break;
 
