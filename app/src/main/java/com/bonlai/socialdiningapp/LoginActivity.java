@@ -152,12 +152,5 @@ public class LoginActivity extends AppCompatActivity{
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
-
-    public void goToMap(View view){
-        Intent intent = new Intent(this, MapsActivity.class);
-        startActivity(intent);
-    }
-
-
 }
 

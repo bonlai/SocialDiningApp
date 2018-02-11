@@ -40,11 +40,26 @@ public class MainActivity extends AppCompatActivity{
     private boolean notificationVisible = false;
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // Make sure to call the super method so that the states of our views are saved
+        super.onSaveInstanceState(outState);
+        // Save our own state now
+        outState.putSerializable("Token", Token.getToken().getKey());
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState != null) {
+            String token = savedInstanceState.getString("Token");
+            Token.getToken().setKey(token);
+            APIclient.setToken();
+        }
         //load user detail(e.g. user id) to singleton class:MyUserHolder
-        setUserDetail();
+
+         setUserDetail();
+
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -115,6 +130,8 @@ public class MainActivity extends AppCompatActivity{
                     MyUserHolder.getInstance().setUser(response.body());
                     setProfile();
                     setupViewPager();
+                }else{
+                    Log.d("Main token",Token.getToken().getKey());
                 }
             }
             @Override
