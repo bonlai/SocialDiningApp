@@ -32,6 +32,7 @@ import com.bonlai.socialdiningapp.APIclient;
 import com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity;
 import com.bonlai.socialdiningapp.detail.gathering.NewGatheringActivity;
 import com.bonlai.socialdiningapp.R;
+import com.bonlai.socialdiningapp.helpers.MapsActivity;
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
@@ -180,6 +181,22 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
             }
         });
         super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_map:
+                Intent intent = new Intent(getContext(), MapsActivity.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 
     public void refresh(){
@@ -331,15 +348,15 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
             });
 
             //get gathering info
-            holder.mGatheringName.setText(mGathering.get(position).getName());
-            holder.mGatheringName.setTag(mGathering.get(position).getId());
-            holder.mDescription.setText(mGathering.get(position).getDetail());
-            holder.mDateTime.setText(mGathering.get(position).getStartDatetime());
+            holder.mGatheringName.setText(mGatheringFiltered.get(position).getName());
+            holder.mGatheringName.setTag(mGatheringFiltered.get(position).getId());
+            holder.mDescription.setText(mGatheringFiltered.get(position).getDetail());
+            holder.mDateTime.setText(mGatheringFiltered.get(position).getStartDatetime());
 
             //set join button event
-            final int gatheringId=mGathering.get(position).getId();
+            final int gatheringId=mGatheringFiltered.get(position).getId();
 
-            if(mGathering.get(position).getMember().contains(myUserId)||mGathering.get(position).getCreatedBy()==myUserId){
+            if(mGatheringFiltered.get(position).getMember().contains(myUserId)||mGatheringFiltered.get(position).getCreatedBy()==myUserId){
                 holder.mJoin.setChecked(true);
             }else{
                 holder.mJoin.setChecked(false);
@@ -383,8 +400,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
                             // name match condition. this might differ depending on your requirement
                             // here we are looking for name or phone number match
-                            if (gathering.getName().toLowerCase().contains(charString.toLowerCase()) || gathering.getDetail().contains(charSequence)) {
+                            if (gathering.getName().toLowerCase().contains(charString.toLowerCase())) {
                                 filteredList.add(gathering);
+                                Log.d("Filter:", gathering.getName().toLowerCase()+" "+charString.toLowerCase());
                             }
                         }
 
