@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -88,7 +89,9 @@ public class GatheringDetailActivity extends AppCompatActivity {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
 
-
+        Button addButton=(Button)findViewById(R.id.addNewGathering);
+        addButton.setVisibility(View.GONE);
+        
         mRestaurantImg=(ImageView) findViewById(R.id.restaurant_img);
         mAvgRating=(MaterialRatingBar) findViewById(R.id.average_rating);
         mCategory=(TextView) findViewById(R.id.category);

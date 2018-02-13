@@ -54,6 +54,7 @@ import static com.bonlai.socialdiningapp.LoginActivity.SETTING_INFOS;
 public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private ImageView mProfilePic;
+    private TextView mUsername;
     private TextView mBio;
     private TextView mDOB;
     private TextView mGender;
@@ -69,6 +70,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private ProfileMode mMode;
 
     private Profile mProfile;
+    private User mUser;
 
     private static final String ARG_MODE = "mode";
 
@@ -135,6 +137,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mBio=(TextView)rootView.findViewById(R.id.bioText);
         mDOB=(TextView)rootView.findViewById(R.id.DOB);
         mGender=(TextView)rootView.findViewById(R.id.gender);
+        mUsername=(TextView)rootView.findViewById(R.id.username);
 
         mEditButton=(FloatingActionButton)rootView.findViewById(R.id.edit_pic);
         mLogout=(Button)rootView.findViewById(R.id.logout);
@@ -155,6 +158,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateProfile(){
+        mUsername.setText(mUser.getUsername());
         String imgPath=mProfile.getImage();
         Picasso.with(getActivity()).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mProfilePic);
         mBio.setText(mProfile.getSelfIntroduction());
@@ -170,6 +174,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if(response.isSuccessful()){
                     Log.d("adding ",""+userId);
+                    mUser=response.body().get(0);
                     mProfile=response.body().get(0).getProfile();
                     updateProfile();
                 }else{
@@ -191,6 +196,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<Profile> call, Response<Profile> response) {
                 if(response.isSuccessful()){
                     MyUserHolder.getInstance().getUser().setProfile(response.body());
+                    mUser=MyUserHolder.getInstance().getUser();
                     mProfile=response.body();
                     updateProfile();
                 }
