@@ -58,6 +58,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -81,6 +82,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Circle mCircle;
 
     private List<MapMarker> mMarkers;
+
+    private HashMap<LatLng, Float> rotation= new HashMap<LatLng, Float>();
 
 
     @Override
@@ -134,18 +137,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(response.isSuccessful()){
                     try {
                         JSONObject jsonObj = new JSONObject(response.body().string());
-                        Log.d("JSON obj", "JSON obj: " + jsonObj);
+                        //Log.d("JSON obj", "JSON obj: " + jsonObj);
 
                         double longitude = ((JSONArray)jsonObj.get("results")).getJSONObject(0)
                                 .getJSONObject("geometry").getJSONObject("location")
                                 .getDouble("lng");
-                        Log.d("JSON longitude", "JSON longitude: " + longitude);
+                        //Log.d("JSON longitude", "JSON longitude: " + longitude);
 
                         double latitude = ((JSONArray)jsonObj.get("results")).getJSONObject(0)
                                 .getJSONObject("geometry").getJSONObject("location")
                                 .getDouble("lat");
                         LatLng latLng=new LatLng(latitude,longitude);
-                        createMarker(marker,latLng);
+                        marker.setLatLng(latLng);
+                        createMarker(marker);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
@@ -161,10 +165,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         service.enqueue(responseBodyCallback);
     }
 
-    private void createMarker(MapMarker marker,LatLng latLng){
-        mMap.addMarker(new MarkerOptions().position(latLng)
+    private void createMarker(MapMarker marker){
+        float rotationValue=getRotation(marker.getLatLng());
+        mMap.addMarker(new MarkerOptions().position(marker.getLatLng()).rotation(rotationValue)
                 .title(marker.getName()).snippet(marker.getRestaurant().getAddress())
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))).setTag(marker.getId());
+    }
+
+    private float getRotation(LatLng latLng){
+        Float value = rotation.get(latLng);
+        if (value != null) {
+            Log.d("rotation1 ",""+value);
+            rotation.put(latLng, value+30);
+            return value+10;
+        } else {
+            rotation.put(latLng, (float)0);
+            Log.d("rotation2 "," ");
+            return 0;
+        }
     }
 
     private void buildGoogleAPIClient() {

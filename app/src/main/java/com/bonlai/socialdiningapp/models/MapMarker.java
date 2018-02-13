@@ -1,5 +1,6 @@
 package com.bonlai.socialdiningapp.models;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -18,6 +19,8 @@ import com.google.gson.annotations.SerializedName;
         @SerializedName("restaurant")
 
         private Restaurant restaurant;
+
+        private LatLng latLng;
 
         public Integer getId() {
             return id;
@@ -41,6 +44,14 @@ import com.google.gson.annotations.SerializedName;
 
         public void setRestaurant(Restaurant restaurant) {
             this.restaurant = restaurant;
+        }
+
+        public LatLng getLatLng() {
+            return latLng;
+        }
+
+        public void setLatLng(LatLng latLng) {
+            this.latLng = latLng;
         }
 
     }
