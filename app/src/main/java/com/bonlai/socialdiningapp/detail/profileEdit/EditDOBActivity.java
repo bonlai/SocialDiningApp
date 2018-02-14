@@ -12,6 +12,7 @@ import com.bonlai.socialdiningapp.network.APIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
+import com.bonlai.socialdiningapp.network.AuthAPIclient;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,7 +44,7 @@ public class EditDOBActivity extends AppCompatActivity {
     }
 
     private void setDOB(String DOB){
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
         Profile myProfile= MyUserHolder.getInstance().getUser().getProfile();
         int myUserId= MyUserHolder.getInstance().getUser().getPk();
         //Log.d("BIO",bio);

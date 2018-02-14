@@ -18,6 +18,7 @@ import com.bonlai.socialdiningapp.network.APIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Restaurant;
 import com.bonlai.socialdiningapp.models.Review;
+import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -83,7 +84,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
     }
 
     private void getReview(){
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
         Call<List<Review>> getReview = service.getReview(restaurantId);
         getReview.enqueue(new Callback<List<Review>>() {
             @Override
@@ -102,7 +103,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
     }
 
     private void getRestaurantInfo(){
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
         Call<Restaurant> getRestaurantInfo = service.getRestaurantInfo(restaurantId);
         getRestaurantInfo.enqueue(new Callback<Restaurant>() {
             @Override
@@ -136,7 +137,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
 
     @Override
     public void onClick(String comment, int rating) {
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
         Call<ResponseBody> postReview = service.postReview(comment,rating,restaurantId);
         postReview.enqueue(new Callback<ResponseBody>() {
             @Override

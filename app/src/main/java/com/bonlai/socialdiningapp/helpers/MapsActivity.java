@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.bonlai.socialdiningapp.network.APIclient;
+import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.network.GeocodeAPIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity;
@@ -101,7 +102,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void getGathering(){
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
         Call<List<MapMarker>> getGatheringLocationList = service.getGatheringLocationList();
         getGatheringLocationList.enqueue(new Callback<List<MapMarker>>() {
             @Override

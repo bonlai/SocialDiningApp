@@ -8,6 +8,7 @@ import android.widget.MultiAutoCompleteTextView;
 import com.bonlai.socialdiningapp.network.APIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Interest;
+import com.bonlai.socialdiningapp.network.AuthAPIclient;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class EditHobbyActivity extends AppCompatActivity {
     }
 
     private void getInterestList(){
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
         Call<List<Interest>> req = service.getInterestList();
         req.enqueue(new Callback<List<Interest>>() {
             @Override

@@ -26,6 +26,7 @@ import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Restaurant;
 import com.bonlai.socialdiningapp.models.User;
+import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -107,7 +108,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
     }
 
     private void getCreater(){
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
         Call<List<User>> getOthersDetail = service.getOthersDetail(mGathering.getCreatedBy());
         getOthersDetail.enqueue(new Callback<List<User>>() {
             @Override
@@ -126,7 +127,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
     }
 
     private void getGatheringInfo(final Context context){
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
         Call<Gathering> getGatheringDetail = service.getGatheringDetail(gatheringId);
         getGatheringDetail.enqueue(new Callback<Gathering>() {
             @Override
@@ -154,7 +155,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
     }
 
     private void getParticipants(final int id){
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
         Call<List<User>> getOthersDetail = service.getOthersDetail(id);
         getOthersDetail.enqueue(new Callback<List<User>>() {
             @Override
@@ -176,7 +177,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
     }
 
     private void getRestaurantInfo(int id){
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
 
         //get restaurant info
         Call<Restaurant> getRestaurantInfo = service.getRestaurantInfo(id);
@@ -253,7 +254,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
     }
 
     private void callParticipateAPI(){
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
         Call<ResponseBody> req = service.joinGathering(myUserId, gatheringId);
         req.enqueue(new Callback<ResponseBody>() {
             @Override

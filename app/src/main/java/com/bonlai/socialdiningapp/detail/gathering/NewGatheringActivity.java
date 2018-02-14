@@ -18,6 +18,7 @@ import com.bonlai.socialdiningapp.network.APIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
+import com.bonlai.socialdiningapp.network.AuthAPIclient;
 
 import java.util.Calendar;
 
@@ -137,7 +138,7 @@ public class NewGatheringActivity extends AppCompatActivity {
             gathering.setCreatedBy(userID);
             gathering.setRestaurant(restaurantId);
 
-            APIclient.APIService service=APIclient.getAPIService();
+            AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
             Call<ResponseBody> req = service.createGathering(gathering);
             req.enqueue(new Callback<ResponseBody>() {
                 @Override

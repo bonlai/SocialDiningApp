@@ -61,14 +61,6 @@ public class APIclient {
                 @Field("username") String username,
                 @Field("password") String password);
 
-        @GET("api/rest-auth/user/")
-        Call<User> getMyDetail();
-
-        @GET("api/user/")
-        Call<List<User>> getOthersDetail(
-            @Query("id") int userId
-        );
-
         @FormUrlEncoded
         @POST("api/rest-auth/registration/")
         Call<Token> register(
@@ -76,78 +68,5 @@ public class APIclient {
                 @Field("password1") String password1,
                 @Field("password2") String password2);
 
-        @GET("api/user/{id}/profile/")
-        Call<Profile> getProfile(
-                @Path("id") Integer id
-        );
-
-        @PUT("api/user/{id}/profile/")
-        Call<Profile> editProfile(
-                @Path("id") Integer id,
-                @Body Profile profile
-        );
-
-        @Multipart
-        @PUT("api/user/{id}/profile/profile_pic_udate/")
-        Call<ResponseBody> postImage(
-                @Part MultipartBody.Part image,
-                @Path("id") Integer id);
-
-        @GET("api/user/{id}/gathering/")
-        Call<List<Gathering>> getMyGatheringList(
-                @Path("id") Integer id);
-
-        @GET("api/interest/")
-        Call<List<Interest>> getInterestList();
-
-        @FormUrlEncoded
-        @PUT("api/interest/")
-        Call<Profile> postInterest(
-                @Field("name") String bio
-        );
-
-        @POST("api/gathering/")
-        Call<ResponseBody> createGathering(
-                @Body Gathering gathering);
-
-        @GET("api/gathering/")
-        Call<List<Gathering>> getGatheringList();
-
-        @GET("api/gathering/location/")
-        Call<List<MapMarker>> getGatheringLocationList();
-
-        @GET("api/gathering/{id}")
-        Call<Gathering> getGatheringDetail(
-                @Path("id") Integer id
-        );
-
-        @FormUrlEncoded
-        @POST("api/participate/")
-        Call<ResponseBody> joinGathering(
-                @Field("user") int userId,
-                @Field("gathering") int gatheringId
-        );
-
-        @GET("api/restaurant/{id}/")
-        Call<Restaurant> getRestaurantInfo(
-                @Path("id") Integer id
-        );
-
-        @GET("api/restaurant/")
-        Call<List<Restaurant>> getRestaurantList();
-
-
-        @GET("api/review/")
-        Call<List<Review>> getReview(
-                @Query("restaurant") Integer restaurantId
-        );
-
-        @FormUrlEncoded
-        @POST("api/review/")
-        Call<ResponseBody> postReview(
-                @Field("comment") String comment,
-                @Field("rating") int rating,
-                @Field("restaurant") int restaurantId
-        );
     }
 }
