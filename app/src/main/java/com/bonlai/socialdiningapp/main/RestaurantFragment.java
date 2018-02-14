@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bonlai.socialdiningapp.APIclient;
+import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.adapter.MyRestaurantRecyclerViewAdapter;
 import com.bonlai.socialdiningapp.helpers.MapsActivity;
 import com.bonlai.socialdiningapp.R;
@@ -74,7 +74,7 @@ public class RestaurantFragment extends Fragment {
         recyclerView = (RecyclerView) rootView.findViewById(R.id.list);
         recyclerView.setLayoutManager(layoutManager);
 
-        APIclient.APIService service=APIclient.getAPIService();
+        AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
         Call<List<Restaurant>> getRestaurantList = service.getRestaurantList();
         getRestaurantList.enqueue(new Callback<List<Restaurant>>() {
             @Override

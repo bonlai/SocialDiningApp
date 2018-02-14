@@ -18,7 +18,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bonlai.socialdiningapp.APIclient;
+import com.bonlai.socialdiningapp.network.APIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.detail.profileEdit.OtherProfileActivity;
 import com.bonlai.socialdiningapp.detail.restaurant.RestaurantDetailActivity;

@@ -21,6 +21,16 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:indeterminateOnly="true"/>
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:indeterminate="false" />
+
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"

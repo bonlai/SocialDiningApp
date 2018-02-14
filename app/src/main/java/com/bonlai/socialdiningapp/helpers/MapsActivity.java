@@ -1,33 +1,26 @@
 package com.bonlai.socialdiningapp.helpers;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.Intent;
 
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Looper;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.bonlai.socialdiningapp.APIclient;
-import com.bonlai.socialdiningapp.GeocodeAPIclient;
+import com.bonlai.socialdiningapp.network.APIclient;
+import com.bonlai.socialdiningapp.network.GeocodeAPIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity;
-import com.bonlai.socialdiningapp.main.GatheringFragment;
-import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MapMarker;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;

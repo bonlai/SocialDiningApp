@@ -1,6 +1,5 @@
 package com.bonlai.socialdiningapp.detail.profileEdit;
 
-import android.app.DatePickerDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,13 +8,10 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
-import com.bonlai.socialdiningapp.APIclient;
+import com.bonlai.socialdiningapp.network.APIclient;
 import com.bonlai.socialdiningapp.R;
-import com.bonlai.socialdiningapp.detail.gathering.NewGatheringActivity;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
-
-import java.util.Calendar;
 
 import retrofit2.Call;
 import retrofit2.Callback;

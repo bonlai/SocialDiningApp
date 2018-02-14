@@ -1,7 +1,4 @@
-package com.bonlai.socialdiningapp;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+package com.bonlai.socialdiningapp.network;
 
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;

@@ -28,7 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.widget.PullRefreshLayout;
-import com.bonlai.socialdiningapp.APIclient;
+import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity;
 import com.bonlai.socialdiningapp.detail.gathering.NewGatheringActivity;
 import com.bonlai.socialdiningapp.R;
@@ -203,7 +203,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         mProgress.setVisibility(View.VISIBLE);
         mContainer.setVisibility(View.GONE);
         if(mMode==Mode.ALL){
-            APIclient.APIService service=APIclient.getAPIService();
+            AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
             Call<List<Gathering>> getGatheringList = service.getGatheringList();
             getGatheringList.enqueue(new Callback<List<Gathering>>() {
 
@@ -223,7 +223,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 }
             });
         }else{
-            APIclient.APIService service=APIclient.getAPIService();
+            AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
             Call<List<Gathering>> getGatheringList = service.getMyGatheringList(myUserId);
             getGatheringList.enqueue(new Callback<List<Gathering>>() {
                 @Override
@@ -302,7 +302,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
         @Override
         public void onBindViewHolder(final MyGatheringAdapter.ViewHolder holder, final int position) {
-            APIclient.APIService service=APIclient.getAPIService();
+            AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
 
             //get restaurant info
             Call<Restaurant> getRestaurantInfo = service.getRestaurantInfo(mGatheringFiltered.get(position).getRestaurant());
@@ -364,7 +364,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
             holder.mJoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    APIclient.APIService service=APIclient.getAPIService();
+                    AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
                     Call<ResponseBody> req = service.joinGathering(myUserId, gatheringId);
                     callParticipateAPI(req);
 

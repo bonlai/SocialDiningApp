@@ -1,10 +1,13 @@
-package com.bonlai.socialdiningapp;
+package com.bonlai.socialdiningapp.network;
 
-import android.util.Log;
-
-import com.bonlai.socialdiningapp.models.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.bonlai.socialdiningapp.models.Gathering;
+import com.bonlai.socialdiningapp.models.Interest;
+import com.bonlai.socialdiningapp.models.MapMarker;
+import com.bonlai.socialdiningapp.models.Profile;
+import com.bonlai.socialdiningapp.models.Restaurant;
+import com.bonlai.socialdiningapp.models.Review;
+import com.bonlai.socialdiningapp.models.Token;
+import com.bonlai.socialdiningapp.models.User;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,45 +37,30 @@ import retrofit2.http.Query;
  * Created by Bon Lai on 12/1/2018.
  */
 
-public class APIclient {
+public class AuthAPIclient {
     static Retrofit mRetrofit;
     static APIService mAPIService;
-    private static OkHttpClient.Builder OKHttpBuilder = new OkHttpClient.Builder();
+    private static OkHttpClient.Builder OKHttpBuilder=new OkHttpClient.Builder();
     private static Retrofit.Builder builder=new Retrofit.Builder().
             baseUrl("http://192.168.2.5:8000/").
             addConverterFactory(GsonConverterFactory.create());
+
     public static Retrofit retrofit() {
         if (mRetrofit == null) {
-            //Log.d("RETROFIT","asg object");
-            //set log history
-            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            //HTTP connection
-            //OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-
-            OKHttpBuilder.addInterceptor(interceptor);
-            //add authorization information to interceptor
+            setOKHttpBuilder();
             OkHttpClient client=OKHttpBuilder.build();
-
-            Gson gson = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd hh:mm")
-                    .create();
-
             mRetrofit = builder.client(client).build();
         }
         return mRetrofit;
     }
 
-    public static void reset(){
-        mRetrofit=null;
-        OKHttpBuilder=new OkHttpClient.Builder();
+    private static void setOKHttpBuilder(){
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OKHttpBuilder.addInterceptor(interceptor);
-        Token.getToken().setKey(null);
     }
 
-    public static void setToken(){
+    public static void setAuthToken(){
         //Log.d("set token","RETROFIT");
         OKHttpBuilder.addInterceptor(new Interceptor() {
             @Override public Response intercept(Chain chain) throws IOException {
@@ -82,36 +70,21 @@ public class APIclient {
                 return chain.proceed(request);
             }
         });
-        OkHttpClient client=OKHttpBuilder.build();
-        mRetrofit = builder.client(client).build();
     }
 
     public static APIService getAPIService() {
-        mAPIService=APIclient.retrofit().create(APIService.class);
+        mAPIService= AuthAPIclient.retrofit().create(APIService.class);
         return mAPIService;
     }
 
     public interface APIService {
-        @FormUrlEncoded
-        @POST("api/rest-auth/login/")
-        Call<Token> login(
-                @Field("username") String username,
-                @Field("password") String password);
-
         @GET("api/rest-auth/user/")
         Call<User> getMyDetail();
 
         @GET("api/user/")
         Call<List<User>> getOthersDetail(
-            @Query("id") int userId
+                @Query("id") int userId
         );
-
-        @FormUrlEncoded
-        @POST("api/rest-auth/registration/")
-        Call<Token> register(
-                @Field("username") String username,
-                @Field("password1") String password1,
-                @Field("password2") String password2);
 
         @GET("api/user/{id}/profile/")
         Call<Profile> getProfile(

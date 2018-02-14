@@ -51,21 +51,21 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null) {
+ /*       if (savedInstanceState != null) {
             String token = savedInstanceState.getString("Token");
             Token.getToken().setKey(token);
-            APIclient.setToken();
-        }
+            APIclient.setAuthToken();
+        }*/
         //load user detail(e.g. user id) to singleton class:MyUserHolder
 
-         setUserDetail();
+
 
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
-
+        setupViewPager();
 
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
         setupBottomNavBehaviors();
@@ -116,49 +116,15 @@ public class MainActivity extends AppCompatActivity{
     protected void onDestroy() {
         // call the superclass method first
         super.onDestroy();
-        APIclient.reset();
+        //APIclient.reset();
         Log.d("Activity","onDestroy");
     }
 
-    private void setUserDetail(){
-        APIclient.APIService service=APIclient.getAPIService();
-        Call<User> req = service.getMyDetail();
-        req.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if(response.isSuccessful()){
-                    MyUserHolder.getInstance().setUser(response.body());
-                    setProfile();
-                    setupViewPager();
-                }else{
-                    Log.d("Main token",Token.getToken().getKey());
-                }
-            }
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
-    }
 
-    private void setProfile(){
-        APIclient.APIService service=APIclient.getAPIService();
-        Call<Profile> getUserProfile = service.getProfile(MyUserHolder.getInstance().getUser().getPk());
-        getUserProfile.enqueue(new Callback<Profile>() {
-            @Override
-            public void onResponse(Call<Profile> call, Response<Profile> response) {
-                if(response.isSuccessful()){
-                    MyUserHolder.getInstance().getUser().setProfile(response.body());
-                }else{
 
-                }
-            }
-            @Override
-            public void onFailure(Call<Profile> call, Throwable t) {
-                t.printStackTrace();
-            }
-        });
-    }
+
+
+
 
     private void setupViewPager() {
         viewPager = (NoSwipePager) findViewById(R.id.viewpager);
