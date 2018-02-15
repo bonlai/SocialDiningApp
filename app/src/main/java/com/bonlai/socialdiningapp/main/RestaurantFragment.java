@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.adapter.MyRestaurantRecyclerViewAdapter;
-import com.bonlai.socialdiningapp.helpers.MapsActivity;
+import com.bonlai.socialdiningapp.detail.map.MapsActivity;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Restaurant;
 

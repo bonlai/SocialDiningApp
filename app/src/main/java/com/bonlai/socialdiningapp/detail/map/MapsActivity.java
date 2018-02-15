@@ -1,6 +1,7 @@
-package com.bonlai.socialdiningapp.helpers;
+package com.bonlai.socialdiningapp.detail.map;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 
@@ -10,6 +11,7 @@ import android.location.Location;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,9 +43,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
@@ -65,7 +69,9 @@ import retrofit2.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
-        ClusterManager.OnClusterItemInfoWindowClickListener<MapMarkerInfo>{
+        GoogleMap.OnMyLocationButtonClickListener,
+        ClusterManager.OnClusterItemInfoWindowClickListener<MapMarkerInfo>,
+        CircleRadiusDialogFragment.Callback{
 
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     private static final int PLACE_PICKER_REQUEST = 1000;
@@ -76,6 +82,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location mLastLocation;
     private FusedLocationProviderClient mFusedLocationClient;
     private Marker mCurrLocationMarker;
+    private LatLng mLocationPoint;
+    private int mCircleRadius;
     private Circle mCircle;
 
     private List<MapMarkerInfo> mMarkers;
@@ -94,6 +102,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        mCircleRadius =500;
+
         Button searchButton = (Button) findViewById(R.id.search_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,10 +113,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         Button circleButton = (Button) findViewById(R.id.circle_button);
-        searchButton.setOnClickListener(new View.OnClickListener() {
+        circleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                returnSearchPlace();
+                DialogFragment circleRadiusDialogFragment = new CircleRadiusDialogFragment();
+                circleRadiusDialogFragment.show(getSupportFragmentManager(), null);
             }
         });
 
@@ -216,15 +227,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Place place = PlacePicker.getPlace(data, this);
                 String placeName = String.format("Place: %s", place.getName());
                 String placeAddress = String.format("Address: %s", place.getAddress());
-                LatLng toLatLng = place.getLatLng();
+                mLocationPoint = place.getLatLng();
 
-                // Add Marker
-                mMap.addMarker(new MarkerOptions().position(toLatLng)
-                        .title(placeName).snippet(placeAddress)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
-
-                // Move Camera to selected place
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(toLatLng, 16));
+                drawMyMarker();
             }
         }
     }
@@ -233,11 +238,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.moveCamera( CameraUpdateFactory.newLatLngZoom(new LatLng(22.28552, 114.15769) , 14.0f) );
         //mMap.setOnInfoWindowClickListener(this);
         buildGoogleAPIClient();
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(120000); // two minute interval
-        mLocationRequest.setFastestInterval(120000);
+        //mLocationRequest.setInterval(120000); // two minute interval
+        //mLocationRequest.setFastestInterval(120000);
+        mLocationRequest.setNumUpdates(1);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -251,6 +258,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         setClusterManager();
 
+        mMap.setOnMyLocationButtonClickListener(this);
+
     }
 
     private void setClusterManager(){
@@ -258,6 +267,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         RenderClusterInfoWindow render=new RenderClusterInfoWindow(this,mMap,mClusterManager);
         mClusterManager.setRenderer(render);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+        mClusterManager
+                .setOnClusterClickListener(new ClusterManager.OnClusterClickListener<MapMarkerInfo>() {
+                    @Override
+                    public boolean onClusterClick(final Cluster<MapMarkerInfo> cluster) {
+                        LatLngBounds.Builder builder = LatLngBounds.builder();
+                        for (ClusterItem item : cluster.getItems()) {
+                            builder.include(item.getPosition());
+                        }
+                        final LatLngBounds bounds = builder.build();
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+                        return true;
+                    }
+                });
 
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
@@ -290,38 +312,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
 
                 mLastLocation = location;
-                if (mCurrLocationMarker != null) {
-                    mCurrLocationMarker.remove();
-                }
-
-                if (mCircle != null) {
-                    mCircle.remove();
-                }
 
                 //Place current location marker
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                mLocationPoint = new LatLng(location.getLatitude(), location.getLongitude());
 
-                drawCurrentLocationMarker(latLng);
-                drawCircle(latLng);
+                drawMyMarker();
 
-                //move map camera
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
             }
         };
     };
 
+    private void drawMyMarker(){
+        if (mCurrLocationMarker != null) {
+            mCurrLocationMarker.remove();
+        }
+
+        drawCurrentLocationMarker(mLocationPoint);
+        drawCircle();
+        //move map camera
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLocationPoint, getZoomLevel(mCircle)));
+    }
+
+    private int getZoomLevel(Circle circle) {
+        int zoomLevel = 11;
+        if (circle != null) {
+            double radius = circle.getRadius() + circle.getRadius() / 2;
+            double scale = radius / 500;
+            zoomLevel = (int) (16 - Math.log(scale) / Math.log(2));
+        }
+        return zoomLevel;
+    }
+
     private void drawCurrentLocationMarker(LatLng point){
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(point);
-        markerOptions.title("Current Position");
+        markerOptions.title("My Position");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = mMap.addMarker(markerOptions);
     }
 
-    private void drawCircle(LatLng point){
+    private void drawCircle(){
+        if (mCircle != null) {
+            mCircle.remove();
+        }
         mCircle = mMap.addCircle(new CircleOptions()
-                .center(point)
-                .radius(500)
+                .center(mLocationPoint)
+                .radius(mCircleRadius)
                 .strokeColor(Color.RED));
     }
     @Override
@@ -352,20 +388,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-
-/*    @Override
-    public void onInfoWindowClick(Marker marker) {
-        Intent intent = new Intent (this, GatheringDetailActivity.class);
-        intent.putExtra(GatheringDetailActivity.GATHERING_ID, (int)marker.getTag());
-        this.startActivity(intent);
-    }*/
-
     @Override
     public void onClusterItemInfoWindowClick(MapMarkerInfo mapMarkerInfo) {
-        Toast.makeText(this, "test", Toast.LENGTH_LONG).show();
         Intent intent = new Intent (this, GatheringDetailActivity.class);
         intent.putExtra(GatheringDetailActivity.GATHERING_ID, (int) mapMarkerInfo.getId());
         this.startActivity(intent);
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public boolean onMyLocationButtonClick() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setNumUpdates(1);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        Log.d("location button","clicked");
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+        return true;
+    }
+
+    @Override
+    public void onSeekbarChange(int radius) {
+        mCircleRadius =radius;
+        drawCircle();
     }
 
     private class RenderClusterInfoWindow extends DefaultClusterRenderer<MapMarkerInfo> {

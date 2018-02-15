@@ -72,7 +72,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".helpers.MapsActivity"
+            android:name=".detail.map.MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".detail.profileEdit.EditBioActivity" />
         <activity android:name=".detail.profileEdit.EditDOBActivity" />
