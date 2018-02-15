@@ -17,12 +17,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.bonlai.socialdiningapp.network.APIclient;
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.network.GeocodeAPIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity;
-import com.bonlai.socialdiningapp.models.MapMarker;
+import com.bonlai.socialdiningapp.models.MapMarkerInfo;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -66,7 +65,7 @@ import retrofit2.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
-        ClusterManager.OnClusterItemInfoWindowClickListener<MapMarker>{
+        ClusterManager.OnClusterItemInfoWindowClickListener<MapMarkerInfo>{
 
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     private static final int PLACE_PICKER_REQUEST = 1000;
@@ -79,9 +78,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker mCurrLocationMarker;
     private Circle mCircle;
 
-    private List<MapMarker> mMarkers;
+    private List<MapMarkerInfo> mMarkers;
 
-    private ClusterManager<MapMarker> mClusterManager;
+    private ClusterManager<MapMarkerInfo> mClusterManager;
 
     private HashMap<LatLng, Float> rotation= new HashMap<LatLng, Float>();
 
@@ -117,24 +116,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void getGathering(){
         AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
-        Call<List<MapMarker>> getGatheringLocationList = service.getGatheringLocationList();
-        getGatheringLocationList.enqueue(new Callback<List<MapMarker>>() {
+        Call<List<MapMarkerInfo>> getGatheringLocationList = service.getGatheringLocationList();
+        getGatheringLocationList.enqueue(new Callback<List<MapMarkerInfo>>() {
             @Override
-            public void onResponse(Call<List<MapMarker>> call, Response<List<MapMarker>> response) {
+            public void onResponse(Call<List<MapMarkerInfo>> call, Response<List<MapMarkerInfo>> response) {
                 mMarkers=response.body();
 
-                for(MapMarker marker:mMarkers){
+                for(MapMarkerInfo marker:mMarkers){
                     getLatLng(marker);
                 }
             }
             @Override
-            public void onFailure(Call<List<MapMarker>> call, Throwable t) {
+            public void onFailure(Call<List<MapMarkerInfo>> call, Throwable t) {
                 t.printStackTrace();
             }
         });
     }
 
-    private void getLatLng(final MapMarker marker){
+    private void getLatLng(final MapMarkerInfo marker){
         GeocodeAPIclient.APIService mService=GeocodeAPIclient.getAPIService();
         String key = getString(R.string.google_maps_key);
         Call<ResponseBody> service=mService.getCityResults(marker.getRestaurant().getAddress(),key);
@@ -157,7 +156,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .getDouble("lat");
                         LatLng latLng=new LatLng(latitude,longitude);
                         marker.setLatLng(latLng);
+                        marker.setrotationValue(getRotation(latLng));
+
                         mClusterManager.addItem(marker);
+                        mClusterManager.cluster();
                         //createMarker(marker);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -172,13 +174,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
         service.enqueue(responseBodyCallback);
-    }
-
-    private void createMarker(MapMarker marker){
-        float rotationValue=getRotation(marker.getLatLng());
-        mMap.addMarker(new MarkerOptions().position(marker.getLatLng()).rotation(rotationValue)
-                .title(marker.getName()).snippet(marker.getRestaurant().getAddress())
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))).setTag(marker.getId());
     }
 
     private float getRotation(LatLng latLng){
@@ -229,7 +224,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
 
                 // Move Camera to selected place
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(toLatLng, 11));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(toLatLng, 16));
             }
         }
     }
@@ -254,16 +249,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
             }
         }
+        setClusterManager();
 
-        mClusterManager = new ClusterManager<>(this, googleMap);
-        RenderClusterInfoWindow render=new RenderClusterInfoWindow(this,googleMap,mClusterManager);
+    }
+
+    private void setClusterManager(){
+        mClusterManager = new ClusterManager<>(this, mMap);
+        RenderClusterInfoWindow render=new RenderClusterInfoWindow(this,mMap,mClusterManager);
         mClusterManager.setRenderer(render);
         mClusterManager.setOnClusterItemInfoWindowClickListener(this);
-        googleMap.setOnCameraIdleListener(mClusterManager);
-        googleMap.setOnMarkerClickListener(mClusterManager);
-        googleMap.setOnInfoWindowClickListener(mClusterManager);
-        mClusterManager.cluster();
 
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
     }
 
 
@@ -363,38 +361,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }*/
 
     @Override
-    public void onClusterItemInfoWindowClick(MapMarker mapMarker) {
+    public void onClusterItemInfoWindowClick(MapMarkerInfo mapMarkerInfo) {
         Toast.makeText(this, "test", Toast.LENGTH_LONG).show();
         Intent intent = new Intent (this, GatheringDetailActivity.class);
-        intent.putExtra(GatheringDetailActivity.GATHERING_ID, (int)mapMarker.getId());
+        intent.putExtra(GatheringDetailActivity.GATHERING_ID, (int) mapMarkerInfo.getId());
         this.startActivity(intent);
     }
 
-    private class RenderClusterInfoWindow extends DefaultClusterRenderer<MapMarker> {
+    private class RenderClusterInfoWindow extends DefaultClusterRenderer<MapMarkerInfo> {
 
-        RenderClusterInfoWindow(Context context, GoogleMap map, ClusterManager<MapMarker> clusterManager) {
+        RenderClusterInfoWindow(Context context, GoogleMap map, ClusterManager<MapMarkerInfo> clusterManager) {
             super(context, map, clusterManager);
         }
 
         @Override
-        protected void onClusterItemRendered(MapMarker item, Marker marker) {
+        protected void onClusterItemRendered(MapMarkerInfo item, Marker marker) {
             marker.setTag(item.getId());
             super.onClusterItemRendered(item, marker);
         }
 
         @Override
-        protected void onClusterRendered(Cluster<MapMarker> cluster, Marker marker) {
+        protected void onClusterRendered(Cluster<MapMarkerInfo> cluster, Marker marker) {
             super.onClusterRendered(cluster, marker);
         }
 
         @Override
-        protected void onBeforeClusterItemRendered(MapMarker item, MarkerOptions markerOptions) {
-            float rotationValue=getRotation(item.getLatLng());
-
-            markerOptions.position(item.getLatLng()).rotation(rotationValue)
+        protected void onBeforeClusterItemRendered(MapMarkerInfo item, MarkerOptions markerOptions) {
+            markerOptions.position(item.getLatLng()).rotation(item.getrotationValue())
                     .title(item.getName()).snippet(item.getRestaurant().getAddress())
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-
             //super.onBeforeClusterItemRendered(item, markerOptions);
         }
 
