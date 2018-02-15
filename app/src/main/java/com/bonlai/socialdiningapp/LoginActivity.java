@@ -35,11 +35,11 @@ public class LoginActivity extends AppCompatActivity{
      */
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    public static final String SETTING_INFOS = "SETTING_Infos";
+    public static final String USER_CREDENTIAL = "USER_CREDENTIAL";
     public static final String NAME = "NAME";
     public static final String PASSWORD = "PASSWORD";
     public static final String TOKEN = "TOKEN";
-    public static SharedPreferences settings;
+    public static SharedPreferences credential;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -47,40 +47,29 @@ public class LoginActivity extends AppCompatActivity{
     private View mProgressView;
     private View mLoadingView;
     private View mLoginFormView;
-    private Button mEmailSignInButton;
+    private Button mSignInButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        settings= getSharedPreferences(SETTING_INFOS, 0);
+        credential = getSharedPreferences(USER_CREDENTIAL, 0);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         initUI();
+        checkTokenExist();
+    }
 
-        if(Token.getToken().getKey()!= null ){
-            goToMain();
-        }
-
-        if(settings.contains(TOKEN)){
-            Log.d("preference","token set"+Token.getToken().getKey());
-            Gson gson = new Gson();
-            String json = settings.getString(TOKEN, "");
-            Log.d("preference","token setting"+json);
-            Log.d("preference","token set");
-            Token.setToken(gson.fromJson(json, Token.class));
+    private void checkTokenExist(){
+        if(credential.contains(TOKEN)){
+            //Log.d("preference","token set"+Token.getToken().getKey());
+            String key = credential.getString(TOKEN, "");
+            //Log.d("preference","token setting"+json);
+            //Log.d("preference","token set");
+            Token.getToken().setKey(key);
             AuthAPIclient.setAuthToken();
             mLoadingView.setVisibility(View.VISIBLE);
             mLoginFormView.setVisibility(View.GONE);
             setUserDetail();
-            //goToMain();
         }
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
     }
-
 
     private void initUI(){
         mEmailView = (AutoCompleteTextView) findViewById(R.id.username);
@@ -88,14 +77,21 @@ public class LoginActivity extends AppCompatActivity{
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         mLoadingView= findViewById(R.id.progress_bar);
-        mEmailSignInButton= (Button) findViewById(R.id.login_button);
+        mSignInButton = (Button) findViewById(R.id.login_button);
 
         mLoadingView.setVisibility(View.GONE);
         //restore previous successfully login credential
-        String name = settings.getString(NAME, "");
-        String password = settings.getString(PASSWORD, "");
+        String name = credential.getString(NAME, "");
+        String password = credential.getString(PASSWORD, "");
         mEmailView.setText(name);
         mPasswordView.setText(password);
+
+        mSignInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptLogin();
+            }
+        });
     }
 
     private void attemptLogin(){
@@ -103,7 +99,6 @@ public class LoginActivity extends AppCompatActivity{
         final String username=mEmailView.getText().toString();
         final String password=mPasswordView.getText().toString();
 
-        //APIclient.reset();
         APIclient.APIService service=APIclient.getAPIService();
         Call<Token> login = service.login(username,password);
 
@@ -111,14 +106,13 @@ public class LoginActivity extends AppCompatActivity{
             @Override
             public void onResponse(Call<Token> call, Response<Token> response) {
                 if(response.isSuccessful()){
-                    Gson gson = new Gson();
-                    String json = gson.toJson(response.body());
+                    String key=response.body().getKey();
                     //store credential to sharedpreferences
-                    SharedPreferences settings = getSharedPreferences(SETTING_INFOS, 0);
+                    SharedPreferences settings = getSharedPreferences(USER_CREDENTIAL, 0);
                     settings.edit()
                             .putString(NAME, username)
                             .putString(PASSWORD, password)
-                            .putString(TOKEN, json)
+                            .putString(TOKEN, key)
                             .commit();
 
                     Token.setToken(response.body());
@@ -150,13 +144,12 @@ public class LoginActivity extends AppCompatActivity{
                 if(response.isSuccessful()){
                     MyUserHolder.getInstance().setUser(response.body());
                     setProfile();
-                }else{
-                    Log.d("Main token",Token.getToken().getKey());
                 }
             }
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 t.printStackTrace();
+                Toast.makeText(LoginActivity.this, "Network problem. Please try again.", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -170,8 +163,6 @@ public class LoginActivity extends AppCompatActivity{
                 if(response.isSuccessful()){
                     MyUserHolder.getInstance().getUser().setProfile(response.body());
                     goToMain();
-                }else{
-
                 }
             }
             @Override

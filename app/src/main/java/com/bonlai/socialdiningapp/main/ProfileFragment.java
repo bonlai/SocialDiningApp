@@ -45,7 +45,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.bonlai.socialdiningapp.LoginActivity.SETTING_INFOS;
+import static com.bonlai.socialdiningapp.LoginActivity.USER_CREDENTIAL;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
 
@@ -294,7 +294,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.logout:
-                SharedPreferences settings = getActivity().getSharedPreferences(SETTING_INFOS, 0);
+                SharedPreferences settings = getActivity().getSharedPreferences(USER_CREDENTIAL, 0);
                 settings.edit().remove("TOKEN").commit();
                 Token.getToken().setKey(null);
 
