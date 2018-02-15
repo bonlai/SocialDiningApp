@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.widget.PullRefreshLayout;
+import com.bonlai.socialdiningapp.MainActivity;
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity;
 import com.bonlai.socialdiningapp.detail.gathering.NewGatheringActivity;
@@ -153,8 +154,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.addNewGathering:
-                Intent intent = new Intent(getContext(), NewGatheringActivity.class);
-                startActivity(intent);
+                ((MainActivity)getActivity()).navigateToRestList();
+                Toast toast = Toast.makeText(getActivity(), "Please select a place for gathering", Toast.LENGTH_LONG);
+                toast.show();
                 break;
         }
     }

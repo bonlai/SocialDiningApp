@@ -95,6 +95,11 @@ public class MainActivity extends AppCompatActivity{
         Log.d("Activity","create");
     }
 
+    public void navigateToRestList(){
+        viewPager.setCurrentItem(2);
+        bottomNavigation.setCurrentItem(2);
+    }
+
     @Override
     protected void onStop() {
         // call the superclass method first

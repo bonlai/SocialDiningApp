@@ -1,6 +1,7 @@
 package com.bonlai.socialdiningapp.helpers;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 
 import android.content.pm.PackageManager;
@@ -43,6 +44,9 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 
 import android.os.Build;
@@ -62,7 +66,7 @@ import retrofit2.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
-        GoogleMap.OnInfoWindowClickListener {
+        ClusterManager.OnClusterItemInfoWindowClickListener<MapMarker>{
 
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     private static final int PLACE_PICKER_REQUEST = 1000;
@@ -77,6 +81,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private List<MapMarker> mMarkers;
 
+    private ClusterManager<MapMarker> mClusterManager;
+
     private HashMap<LatLng, Float> rotation= new HashMap<LatLng, Float>();
 
 
@@ -90,6 +96,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         Button searchButton = (Button) findViewById(R.id.search_button);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                returnSearchPlace();
+            }
+        });
+
+        Button circleButton = (Button) findViewById(R.id.circle_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -143,7 +157,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 .getDouble("lat");
                         LatLng latLng=new LatLng(latitude,longitude);
                         marker.setLatLng(latLng);
-                        createMarker(marker);
+                        mClusterManager.addItem(marker);
+                        //createMarker(marker);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
@@ -171,7 +186,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (value != null) {
             Log.d("rotation1 ",""+value);
             rotation.put(latLng, value+30);
-            return value+10;
+            return value+30;
         } else {
             rotation.put(latLng, (float)0);
             Log.d("rotation2 "," ");
@@ -223,7 +238,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setOnInfoWindowClickListener(this);
+        //mMap.setOnInfoWindowClickListener(this);
         buildGoogleAPIClient();
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(120000); // two minute interval
@@ -240,8 +255,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
+        mClusterManager = new ClusterManager<>(this, googleMap);
+        RenderClusterInfoWindow render=new RenderClusterInfoWindow(this,googleMap,mClusterManager);
+        mClusterManager.setRenderer(render);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+        googleMap.setOnCameraIdleListener(mClusterManager);
+        googleMap.setOnMarkerClickListener(mClusterManager);
+        googleMap.setOnInfoWindowClickListener(mClusterManager);
+        mClusterManager.cluster();
 
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -331,10 +355,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    @Override
+/*    @Override
     public void onInfoWindowClick(Marker marker) {
         Intent intent = new Intent (this, GatheringDetailActivity.class);
         intent.putExtra(GatheringDetailActivity.GATHERING_ID, (int)marker.getTag());
         this.startActivity(intent);
+    }*/
+
+    @Override
+    public void onClusterItemInfoWindowClick(MapMarker mapMarker) {
+        Toast.makeText(this, "test", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent (this, GatheringDetailActivity.class);
+        intent.putExtra(GatheringDetailActivity.GATHERING_ID, (int)mapMarker.getId());
+        this.startActivity(intent);
+    }
+
+    private class RenderClusterInfoWindow extends DefaultClusterRenderer<MapMarker> {
+
+        RenderClusterInfoWindow(Context context, GoogleMap map, ClusterManager<MapMarker> clusterManager) {
+            super(context, map, clusterManager);
+        }
+
+        @Override
+        protected void onClusterItemRendered(MapMarker item, Marker marker) {
+            marker.setTag(item.getId());
+            super.onClusterItemRendered(item, marker);
+        }
+
+        @Override
+        protected void onClusterRendered(Cluster<MapMarker> cluster, Marker marker) {
+            super.onClusterRendered(cluster, marker);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(MapMarker item, MarkerOptions markerOptions) {
+            float rotationValue=getRotation(item.getLatLng());
+
+            markerOptions.position(item.getLatLng()).rotation(rotationValue)
+                    .title(item.getName()).snippet(item.getRestaurant().getAddress())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+
+            //super.onBeforeClusterItemRendered(item, markerOptions);
+        }
+
+
     }
 }

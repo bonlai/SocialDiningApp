@@ -2,13 +2,14 @@ package com.bonlai.socialdiningapp.models;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
+import com.google.maps.android.clustering.ClusterItem;
 
 /**
  * Created by Bon Lai on 10/2/2018.
  */
 
 
-    public class MapMarker {
+    public class MapMarker implements ClusterItem {
 
         @SerializedName("id")
 
@@ -54,4 +55,8 @@ import com.google.gson.annotations.SerializedName;
             this.latLng = latLng;
         }
 
+    @Override
+    public LatLng getPosition() {
+        return latLng;
     }
+}
