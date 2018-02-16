@@ -116,7 +116,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         circleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment circleRadiusDialogFragment = new CircleRadiusDialogFragment();
+                DialogFragment circleRadiusDialogFragment = CircleRadiusDialogFragment.newInstance(mCircleRadius);
                 circleRadiusDialogFragment.show(getSupportFragmentManager(), null);
             }
         });
@@ -358,7 +358,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mCircle = mMap.addCircle(new CircleOptions()
                 .center(mLocationPoint)
                 .radius(mCircleRadius)
-                .strokeColor(Color.RED));
+                .fillColor(0x220000FF)
+                .strokeWidth(2)
+                .strokeColor(Color.BLUE));
     }
     @Override
     protected void onStart() {
@@ -408,8 +410,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onSeekbarChange(int radius) {
-        mCircleRadius =radius;
+        mCircleRadius =radius*100+500;
         drawCircle();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLocationPoint, getZoomLevel(mCircle)));
     }
 
     private class RenderClusterInfoWindow extends DefaultClusterRenderer<MapMarkerInfo> {

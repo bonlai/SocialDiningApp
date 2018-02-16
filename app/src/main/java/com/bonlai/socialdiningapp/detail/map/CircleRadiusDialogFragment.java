@@ -19,6 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.bonlai.socialdiningapp.R;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -37,9 +38,18 @@ public class CircleRadiusDialogFragment extends DialogFragment {
 
     private Callback callback;
 
+    public static CircleRadiusDialogFragment newInstance(int radius) {
+        CircleRadiusDialogFragment frag = new CircleRadiusDialogFragment();
+        Bundle args = new Bundle();
+        args.putInt("radius", radius);
+        frag.setArguments(args);
+        return frag;
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        int radius = getArguments().getInt("radius");
+
         Log.d("Create Dialog","OK");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -55,7 +65,11 @@ public class CircleRadiusDialogFragment extends DialogFragment {
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         window.setAttributes(lp);
 
+        final TextView radiusIndicater=view.findViewById(R.id.radius_indicater);
+        radiusIndicater.setText(radius/1000+ "km");
+
         SeekBar seekBar=view.findViewById(R.id.seekBar);
+        seekBar.setProgress((radius-500)/100);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -75,7 +89,8 @@ public class CircleRadiusDialogFragment extends DialogFragment {
                 // update map zoom level here
                 if (callback != null) {
                     Log.d("Onclick infrag","OK");
-
+                    float radiusValue=((float)progress*100+500)/1000;
+                    radiusIndicater.setText(String.format("%.1f km", radiusValue));
                     callback.onSeekbarChange(progress);
                 }
             }
