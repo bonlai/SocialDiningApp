@@ -9,13 +9,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.bonlai.socialdiningapp.R;
 
-import com.bonlai.socialdiningapp.detail.gathering.NewGatheringActivity;
-import com.bonlai.socialdiningapp.detail.profileEdit.EditBioActivity;
+import com.bonlai.socialdiningapp.detail.gathering.GatheringUpsertActivity;
 import com.bonlai.socialdiningapp.detail.restaurant.RestaurantDetailActivity;
 import com.bonlai.socialdiningapp.models.Restaurant;
 import com.squareup.picasso.Picasso;
@@ -58,9 +56,11 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
         holder.mCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, NewGatheringActivity.class);
+                Intent intent = new Intent(context, GatheringUpsertActivity.class);
+                intent.putExtra("mode", GatheringUpsertActivity.Mode.POST);
                 intent.putExtra("restaurantId", restaurantId);
                 intent.putExtra("restaurantName", mRestaurant.get(position).getName());
+                intent.putExtra("mode", GatheringUpsertActivity.Mode.POST);
                 context.startActivity(intent);
             }
         });

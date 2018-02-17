@@ -1,13 +1,14 @@
 package com.bonlai.socialdiningapp.models;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Bon Lai on 3/1/2018.
  */
 
-public class Gathering {
+public class Gathering implements Serializable {
     @SerializedName("id")
     private int id;
     @SerializedName("name")

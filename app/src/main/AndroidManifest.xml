@@ -40,7 +40,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".detail.gathering.NewGatheringActivity"
+            android:name=".detail.gathering.GatheringUpsertActivity"
             android:label="@string/title_activity_new_gathering"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

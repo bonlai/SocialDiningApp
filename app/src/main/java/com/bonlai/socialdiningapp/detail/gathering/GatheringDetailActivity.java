@@ -14,11 +14,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bonlai.socialdiningapp.network.APIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.detail.profileEdit.OtherProfileActivity;
 import com.bonlai.socialdiningapp.detail.restaurant.RestaurantDetailActivity;
@@ -44,6 +44,8 @@ public class GatheringDetailActivity extends AppCompatActivity {
     private Gathering mGathering;
     private List<User> mParticipants;
     private MyParticipantRecyclerViewAdapter adapter;
+    private ProgressBar mProgress;
+    private View mContainer;
 
     private ImageView mRestaurantImg;
     private MaterialRatingBar mAvgRating;
@@ -57,6 +59,8 @@ public class GatheringDetailActivity extends AppCompatActivity {
     private TextView mDescription;
     private TextView mDateTime;
     private Switch mJoin;
+    private Button mStart;
+    private Button mEdit;
 
     private int myUserId;
 
@@ -66,12 +70,9 @@ public class GatheringDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gathering_detail);
-
         initUI();
         initVar();
-
         getGatheringInfo(this);
-
     }
 
     private void initVar(){
@@ -85,6 +86,8 @@ public class GatheringDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         recyclerView=(RecyclerView)findViewById(R.id.list_view);
+        mProgress= (ProgressBar) findViewById(R.id.progress_bar);
+        mContainer=findViewById(R.id.container);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -105,6 +108,8 @@ public class GatheringDetailActivity extends AppCompatActivity {
         mDescription = (TextView) findViewById(R.id.bio);
         mDateTime= (TextView) findViewById(R.id.date_time);
         mJoin = (Switch) findViewById(R.id.join);
+        mStart=(Button)findViewById(R.id.start_button);
+        mEdit=(Button)findViewById(R.id.edit_button);
     }
 
     private void getCreater(){
@@ -127,6 +132,8 @@ public class GatheringDetailActivity extends AppCompatActivity {
     }
 
     private void getGatheringInfo(final Context context){
+        mContainer.setVisibility(View.GONE);
+        mProgress.setVisibility(View.VISIBLE);
         AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
         Call<Gathering> getGatheringDetail = service.getGatheringDetail(gatheringId);
         getGatheringDetail.enqueue(new Callback<Gathering>() {
@@ -141,8 +148,39 @@ public class GatheringDetailActivity extends AppCompatActivity {
                     }
                     getRestaurantInfo(mGathering.getRestaurant());
                     getCreater();
+
+                    if(mGathering.getCreatedBy()==myUserId){
+                        mJoin.setVisibility(View.GONE);
+                    }else{
+                        mStart.setVisibility(View.GONE);
+                        mEdit.setVisibility(View.GONE);
+                    }
+
+                    mStart.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if(!mGathering.getIsStart()){
+                                startGathering(gatheringId);
+                            }else{
+                                Toast.makeText(GatheringDetailActivity.this, "Started already",Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+
+                    mEdit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(GatheringDetailActivity.this, GatheringUpsertActivity.class);
+                            intent.putExtra("mode", GatheringUpsertActivity.Mode.EDIT);
+                            intent.putExtra("gathering",mGathering);
+                            startActivity(intent);
+                        }
+                    });
                     adapter=new MyParticipantRecyclerViewAdapter(context,mParticipants);
                     recyclerView.setAdapter(adapter);
+
+                    mContainer.setVisibility(View.VISIBLE);
+                    mProgress.setVisibility(View.GONE);
                 }else{
 
                 }
@@ -164,7 +202,6 @@ public class GatheringDetailActivity extends AppCompatActivity {
                     Log.d("adding ",""+id);
                     mParticipants.add(response.body().get(0));
                     adapter.notifyDataSetChanged();
-
                 }else{
 
                 }
@@ -190,6 +227,26 @@ public class GatheringDetailActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<Restaurant> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void startGathering(int id){
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
+
+        //get restaurant info
+        Call<Gathering> startGathering = service.startGathering(id,true);
+        startGathering.enqueue(new Callback<Gathering>() {
+            @Override
+            public void onResponse(Call<Gathering> call, Response<Gathering> response) {
+                if(response.isSuccessful()){
+                    mGathering.setIsStart(true);
+                    Toast.makeText(GatheringDetailActivity.this, "Started the gathering",Toast.LENGTH_LONG).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<Gathering> call, Throwable t) {
                 t.printStackTrace();
             }
         });

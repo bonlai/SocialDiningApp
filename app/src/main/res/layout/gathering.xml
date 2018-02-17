@@ -33,7 +33,6 @@
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="Restaurant Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textColor="@color/appText"
             card_view:layout_constraintEnd_toStartOf="@+id/join"
@@ -48,13 +47,10 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
-            android:text="#category"
             card_view:layout_constraintHorizontal_bias="0.027"
             card_view:layout_constraintLeft_toLeftOf="parent"
             card_view:layout_constraintRight_toRightOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/restaurant_name"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp" />
+            card_view:layout_constraintTop_toBottomOf="@+id/restaurant_name" />
 
         <ImageView
             android:id="@+id/restaurant_img"
@@ -78,12 +74,11 @@
             android:layout_marginTop="8dp"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/appText"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@+id/restaurant_img"
             tools:layout_constraintLeft_creator="1"
-            tools:layout_constraintTop_creator="1"
-            tools:text="Gathering Theme"
-            android:textColor="@color/appText"/>
+            tools:layout_constraintTop_creator="1" />
 
         <TextView
             android:id="@+id/bio"
@@ -91,25 +86,22 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="7dp"
             android:layout_marginRight="8dp"
-            android:layout_marginStart="7dp"
             android:layout_marginTop="-14dp"
             android:maxLines="3"
             android:padding="8dp"
-            android:text="This is the description. Testing TestingTestingTestingTestingTestingTestingTesting"
             android:textColor="#666"
             android:textSize="14dp"
+            card_view:layout_constraintHorizontal_bias="0.0"
             card_view:layout_constraintLeft_toRightOf="@+id/user_img"
             card_view:layout_constraintRight_toRightOf="parent"
             card_view:layout_constraintTop_toBottomOf="@+id/gathering_name"
             tools:layout_constraintLeft_creator="1"
-            tools:layout_constraintTop_creator="1"
-            card_view:layout_constraintHorizontal_bias="0.0" />
+            tools:layout_constraintTop_creator="1" />
 
         <ImageView
             android:id="@+id/user_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            card_view:srcCompat="@mipmap/ic_launcher_round"
             android:layout_marginLeft="8dp"
             card_view:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginTop="8dp"
