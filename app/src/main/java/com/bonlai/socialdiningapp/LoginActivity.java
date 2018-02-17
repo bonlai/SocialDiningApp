@@ -5,11 +5,12 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -19,7 +20,6 @@ import com.bonlai.socialdiningapp.models.Token;
 import com.bonlai.socialdiningapp.models.User;
 import com.bonlai.socialdiningapp.network.APIclient;
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
-import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,11 +30,6 @@ import retrofit2.Response;
  */
 public class LoginActivity extends AppCompatActivity{
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
-
     public static final String USER_CREDENTIAL = "USER_CREDENTIAL";
     public static final String NAME = "NAME";
     public static final String PASSWORD = "PASSWORD";
@@ -44,10 +39,12 @@ public class LoginActivity extends AppCompatActivity{
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
-    private View mProgressView;
+    private View mLoginProgressView;
     private View mLoadingView;
     private View mLoginFormView;
     private Button mSignInButton;
+    private CheckBox mRememberMe;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         credential = getSharedPreferences(USER_CREDENTIAL, 0);
@@ -75,16 +72,39 @@ public class LoginActivity extends AppCompatActivity{
         mEmailView = (AutoCompleteTextView) findViewById(R.id.username);
         mPasswordView = (EditText) findViewById(R.id.password);
         mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        mLoginProgressView = findViewById(R.id.login_progress);
         mLoadingView= findViewById(R.id.progress_bar);
         mSignInButton = (Button) findViewById(R.id.login_button);
+        mRememberMe = (CheckBox) findViewById(R.id.remember_me);
 
         mLoadingView.setVisibility(View.GONE);
-        //restore previous successfully login credential
-        String name = credential.getString(NAME, "");
-        String password = credential.getString(PASSWORD, "");
-        mEmailView.setText(name);
-        mPasswordView.setText(password);
+
+        if(credential.getString(NAME, "")!=""){
+            mRememberMe.setChecked(true);
+        }
+
+        mRememberMe.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            {
+                if(!isChecked)
+                {
+                    credential.edit()
+                            .remove(NAME)
+                            .remove(PASSWORD)
+                            .commit();
+                }
+            }
+        });
+
+        if(mRememberMe.isChecked()){
+            String name = credential.getString(NAME, "");
+            String password = credential.getString(PASSWORD, "");
+            //restore previous successfully login credential
+            mEmailView.setText(name);
+            mPasswordView.setText(password);
+        }
 
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -95,7 +115,7 @@ public class LoginActivity extends AppCompatActivity{
     }
 
     private void attemptLogin(){
-        mProgressView.setVisibility(View.VISIBLE);
+        mLoginProgressView.setVisibility(View.VISIBLE);
         final String username=mEmailView.getText().toString();
         final String password=mPasswordView.getText().toString();
 
@@ -107,29 +127,33 @@ public class LoginActivity extends AppCompatActivity{
             public void onResponse(Call<Token> call, Response<Token> response) {
                 if(response.isSuccessful()){
                     String key=response.body().getKey();
-                    //store credential to sharedpreferences
-                    SharedPreferences settings = getSharedPreferences(USER_CREDENTIAL, 0);
-                    settings.edit()
-                            .putString(NAME, username)
-                            .putString(PASSWORD, password)
-                            .putString(TOKEN, key)
-                            .commit();
+
+                    if(mRememberMe.isChecked()){
+                        //store credential to sharedpreferences
+                        credential.edit()
+                                .putString(NAME, username)
+                                .putString(PASSWORD, password)
+                                .putString(TOKEN, key)
+                                .commit();
+                    }
 
                     Token.setToken(response.body());
                     AuthAPIclient.setAuthToken();
-                    mProgressView.setVisibility(View.GONE);
+                    mLoginProgressView.setVisibility(View.GONE);
 
                     setUserDetail();
 
                 }else{
-                    mProgressView.setVisibility(View.GONE);
-                    Toast toast = Toast.makeText(LoginActivity.this, "Failed to login with the given credential", Toast.LENGTH_LONG);
-                    toast.show();
+                    mLoginProgressView.setVisibility(View.GONE);
+                    String loginFailureMsg=getString(R.string.login_failure);
+                    Toast.makeText(LoginActivity.this, loginFailureMsg, Toast.LENGTH_LONG).show();
                 }
             }
             @Override
             public void onFailure(Call<Token> call, Throwable t) {
                 t.printStackTrace();
+                toastNetworkError();
+                mLoginProgressView.setVisibility(View.GONE);
             }
         });
     }
@@ -149,7 +173,8 @@ public class LoginActivity extends AppCompatActivity{
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 t.printStackTrace();
-                Toast.makeText(LoginActivity.this, "Network problem. Please try again.", Toast.LENGTH_LONG).show();
+                toastNetworkError();
+                mLoginProgressView.setVisibility(View.GONE);
             }
         });
     }
@@ -168,6 +193,8 @@ public class LoginActivity extends AppCompatActivity{
             @Override
             public void onFailure(Call<Profile> call, Throwable t) {
                 t.printStackTrace();
+                toastNetworkError();
+                mLoginProgressView.setVisibility(View.GONE);
             }
         });
     }
@@ -179,9 +206,14 @@ public class LoginActivity extends AppCompatActivity{
         finish();
     }
 
-    public void goToRegister(View view){
+    private void goToRegister(View view){
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
+    }
+
+    private void toastNetworkError(){
+        String networkFailureMsg=getString(R.string.network_connection_problem);
+        Toast.makeText(LoginActivity.this, networkFailureMsg, Toast.LENGTH_LONG).show();
     }
 }
 

@@ -79,6 +79,13 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <CheckBox
+                android:id="@+id/remember_me"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#99FFFFFF"
+                android:text="Remember me" />
+
             <Button
                 android:id="@+id/login_button"
                 style="@style/Widget.AppCompat.Button.Colored"

@@ -9,6 +9,8 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_register">Register</string>
     <string name="error_field_required">This field is required</string>
+    <string name="login_failure">Failed to login with the given credential</string>
+
     <!--
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -35,5 +37,7 @@
     <string name="tab_2">Joined Gathering</string>
     <string name="tab_3">Restaurant</string>
     <string name="tab_4">My Profile</string>
+
+    <string name="network_connection_problem">Failed to connect. Please try again later.</string>
 
 </resources>
