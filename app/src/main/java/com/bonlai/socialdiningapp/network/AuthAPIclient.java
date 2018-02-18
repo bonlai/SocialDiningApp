@@ -1,8 +1,10 @@
 package com.bonlai.socialdiningapp.network;
 
+import android.util.Log;
+
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.Interest;
-import com.bonlai.socialdiningapp.models.MapMarker;
+import com.bonlai.socialdiningapp.models.MapMarkerInfo;
 import com.bonlai.socialdiningapp.models.Profile;
 import com.bonlai.socialdiningapp.models.Restaurant;
 import com.bonlai.socialdiningapp.models.Review;
@@ -11,6 +13,7 @@ import com.bonlai.socialdiningapp.models.User;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.MultipartBody;
@@ -27,6 +30,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
@@ -58,6 +62,9 @@ public class AuthAPIclient {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OKHttpBuilder.addInterceptor(interceptor);
+        OKHttpBuilder.connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS);
     }
 
     public static void setAuthToken(){
@@ -66,7 +73,7 @@ public class AuthAPIclient {
             @Override public Response intercept(Chain chain) throws IOException {
                 //Log.d("RETROFIT","add inter");
                 Request request = chain.request().newBuilder().addHeader("Authorization", "Token "+Token.getToken().getKey()).build();
-                //Log.d("RETROFIT",Token.getToken().getKey());
+                Log.d("RETROFIT",Token.getToken().getKey());
                 return chain.proceed(request);
             }
         });
@@ -121,14 +128,28 @@ public class AuthAPIclient {
                 @Body Gathering gathering);
 
         @GET("api/gathering/")
-        Call<List<Gathering>> getGatheringList();
+        Call<List<Gathering>> getGatheringList(
+                @Query("page") Integer pageNum
+        );
 
         @GET("api/gathering/location/")
-        Call<List<MapMarker>> getGatheringLocationList();
+        Call<List<MapMarkerInfo>> getGatheringLocationList();
 
-        @GET("api/gathering/{id}")
+        @GET("api/gathering/{id}/")
         Call<Gathering> getGatheringDetail(
                 @Path("id") Integer id
+        );
+
+        @PUT("api/gathering/{id}/")
+        Call<Gathering> putGathering(
+                @Path("id") Integer id,
+                @Body Gathering gathering);
+
+        @FormUrlEncoded
+        @PATCH("api/gathering/{id}/")
+        Call<Gathering> startGathering(
+                @Path("id") Integer id,
+                @Field("is_start") boolean isStart
         );
 
         @FormUrlEncoded

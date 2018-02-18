@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.baoyz.widget.PullRefreshLayout;
 import com.bonlai.socialdiningapp.MainActivity;
+import com.bonlai.socialdiningapp.adapter.MyGatheringAdapter;
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity;
 import com.bonlai.socialdiningapp.R;
@@ -48,7 +49,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class GatheringFragment extends Fragment implements View.OnClickListener {
+public class GatheringFragment extends Fragment implements View.OnClickListener,MyGatheringAdapter.LoadDataListener {
 
     public static enum Mode {
         ALL,
@@ -63,6 +64,8 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
     private Mode mMode;
     private int myUserId;
     private boolean isPrepared;
+    private int pageNum=1;
+    private boolean hasMoreData=true;
 
     private RecyclerView recyclerView;
     private FloatingActionButton mAddGathering;
@@ -122,18 +125,37 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
 
         mPullRefresh = (PullRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
 
-// listen refresh event
+// listen loadData event
         mPullRefresh.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh();
+                //pageNum=1;
+                loadData();
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                //Log.d("scroll","called");
+                if (!recyclerView.canScrollVertically(1)&&hasMoreData&&mMode==Mode.ALL) {
+                    //Toast.makeText(getContext(),"L",Toast.LENGTH_LONG).show();
+                    Log.d("onscroll end","called");
+                    myAdapter.showLoading();
+                }
             }
         });
 
 
-
-        refresh();
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("MainActivity_","onStart");
+        loadData();
     }
 
     @Override
@@ -145,7 +167,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser&&isPrepared) {
-                refresh();
+                loadData();
         }
     }
 
@@ -200,20 +222,24 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         }
     }
 
-    public void refresh(){
+    @Override
+    public void loadData(){
+        pageNum=1;
+        hasMoreData=true;
         mProgress.setVisibility(View.VISIBLE);
         mContainer.setVisibility(View.GONE);
         if(mMode==Mode.ALL){
             AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
-            Call<List<Gathering>> getGatheringList = service.getGatheringList();
+            Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum++);
+            Log.d("page no in load data",""+pageNum);
             getGatheringList.enqueue(new Callback<List<Gathering>>() {
 
                 @Override
                 public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
                     Log.d("fragment","called");
-                    myAdapter = new MyGatheringAdapter(getContext(), response.body());
+                    myAdapter = new MyGatheringAdapter(getContext(), response.body(),GatheringFragment.this);
                     recyclerView.setAdapter(myAdapter);
-                    // refresh complete
+                    // loadData complete
                     mProgress.setVisibility(View.GONE);
                     mContainer.setVisibility(View.VISIBLE);
                     mPullRefresh.setRefreshing(false);
@@ -230,9 +256,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                 @Override
                 public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
 
-                    myAdapter = new MyGatheringAdapter(getContext(), response.body());
+                    myAdapter = new MyGatheringAdapter(getContext(), response.body(),GatheringFragment.this);
                     recyclerView.setAdapter(myAdapter);
-                    // refresh complete
+                    // loadData complete
                     mProgress.setVisibility(View.GONE);
                     mContainer.setVisibility(View.VISIBLE);
                     mPullRefresh.setRefreshing(false);
@@ -245,7 +271,39 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
         }
     }
 
-    public class MyGatheringAdapter extends RecyclerView.Adapter<MyGatheringAdapter.ViewHolder>implements Filterable {
+    @Override
+    public void loadMoreData(){
+        //myAdapter.showLoading();
+        if(mMode==Mode.ALL){
+            AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
+            Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum);
+            Log.d("page no",""+pageNum);
+            getGatheringList.enqueue(new Callback<List<Gathering>>() {
+
+                @Override
+                public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
+                    if(response.isSuccessful()){
+                        myAdapter.dismissLoading();
+                        myAdapter.addMoreGathering(response.body());
+                        myAdapter.setMore(true);
+                        pageNum++;
+                    }else{
+                        myAdapter.dismissLoading();
+                        myAdapter.setMore(true);
+                        hasMoreData=false;
+                    }
+                    //recyclerView.setAdapter(myAdapter);
+                    // loadData complete
+                }
+                @Override
+                public void onFailure(Call<List<Gathering>> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+        }
+    }
+
+ /*   public class MyGatheringAdapter extends RecyclerView.Adapter<MyGatheringAdapter.ViewHolder>implements Filterable {
         private List<Gathering> mGathering;
         private List<Gathering> mGatheringFiltered;
         Context context;
@@ -430,14 +488,14 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
                         Toast toast = Toast.makeText(context, "Joined Gathering " , Toast.LENGTH_LONG);
                         toast.show();
                         if(mMode==Mode.MY){
-                            refresh();
+                            loadData();
                         }
 
                     }else{
                         Toast toast = Toast.makeText(context, "Withdraw Gathering" , Toast.LENGTH_LONG);
                         toast.show();
                         if(mMode==Mode.MY){
-                            refresh();
+                            loadData();
                         }
                     }
                 }
@@ -448,6 +506,12 @@ public class GatheringFragment extends Fragment implements View.OnClickListener 
             });
         }
 
-    }
+        public void addMoreGathering(List<Gathering> gatherings){
+            int sizeInit = mGatheringFiltered.size();
+            mGatheringFiltered.addAll(gatherings);
+            notifyItemRangeChanged(sizeInit, mGatheringFiltered.size());
+        }
+
+    }*/
 
 }
