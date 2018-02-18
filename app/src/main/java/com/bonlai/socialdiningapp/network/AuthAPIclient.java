@@ -165,7 +165,9 @@ public class AuthAPIclient {
         );
 
         @GET("api/restaurant/")
-        Call<List<Restaurant>> getRestaurantList();
+        Call<List<Restaurant>> getRestaurantList(
+                @Query("page") Integer pageNum
+        );
 
 
         @GET("api/review/")

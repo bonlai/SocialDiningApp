@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,14 +27,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class RestaurantFragment extends Fragment {
-
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+public class RestaurantFragment extends Fragment implements MyRestaurantRecyclerViewAdapter.LoadDataListener{
 
     private RecyclerView recyclerView;
+    private MyRestaurantRecyclerViewAdapter mAdapter;
+    private int pageNum=1;
+    private boolean hasMoreData=true;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -56,11 +55,7 @@ public class RestaurantFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
         setHasOptionsMenu(true);
-        //((AppCompatActivity) getActivity()).getSupportActionBar().show();
     }
 
     @Override
@@ -74,18 +69,18 @@ public class RestaurantFragment extends Fragment {
         recyclerView = (RecyclerView) rootView.findViewById(R.id.list);
         recyclerView.setLayoutManager(layoutManager);
 
-        AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
-        Call<List<Restaurant>> getRestaurantList = service.getRestaurantList();
-        getRestaurantList.enqueue(new Callback<List<Restaurant>>() {
+        loadData();
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onResponse(Call<List<Restaurant>> call, Response<List<Restaurant>> response) {
-                if(response.isSuccessful()){
-                    recyclerView.setAdapter(new MyRestaurantRecyclerViewAdapter(getContext(),response.body()));
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                //Log.d("scroll","called");
+                if (!recyclerView.canScrollVertically(1)&&hasMoreData) {
+                    //Toast.makeText(getContext(),"L",Toast.LENGTH_LONG).show();
+                    Log.d("onscroll end","called");
+                    mAdapter.showLoading();
                 }
-            }
-            @Override
-            public void onFailure(Call<List<Restaurant>> call, Throwable t) {
-                t.printStackTrace();
             }
         });
 
@@ -141,4 +136,50 @@ public class RestaurantFragment extends Fragment {
         }
     }
 
+    @Override
+    public void loadData() {
+        pageNum=1;
+        hasMoreData=true;
+
+        AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
+        Call<List<Restaurant>> getRestaurantList = service.getRestaurantList(pageNum++);
+        getRestaurantList.enqueue(new Callback<List<Restaurant>>() {
+            @Override
+            public void onResponse(Call<List<Restaurant>> call, Response<List<Restaurant>> response) {
+                if(response.isSuccessful()){
+                    mAdapter=new MyRestaurantRecyclerViewAdapter(getContext(),response.body(),RestaurantFragment.this);
+                    recyclerView.setAdapter(mAdapter);
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Restaurant>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void loadMoreData() {
+        AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
+        Call<List<Restaurant>> getRestaurantList = service.getRestaurantList(pageNum);
+        getRestaurantList.enqueue(new Callback<List<Restaurant>>() {
+            @Override
+            public void onResponse(Call<List<Restaurant>> call, Response<List<Restaurant>> response) {
+                if (response.isSuccessful()) {
+                    mAdapter.dismissLoading();
+                    mAdapter.addMoreRestaurants(response.body());
+                    mAdapter.setMore(true);
+                    pageNum++;
+                } else {
+                    mAdapter.dismissLoading();
+                    mAdapter.setMore(true);
+                    hasMoreData = false;
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Restaurant>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
 }

@@ -2,12 +2,14 @@ package com.bonlai.socialdiningapp.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
@@ -23,60 +25,17 @@ import java.util.List;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 
-public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRestaurantRecyclerViewAdapter.ViewHolder> {
-
+public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final int VIEW_ITEM = 1;
+    private final int VIEW_PROG = 0;
+    private boolean isMoreLoading = true;
     private final List<Restaurant> mRestaurant;
     Context context;
+    private LoadDataListener mListener;
 
-    public MyRestaurantRecyclerViewAdapter(Context context,List<Restaurant> restaurant) {
-        this.context = context;
-        mRestaurant=restaurant;
-    }
-
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_restaurant, parent, false);
-        return new ViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
-        String imgPath = mRestaurant.get(position).getImage().get(0).getImage();
-        final int restaurantId=mRestaurant.get(position).getId();
-        Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent (context, RestaurantDetailActivity.class);
-                intent.putExtra("restaurantId", restaurantId);
-                context.startActivity(intent);
-            }
-        });
-        holder.mCreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, GatheringUpsertActivity.class);
-                intent.putExtra("mode", GatheringUpsertActivity.Mode.POST);
-                intent.putExtra("restaurantId", restaurantId);
-                intent.putExtra("restaurantName", mRestaurant.get(position).getName());
-                intent.putExtra("mode", GatheringUpsertActivity.Mode.POST);
-                context.startActivity(intent);
-            }
-        });
-
-        double rating=mRestaurant.get(position).getAverageRate();
-        holder.mAvgRating.setRating((float)rating);
-        holder.mAvgRating.setIsIndicator(true);
-
-        holder.mCategory.setText(mRestaurant.get(position).getCategory());
-        holder.mAddress.setText(mRestaurant.get(position).getAddress());
-        holder.mRestaurantName.setText(mRestaurant.get(position).getName());
-    }
-
-    @Override
-    public int getItemCount() {
-        return mRestaurant.size();
+    public interface LoadDataListener{
+        void loadData();
+        void loadMoreData();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -116,4 +75,110 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<MyRest
             }
         }
     }
+
+    public class ProgressViewHolder extends RecyclerView.ViewHolder {
+        public ProgressBar pBar;
+        public ProgressViewHolder(View v) {
+            super(v);
+            pBar = (ProgressBar) v.findViewById(R.id.pBar);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mRestaurant.get(position) != null ? VIEW_ITEM : VIEW_PROG;
+    }
+
+    public MyRestaurantRecyclerViewAdapter(Context context,List<Restaurant> restaurant, LoadDataListener listener) {
+        this.context = context;
+        mRestaurant=restaurant;
+        mListener=listener;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_ITEM) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.fragment_restaurant, parent, false);
+            return new ViewHolder(view);
+        } else {
+            return new ProgressViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_progress,parent, false));
+        }
+
+    }
+
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        if (holder instanceof ViewHolder) {
+            ViewHolder mHolder=(ViewHolder)holder;
+            String imgPath = mRestaurant.get(position).getImage().get(0).getImage();
+            final int restaurantId=mRestaurant.get(position).getId();
+            Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mHolder.mRestaurantImg);
+            mHolder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent (context, RestaurantDetailActivity.class);
+                    intent.putExtra("restaurantId", restaurantId);
+                    context.startActivity(intent);
+                }
+            });
+            mHolder.mCreate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, GatheringUpsertActivity.class);
+                    intent.putExtra("mode", GatheringUpsertActivity.Mode.POST);
+                    intent.putExtra("restaurantId", restaurantId);
+                    intent.putExtra("restaurantName", mRestaurant.get(position).getName());
+                    intent.putExtra("mode", GatheringUpsertActivity.Mode.POST);
+                    context.startActivity(intent);
+                }
+            });
+
+            double rating=mRestaurant.get(position).getAverageRate();
+            mHolder.mAvgRating.setRating((float)rating);
+            mHolder.mAvgRating.setIsIndicator(true);
+
+            mHolder.mCategory.setText(mRestaurant.get(position).getCategory());
+            mHolder.mAddress.setText(mRestaurant.get(position).getAddress());
+            mHolder.mRestaurantName.setText(mRestaurant.get(position).getName());
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return mRestaurant.size();
+    }
+
+    public void addMoreRestaurants(List<Restaurant> restaurants){
+        int sizeInit = mRestaurant.size();
+        mRestaurant.addAll(restaurants);
+        notifyItemRangeChanged(sizeInit, mRestaurant.size());
+    }
+
+    public void showLoading() {
+        if (isMoreLoading && mRestaurant != null && mListener != null) {
+            isMoreLoading = false;
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    mRestaurant.add(null);
+                    notifyItemInserted(mRestaurant.size() - 1);
+                    mListener.loadMoreData();
+                }
+            });
+        }
+    }
+
+    public void setMore(boolean isMore) {
+        this.isMoreLoading = isMore;
+    }
+
+    public void dismissLoading() {
+        if (mRestaurant != null && mRestaurant.size() > 0) {
+            mRestaurant.remove(mRestaurant.size() - 1);
+            notifyItemRemoved(mRestaurant.size());
+        }
+    }
+
+
 }
