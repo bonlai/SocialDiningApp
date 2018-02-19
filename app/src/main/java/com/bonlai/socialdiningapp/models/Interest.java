@@ -28,4 +28,16 @@ public class Interest {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public boolean equals(Object v) {
+        boolean retVal = false;
+
+        if (v instanceof Interest){
+            Interest ptr = (Interest) v;
+            retVal = ptr.id == this.id;
+        }
+
+        return retVal;
+    }
 }

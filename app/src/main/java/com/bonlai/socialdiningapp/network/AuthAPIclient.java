@@ -26,6 +26,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -118,9 +119,19 @@ public class AuthAPIclient {
         Call<List<Interest>> getInterestList();
 
         @FormUrlEncoded
-        @PUT("api/interest/")
-        Call<Profile> postInterest(
+        @POST("api/interest/")
+        Call<ResponseBody> postInterest(
                 @Field("name") String bio
+        );
+
+        @DELETE("api/user/{id}/interest/")
+        Call<ResponseBody> clearInterest(
+                @Path("id") Integer id
+        );
+
+        @GET("api/interest/")
+        Call<List<Interest>> getMyInterestList(
+                @Query("user") Integer id
         );
 
         @POST("api/gathering/")

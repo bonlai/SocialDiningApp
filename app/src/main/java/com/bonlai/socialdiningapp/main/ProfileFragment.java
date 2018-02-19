@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.LoginActivity;
@@ -35,6 +36,7 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -45,6 +47,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.app.Activity.RESULT_OK;
 import static com.bonlai.socialdiningapp.LoginActivity.USER_CREDENTIAL;
 
 public class ProfileFragment extends Fragment implements View.OnClickListener {
@@ -54,6 +57,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private TextView mBio;
     private TextView mDOB;
     private TextView mGender;
+    private TextView mInterest;
     private FloatingActionButton mEditButton;
     private Button mLogout;
     private RelativeLayout mBioHolder;
@@ -68,6 +72,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private User mUser;
 
     private static final String ARG_MODE = "mode";
+
+    final int INTEREST_EDIT = 100;
 
 
     public static enum ProfileMode {
@@ -134,6 +140,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mDOB=(TextView)rootView.findViewById(R.id.DOB);
         mGender=(TextView)rootView.findViewById(R.id.gender);
         mUsername=(TextView)rootView.findViewById(R.id.username);
+        mInterest=(TextView)rootView.findViewById(R.id.interests);
 
         mEditButton=(FloatingActionButton)rootView.findViewById(R.id.edit_pic);
         mLogout=(Button)rootView.findViewById(R.id.logout);
@@ -215,13 +222,36 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == Activity.RESULT_OK) {
+            if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
                 File imageFile = new File(resultUri.getPath());
                 postImage(imageFile);
 
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
+            }
+        }
+
+        if (requestCode == INTEREST_EDIT) {
+            if(resultCode == Activity.RESULT_OK){
+                ArrayList<String> result=(ArrayList<String>)data.getSerializableExtra("result");
+                StringBuilder builder = new StringBuilder();
+                boolean firstItem=true;
+                for(String interest:result){
+                    if(firstItem){
+                        firstItem=false;
+                    }else{
+                        builder.append(", ");
+                    }
+                    builder.append(interest);
+
+                    mInterest.setText(builder.toString());
+                    //Toast.makeText(getContext(),interest,Toast.LENGTH_SHORT).show();
+                }
+
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
             }
         }
     }
@@ -273,7 +303,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
             case R.id.hobby_holder:
                 intent = new Intent(getContext(), EditHobbyActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,INTEREST_EDIT);
+                //startActivity(intent);
                 break;
 
 

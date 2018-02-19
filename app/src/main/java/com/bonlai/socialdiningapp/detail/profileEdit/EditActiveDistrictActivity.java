@@ -48,8 +48,8 @@ public class EditActiveDistrictActivity extends AppCompatActivity {
 
     private void initUI() {
         //mGridView= (GridView) findViewById(R.id.districts_list);
-        mContainer = (LinearLayout) findViewById(R.id.container);
-        mList = mContainer = (LinearLayout) findViewById(R.id.districts_list);
+        //mContainer = (LinearLayout) findViewById(R.id.container);
+        mList  = (LinearLayout) findViewById(R.id.districts_list);
     }
 
     private CheckBox.OnCheckedChangeListener checker = new CheckBox.OnCheckedChangeListener() {

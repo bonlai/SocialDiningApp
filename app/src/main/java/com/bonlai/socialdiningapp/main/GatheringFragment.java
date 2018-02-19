@@ -129,7 +129,6 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
         mPullRefresh.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //pageNum=1;
                 loadData();
             }
         });
