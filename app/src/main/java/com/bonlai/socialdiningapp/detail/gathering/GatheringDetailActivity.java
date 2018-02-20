@@ -3,6 +3,7 @@ package com.bonlai.socialdiningapp.detail.gathering;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bonlai.socialdiningapp.ChatActivity;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.detail.profileEdit.OtherProfileActivity;
 import com.bonlai.socialdiningapp.detail.restaurant.RestaurantDetailActivity;
@@ -73,6 +75,16 @@ public class GatheringDetailActivity extends AppCompatActivity {
         initUI();
         initVar();
         getGatheringInfo(this);
+
+        FloatingActionButton message=(FloatingActionButton)findViewById(R.id.message);
+        message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(GatheringDetailActivity.this, ChatActivity.class);
+                intent.putExtra(GATHERING_ID,gatheringId);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initVar(){

@@ -52,7 +52,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
 
         initUI();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.message);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
