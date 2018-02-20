@@ -18,7 +18,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bonlai.socialdiningapp.detail.profileEdit.GenderDialogFragment;
 import com.bonlai.socialdiningapp.models.Interest;
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.LoginActivity;
@@ -49,7 +51,8 @@ import retrofit2.Response;
 import static android.app.Activity.RESULT_OK;
 import static com.bonlai.socialdiningapp.LoginActivity.USER_CREDENTIAL;
 
-public class ProfileFragment extends Fragment implements View.OnClickListener {
+public class ProfileFragment extends Fragment implements View.OnClickListener
+        ,GenderDialogFragment.Callback {
 
     private ImageView mProfilePic;
     private TextView mUsername;
@@ -63,6 +66,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private RelativeLayout mHobbyHolder;
     private RelativeLayout mDOBHolder;
     private RelativeLayout mDistrictsHolder;
+    private RelativeLayout mGenderHolder;
 
     private int myUserId;
     private ProfileMode mMode;
@@ -73,6 +77,33 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private static final String ARG_MODE = "mode";
 
     final int INTEREST_EDIT = 100;
+
+    @Override
+    public void onGenderSelect(String Gender) {
+        //Toast.makeText(getContext(),Gender,Toast.LENGTH_SHORT).show();
+        //Log.d("check stirng",Gender);
+
+        AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
+        Profile myProfile= MyUserHolder.getInstance().getUser().getProfile();
+
+        myProfile.setGender(Gender);
+        Call<Profile> req = service.editProfile(myUserId,myProfile);
+        req.enqueue(new Callback<Profile>() {
+            @Override
+            public void onResponse(Call<Profile> call, Response<Profile> response) {
+                Log.v("Upload", "success");
+                MyUserHolder.getInstance().getUser().setProfile(response.body());
+                Toast.makeText(getContext(), "Saved!", Toast.LENGTH_LONG).show();
+                updateProfile();
+            }
+
+            @Override
+            public void onFailure(Call<Profile> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+    }
 
 
     public static enum ProfileMode {
@@ -150,6 +181,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mHobbyHolder = (RelativeLayout) rootView.findViewById(R.id.hobby_holder);
         mDOBHolder = (RelativeLayout) rootView.findViewById(R.id.DOB_holder);
         mDistrictsHolder = (RelativeLayout) rootView.findViewById(R.id.districts_holder);
+        mGenderHolder= (RelativeLayout) rootView.findViewById(R.id.gender_holder);
 
         if(mMode==ProfileMode.MY){
             mEditButton.setOnClickListener(this);
@@ -157,6 +189,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             mHobbyHolder.setOnClickListener(this);
             mDOBHolder.setOnClickListener(this);
             mDistrictsHolder.setOnClickListener(this);
+            mGenderHolder.setOnClickListener(this);
             mLogout.setOnClickListener(this);
         }
     }
@@ -326,6 +359,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             case R.id.DOB_holder:
                 intent = new Intent(getContext(), EditDOBActivity.class);
                 startActivity(intent);
+                break;
+
+            case R.id.gender_holder:
+                GenderDialogFragment genderDialogFragment=new GenderDialogFragment();
+                genderDialogFragment.setTargetFragment(this,1);
+                genderDialogFragment.show(getFragmentManager().beginTransaction(), null);
                 break;
 
             case R.id.districts_holder:
