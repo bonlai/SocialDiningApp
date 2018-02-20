@@ -157,7 +157,6 @@
                         android:layout_marginStart="@dimen/activity_horizontal_margin"
                         android:layout_marginTop="8dp"
                         android:layout_toEndOf="@id/ivContactItem1"
-                        android:text="This is my introduction. Thanks you."
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="#727272" />
 
@@ -201,7 +200,6 @@
                         android:layout_marginStart="@dimen/activity_horizontal_margin"
                         android:layout_marginTop="8dp"
                         android:layout_toEndOf="@id/ivContactItem3"
-                        android:text="/@hah"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="#727272" />
 
@@ -252,7 +250,6 @@
                         android:layout_marginStart="@dimen/activity_horizontal_margin"
                         android:layout_marginTop="8dp"
                         android:layout_toEndOf="@id/ic_DOB"
-                        android:text="2018-01-01"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="#727272" />
 
@@ -301,7 +298,6 @@
                         android:layout_marginStart="@dimen/activity_horizontal_margin"
                         android:layout_marginTop="8dp"
                         android:layout_toEndOf="@id/ivContactItem5"
-                        android:text="Yuen Long"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="#727272" />
 
@@ -346,7 +342,6 @@
                         android:layout_marginStart="@dimen/activity_horizontal_margin"
                         android:layout_marginTop="8dp"
                         android:layout_toEndOf="@id/ivContactItem6"
-                        android:text="Music, Guitar, Beatbox"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="#727272" />
 

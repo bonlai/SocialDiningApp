@@ -18,8 +18,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bonlai.socialdiningapp.models.Interest;
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.LoginActivity;
 import com.bonlai.socialdiningapp.R;
@@ -36,7 +36,6 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -97,6 +96,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        myUserId=MyUserHolder.getInstance().getUser().getPk();
         if (getArguments() != null) {
             mMode = (ProfileMode)getArguments().getSerializable(ARG_MODE);
         }
@@ -104,8 +104,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         if (getActivity() instanceof OtherProfileActivity) {
             int userId = getActivity().getIntent().getExtras().getInt("userId");
             getOtherUserProfile(userId);
+            getInterestsList(userId);
         }else{
             getMyProfile();
+            getInterestsList(myUserId);
         }
 
         isStoragePermissionGranted();
@@ -114,9 +116,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        myUserId=MyUserHolder.getInstance().getUser().getPk();
-        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         initUI(rootView);
 
@@ -167,6 +168,34 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mBio.setText(mProfile.getSelfIntroduction());
         mDOB.setText(mProfile.getDob());
         mGender.setText(mProfile.getGender());
+    }
+
+    private void getInterestsList(int userId){
+        AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
+        Call<List<Interest>> req = service.getMyInterestList(userId);
+        req.enqueue(new Callback<List<Interest>>() {
+            @Override
+            public void onResponse(Call<List<Interest>> call, Response<List<Interest>> response) {
+                if(response.isSuccessful()) {
+                    //mMyInterestList = response.body();
+                    StringBuilder builder = new StringBuilder();
+                    boolean firstItem=true;
+                    for(Interest interest:response.body()){
+                        if(firstItem){
+                            firstItem=false;
+                        }else{
+                            builder.append(", ");
+                        }
+                        builder.append(interest.getName());
+                    }
+                    mInterest.setText(builder.toString());
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Interest>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     private void getOtherUserProfile(final int userId){
@@ -234,21 +263,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         if (requestCode == INTEREST_EDIT) {
             if(resultCode == Activity.RESULT_OK){
-                ArrayList<String> result=(ArrayList<String>)data.getSerializableExtra("result");
-                StringBuilder builder = new StringBuilder();
-                boolean firstItem=true;
-                for(String interest:result){
-                    if(firstItem){
-                        firstItem=false;
-                    }else{
-                        builder.append(", ");
-                    }
-                    builder.append(interest);
-
-                    mInterest.setText(builder.toString());
-                    //Toast.makeText(getContext(),interest,Toast.LENGTH_SHORT).show();
-                }
-
+                getInterestsList(myUserId);
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
