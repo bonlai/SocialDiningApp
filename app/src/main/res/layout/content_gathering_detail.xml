@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -11,7 +13,9 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:indeterminate="true" />
+        android:indeterminate="true"
+        tools:layout_editor_absoluteX="47dp"
+        tools:layout_editor_absoluteY="230dp" />
 
     <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -81,16 +85,15 @@
 
                     <TextView
                         android:id="@+id/date_time"
-                        android:layout_width="250dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="7dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
                         android:maxLines="3"
                         android:padding="8dp"
                         android:textColor="#666"
                         android:textSize="14dp"
-                        card_view:layout_constraintLeft_toRightOf="@+id/user_img"
-                        card_view:layout_constraintTop_toBottomOf="@+id/creater_img"
+                        card_view:layout_constraintEnd_toEndOf="parent"
+                        card_view:layout_constraintTop_toBottomOf="@+id/bio"
                         tools:layout_constraintLeft_creator="1"
                         tools:layout_constraintTop_creator="1" />
 
@@ -101,7 +104,7 @@
                         android:layout_marginLeft="16dp"
                         android:layout_marginTop="8dp"
                         card_view:layout_constraintLeft_toLeftOf="parent"
-                        card_view:layout_constraintTop_toBottomOf="@+id/gathering_name"/>
+                        card_view:layout_constraintTop_toBottomOf="@+id/gathering_name" />
 
                     <Switch
                         android:id="@+id/join"
