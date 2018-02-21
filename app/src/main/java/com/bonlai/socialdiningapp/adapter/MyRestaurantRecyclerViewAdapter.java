@@ -155,6 +155,12 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
         notifyItemRangeChanged(sizeInit, mRestaurant.size());
     }
 
+    public void resetRestaurants(List<Restaurant> restaurants){
+        mRestaurant.clear();
+        mRestaurant.addAll(restaurants);
+        notifyDataSetChanged();
+    }
+
     public void showLoading() {
         if (isMoreLoading && mRestaurant != null && mListener != null) {
             isMoreLoading = false;

@@ -2,6 +2,7 @@ package com.bonlai.socialdiningapp.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bonlai.socialdiningapp.RestaurantSearchActivity;
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.adapter.MyRestaurantRecyclerViewAdapter;
 import com.bonlai.socialdiningapp.detail.map.MapsActivity;
@@ -26,6 +28,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class RestaurantFragment extends Fragment implements MyRestaurantRecyclerViewAdapter.LoadDataListener{
 
@@ -34,27 +38,31 @@ public class RestaurantFragment extends Fragment implements MyRestaurantRecycler
     private int pageNum=1;
     private boolean hasMoreData=true;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public RestaurantFragment() {
-    }
+    static final int SEARCH_REQUEST = 1;
+    private String query;
 
+    private static final String ARG_QUERY = "query";
+    private boolean returnedSearchResult=false;
 
-/*    @SuppressWarnings("unused")
-    public static RestaurantFragment newInstance(int columnCount) {
+    public RestaurantFragment() {}
+
+    public static RestaurantFragment newInstance(String query) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ARG_QUERY, query);
+
         RestaurantFragment fragment = new RestaurantFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }*/
+        fragment.setArguments(bundle);
 
+        return fragment;
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (getArguments() != null) {
+            query = getArguments().getString(ARG_QUERY);
+        }else{
+            query="";
+        }
         setHasOptionsMenu(true);
     }
 
@@ -103,29 +111,73 @@ public class RestaurantFragment extends Fragment implements MyRestaurantRecycler
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.restaurant_search, menu);
-        MenuItem item=menu.findItem(R.id.action_search);
-        SearchView searchView=(SearchView)item.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                //GatheringFragment.this.MyGatheringAdapter.getFilter().filter(s);
-                return false;
-            }
+        MenuItem search = menu.findItem(R.id.action_search);
+        MenuItem back = menu.findItem(R.id.action_back);
+        if(returnedSearchResult){
+            search.setVisible(false);
+            back.setVisible(true);
+        }else{
+            search.setVisible(true);
+            back.setVisible(false);
+        }
 
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
         super.onCreateOptionsMenu(menu,inflater);
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SEARCH_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                returnedSearchResult=true;
+                getActivity().invalidateOptionsMenu();
+                String restaurantName=data.getStringExtra(RestaurantSearchActivity.RESTAURANT_NAME);
+                String category=data.getStringExtra(RestaurantSearchActivity.CATEGORY);
+                String address=data.getStringExtra(RestaurantSearchActivity.ADDRESS);
+                query=restaurantName+","+category+","+address;
+                loadQueryData(query);
+            }
+        }
+    }
+
+    public void loadQueryData(String query) {
+        pageNum=1;
+        hasMoreData=true;
+
+        AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
+        Call<List<Restaurant>> getRestaurantList = service.getRestaurantList(pageNum++,query);
+        getRestaurantList.enqueue(new Callback<List<Restaurant>>() {
+            @Override
+            public void onResponse(Call<List<Restaurant>> call, Response<List<Restaurant>> response) {
+                if(response.isSuccessful()){
+                    mAdapter.resetRestaurants(response.body());
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Restaurant>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.action_map:
-                Intent intent = new Intent(getContext(), MapsActivity.class);
+                intent = new Intent(getContext(), MapsActivity.class);
                 startActivity(intent);
+                return true;
+
+            case R.id.action_search:
+                intent = new Intent(getContext(), RestaurantSearchActivity.class);
+                startActivityForResult(intent,SEARCH_REQUEST);
+                return true;
+
+            case R.id.action_back:
+                returnedSearchResult=false;
+                query="";
+                loadQueryData(query);
+                getActivity().invalidateOptionsMenu();
                 return true;
 
             default:
@@ -142,7 +194,7 @@ public class RestaurantFragment extends Fragment implements MyRestaurantRecycler
         hasMoreData=true;
 
         AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
-        Call<List<Restaurant>> getRestaurantList = service.getRestaurantList(pageNum++);
+        Call<List<Restaurant>> getRestaurantList = service.getRestaurantList(pageNum++,query);
         getRestaurantList.enqueue(new Callback<List<Restaurant>>() {
             @Override
             public void onResponse(Call<List<Restaurant>> call, Response<List<Restaurant>> response) {
@@ -161,7 +213,7 @@ public class RestaurantFragment extends Fragment implements MyRestaurantRecycler
     @Override
     public void loadMoreData() {
         AuthAPIclient.APIService service= AuthAPIclient.getAPIService();
-        Call<List<Restaurant>> getRestaurantList = service.getRestaurantList(pageNum);
+        Call<List<Restaurant>> getRestaurantList = service.getRestaurantList(pageNum,query);
         getRestaurantList.enqueue(new Callback<List<Restaurant>>() {
             @Override
             public void onResponse(Call<List<Restaurant>> call, Response<List<Restaurant>> response) {
