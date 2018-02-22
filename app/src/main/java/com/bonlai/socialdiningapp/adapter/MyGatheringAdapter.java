@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity;
-import com.bonlai.socialdiningapp.main.GatheringFragment;
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.models.Profile;
@@ -303,6 +302,12 @@ public class MyGatheringAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             mGatheringFiltered.remove(mGatheringFiltered.size() - 1);
             notifyItemRemoved(mGatheringFiltered.size());
         }
+    }
+
+    public void resetGatherings(List<Gathering> gatherings){
+        mGatheringFiltered.clear();
+        mGatheringFiltered.addAll(gatherings);
+        notifyDataSetChanged();
     }
 
 }

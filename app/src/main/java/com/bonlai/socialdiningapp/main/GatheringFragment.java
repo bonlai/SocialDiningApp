@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,37 +15,30 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
 
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.widget.PullRefreshLayout;
+import com.bonlai.socialdiningapp.GatheringSearchActivity;
 import com.bonlai.socialdiningapp.MainActivity;
 import com.bonlai.socialdiningapp.adapter.MyGatheringAdapter;
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
-import com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.detail.map.MapsActivity;
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
-import com.bonlai.socialdiningapp.models.Profile;
-import com.bonlai.socialdiningapp.models.Restaurant;
-import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class GatheringFragment extends Fragment implements View.OnClickListener,MyGatheringAdapter.LoadDataListener {
@@ -60,12 +52,14 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
     private static final String ARG_MODE = "mode";
 
 
-    // TODO: Rename and change types of parameters
     private Mode mMode;
     private int myUserId;
     private boolean isPrepared;
     private int pageNum=1;
+    private Map<String, String> queryOption = new HashMap<>();
     private boolean hasMoreData=true;
+    private boolean returnedSearchResult=false;
+    static final int SEARCH_REQUEST = 1;
 
     private RecyclerView recyclerView;
     private FloatingActionButton mAddGathering;
@@ -187,21 +181,33 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
         inflater.inflate(R.menu.gatheirng_search, menu);
 
         //set searchview in action bar
-        MenuItem item=menu.findItem(R.id.action_search);
-        SearchView searchView=(SearchView)item.getActionView();
+        MenuItem search = menu.findItem(R.id.action_search);
+        MenuItem back = menu.findItem(R.id.action_back);
+        if(returnedSearchResult){
+            search.setVisible(false);
+            back.setVisible(true);
+        }else{
+            search.setVisible(true);
+            back.setVisible(false);
+        }
+
+        if(mMode==Mode.MY){
+            search.setVisible(false);
+        }
+/*        SearchView searchView=(SearchView)item.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                myAdapter.getFilter().filter(query);
+            public boolean onQueryTextSubmit(String searchText) {
+                myAdapter.getFilter().filter(searchText);
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String query) {
-                myAdapter.getFilter().filter(query);
+            public boolean onQueryTextChange(String searchText) {
+                myAdapter.getFilter().filter(searchText);
                 return false;
             }
-        });
+        });*/
         super.onCreateOptionsMenu(menu,inflater);
     }
 
@@ -213,6 +219,18 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
                 startActivity(intent);
                 return true;
 
+            case R.id.action_search:
+                intent = new Intent(getContext(), GatheringSearchActivity.class);
+                startActivityForResult(intent,SEARCH_REQUEST);
+                return true;
+
+            case R.id.action_back:
+                returnedSearchResult=false;
+                queryOption.clear();
+                loadQueryData();
+                getActivity().invalidateOptionsMenu();
+                return true;
+
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -222,14 +240,60 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SEARCH_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                returnedSearchResult=true;
+                getActivity().invalidateOptionsMenu();
+                String keyword=data.getStringExtra(GatheringSearchActivity.KEYWORD);
+                String location=data.getStringExtra(GatheringSearchActivity.LOCATION);
+                String minCount=data.getStringExtra(GatheringSearchActivity.MIN_COUNT);
+                String maxCount=data.getStringExtra(GatheringSearchActivity.MAX_COUNT);
+                String startDate=data.getStringExtra(GatheringSearchActivity.START_DATE);
+                String endDate=data.getStringExtra(GatheringSearchActivity.END_DATE);
+
+                queryOption.put("search", keyword);
+                queryOption.put("location",location);
+                queryOption.put("count_greater",minCount);
+                queryOption.put("count_less",maxCount);
+                queryOption.put("start_date",startDate);
+                queryOption.put("end_date",endDate);
+
+                loadQueryData();
+            }
+        }
+    }
+
+    public void loadQueryData() {
+        pageNum=1;
+        hasMoreData=true;
+
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
+        Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum++,queryOption);
+        Log.d("page no in load data",""+pageNum);
+        getGatheringList.enqueue(new Callback<List<Gathering>>() {
+
+            @Override
+            public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
+                myAdapter.resetGatherings(response.body());
+            }
+            @Override
+            public void onFailure(Call<List<Gathering>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    @Override
     public void loadData(){
         pageNum=1;
         hasMoreData=true;
         mProgress.setVisibility(View.VISIBLE);
         mContainer.setVisibility(View.GONE);
+
         if(mMode==Mode.ALL){
             AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
-            Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum++);
+            Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum++,queryOption);
             Log.d("page no in load data",""+pageNum);
             getGatheringList.enqueue(new Callback<List<Gathering>>() {
 
@@ -273,9 +337,10 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
     @Override
     public void loadMoreData(){
         //myAdapter.showLoading();
+
         if(mMode==Mode.ALL){
             AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
-            Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum);
+            Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum,queryOption);
             Log.d("page no",""+pageNum);
             getGatheringList.enqueue(new Callback<List<Gathering>>() {
 
@@ -301,216 +366,4 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
             });
         }
     }
-
- /*   public class MyGatheringAdapter extends RecyclerView.Adapter<MyGatheringAdapter.ViewHolder>implements Filterable {
-        private List<Gathering> mGathering;
-        private List<Gathering> mGatheringFiltered;
-        Context context;
-
-        public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-            public final View mView;
-            public TextView mGatheringName;
-            public TextView mDescription;
-            public Switch mJoin;
-
-            public TextView mRestaurantName;
-            public ImageView mRestaurantImg;
-            public TextView mCategory;
-            public TextView mDateTime;
-
-            public ImageView mCreator;
-
-
-            public ViewHolder(View v) {
-                super(v);
-                mView = v;
-                mGatheringName = (TextView) v.findViewById(R.id.gathering_name);
-                mRestaurantImg = (ImageView) v.findViewById(R.id.restaurant_img);
-                mDescription = (TextView) v.findViewById(R.id.bio);
-                mRestaurantName=(TextView) v.findViewById(R.id.restaurant_name);
-                mCreator= (ImageView) v.findViewById(R.id.user_img);
-                mCategory=(TextView) v.findViewById(R.id.category);
-                mDateTime=(TextView) v.findViewById(R.id.date_time);
-                mJoin = (Switch) v.findViewById(R.id.join);
-                itemView.setOnClickListener(this);
-
-            }
-
-            @Override
-            public void onClick (View v){
-                //to event detail activity
-                Toast toast = Toast.makeText(context, "Testing toast" + mGathering.get(getAdapterPosition()), Toast.LENGTH_LONG);
-                toast.show();
-            }
-        }
-
-        public MyGatheringAdapter(Context context, List<Gathering> gathering) {
-            this.context = context;
-            mGathering=gathering;
-            mGatheringFiltered=gathering;
-        }
-
-        @Override
-        public MyGatheringAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.gathering, parent, false);
-            MyGatheringAdapter.ViewHolder vh = new MyGatheringAdapter.ViewHolder(v);
-            return vh;
-        }
-
-        @Override
-        public void onBindViewHolder(final MyGatheringAdapter.ViewHolder holder, final int position) {
-            AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
-
-            //get restaurant info
-            Call<Restaurant> getRestaurantInfo = service.getRestaurantInfo(mGatheringFiltered.get(position).getRestaurant());
-            getRestaurantInfo.enqueue(new Callback<Restaurant>() {
-                @Override
-                public void onResponse(Call<Restaurant> call, Response<Restaurant> response) {
-                    if(response.isSuccessful()){
-                        holder.mRestaurantName.setText(response.body().getName());
-                        if(!response.body().getImage().isEmpty()){
-                            String restImg=response.body().getImage().get(0).getImage();
-                            Picasso.with(context).load(restImg).placeholder(R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
-                        }
-                        holder.mCategory.setText("# "+response.body().getCategory());
-                    }else{
-
-                    }
-                }
-                @Override
-                public void onFailure(Call<Restaurant> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });
-
-            if(mGatheringFiltered.get(position).getCreatedBy()==myUserId){
-                holder.mJoin.setVisibility(View.GONE);
-            }
-            //get user img
-            Call<Profile> getUserImg = service.getProfile(mGathering.get(position).getCreatedBy());
-            getUserImg.enqueue(new Callback<Profile>() {
-                @Override
-                public void onResponse(Call<Profile> call, Response<Profile> response) {
-                    if(response.isSuccessful()){
-                        String imgPath=response.body().getImage();
-                        Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mCreator);
-                    }else{
-
-                    }
-                }
-                @Override
-                public void onFailure(Call<Profile> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });
-
-            //get gathering info
-            holder.mGatheringName.setText(mGatheringFiltered.get(position).getName());
-            holder.mGatheringName.setTag(mGatheringFiltered.get(position).getId());
-            holder.mDescription.setText(mGatheringFiltered.get(position).getDetail());
-            holder.mDateTime.setText(mGatheringFiltered.get(position).getStartDatetime());
-
-            //set join button event
-            final int gatheringId=mGatheringFiltered.get(position).getId();
-
-            if(mGatheringFiltered.get(position).getMember().contains(myUserId)||mGatheringFiltered.get(position).getCreatedBy()==myUserId){
-                holder.mJoin.setChecked(true);
-            }else{
-                holder.mJoin.setChecked(false);
-            }
-
-            holder.mJoin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
-                    Call<ResponseBody> req = service.joinGathering(myUserId, gatheringId);
-                    callParticipateAPI(req);
-
-                }
-            });
-
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent (context, GatheringDetailActivity.class);
-                    intent.putExtra(GatheringDetailActivity.GATHERING_ID, gatheringId);
-                    context.startActivity(intent);
-                }
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return mGatheringFiltered.size();
-        }
-
-        @Override
-        public Filter getFilter() {
-            return new Filter() {
-                @Override
-                protected FilterResults performFiltering(CharSequence charSequence) {
-                    String charString = charSequence.toString();
-                    if (charString.isEmpty()) {
-                        mGatheringFiltered = mGathering;
-                    } else {
-                        List<Gathering> filteredList = new ArrayList<>();
-                        for (Gathering gathering : mGathering) {
-
-                            // name match condition. this might differ depending on your requirement
-                            // here we are looking for name or phone number match
-                            if (gathering.getName().toLowerCase().contains(charString.toLowerCase())) {
-                                filteredList.add(gathering);
-                                Log.d("Filter:", gathering.getName().toLowerCase()+" "+charString.toLowerCase());
-                            }
-                        }
-
-                        mGatheringFiltered = filteredList;
-                    }
-
-                    FilterResults filterResults = new FilterResults();
-                    filterResults.values = mGatheringFiltered;
-                    return filterResults;
-                }
-
-                @Override
-                protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                    mGatheringFiltered = (ArrayList<Gathering>) filterResults.values;
-                    notifyDataSetChanged();
-                }
-            };
-        }
-        private void callParticipateAPI(Call<ResponseBody> req){
-            req.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if(response.isSuccessful()){
-                        Toast toast = Toast.makeText(context, "Joined Gathering " , Toast.LENGTH_LONG);
-                        toast.show();
-                        if(mMode==Mode.MY){
-                            loadData();
-                        }
-
-                    }else{
-                        Toast toast = Toast.makeText(context, "Withdraw Gathering" , Toast.LENGTH_LONG);
-                        toast.show();
-                        if(mMode==Mode.MY){
-                            loadData();
-                        }
-                    }
-                }
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });
-        }
-
-        public void addMoreGathering(List<Gathering> gatherings){
-            int sizeInit = mGatheringFiltered.size();
-            mGatheringFiltered.addAll(gatherings);
-            notifyItemRangeChanged(sizeInit, mGatheringFiltered.size());
-        }
-
-    }*/
-
 }
