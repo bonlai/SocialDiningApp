@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -183,6 +184,8 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
         //set searchview in action bar
         MenuItem search = menu.findItem(R.id.action_search);
         MenuItem back = menu.findItem(R.id.action_back);
+        MenuItem searchview = menu.findItem(R.id.action_searchview);
+
         if(returnedSearchResult){
             search.setVisible(false);
             back.setVisible(true);
@@ -193,21 +196,25 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
 
         if(mMode==Mode.MY){
             search.setVisible(false);
-        }
-/*        SearchView searchView=(SearchView)item.getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String searchText) {
-                myAdapter.getFilter().filter(searchText);
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String searchText) {
-                myAdapter.getFilter().filter(searchText);
-                return false;
-            }
-        });*/
+            SearchView searchView=(SearchView)searchview.getActionView();
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String searchText) {
+                    myAdapter.getFilter().filter(searchText);
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String searchText) {
+                    myAdapter.getFilter().filter(searchText);
+                    return false;
+                }
+            });
+        }else{
+            searchview.setVisible(false);
+        }
+
         super.onCreateOptionsMenu(menu,inflater);
     }
 

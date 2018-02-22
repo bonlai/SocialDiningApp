@@ -13,6 +13,7 @@ import com.bonlai.socialdiningapp.models.User;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
@@ -37,6 +38,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 /**
  * Created by Bon Lai on 12/1/2018.
@@ -47,7 +49,7 @@ public class AuthAPIclient {
     static APIService mAPIService;
     private static OkHttpClient.Builder OKHttpBuilder=new OkHttpClient.Builder();
     private static Retrofit.Builder builder=new Retrofit.Builder().
-            baseUrl("http://192.168.2.5:8000/").
+            baseUrl("http://192.168.2.6:8000/").
             addConverterFactory(GsonConverterFactory.create());
 
     public static Retrofit retrofit() {
@@ -140,7 +142,8 @@ public class AuthAPIclient {
 
         @GET("api/gathering/")
         Call<List<Gathering>> getGatheringList(
-                @Query("page") Integer pageNum
+                @Query("page") Integer pageNum,
+                @QueryMap Map<String, String> options
         );
 
         @GET("api/gathering/location/")
@@ -177,7 +180,8 @@ public class AuthAPIclient {
 
         @GET("api/restaurant/")
         Call<List<Restaurant>> getRestaurantList(
-                @Query("page") Integer pageNum
+                @Query("page") Integer pageNum,
+                @Query("search") String query
         );
 
 
