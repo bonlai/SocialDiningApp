@@ -31,7 +31,7 @@ public class APIclient {
     static APIService mAPIService;
     private static OkHttpClient.Builder OKHttpBuilder=new OkHttpClient.Builder();
     private static Retrofit.Builder builder=new Retrofit.Builder().
-            baseUrl("http://192.168.2.6:8000/").
+            baseUrl("http://192.168.2.4:8000/").
             addConverterFactory(GsonConverterFactory.create());
 
     public static Retrofit retrofit() {

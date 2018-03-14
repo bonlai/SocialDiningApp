@@ -1,7 +1,11 @@
 package com.bonlai.socialdiningapp;
 
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +15,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
@@ -24,10 +29,15 @@ import com.bonlai.socialdiningapp.helpers.NoSwipePager;
 import com.bonlai.socialdiningapp.main.ProfileFragment;
 import com.bonlai.socialdiningapp.main.RestaurantFragment;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
-import com.bonlai.socialdiningapp.models.Profile;
 import com.bonlai.socialdiningapp.models.Token;
-import com.bonlai.socialdiningapp.models.User;
+import com.bonlai.socialdiningapp.network.AuthAPIclient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,14 +49,40 @@ public class MainActivity extends AppCompatActivity{
     private BottomBarAdapter pagerAdapter;
     private boolean notificationVisible = false;
 
+    private LocationRequest mLocationRequest;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private final static int MY_PERMISSION_FINE_LOCATION = 101;
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         // Make sure to call the super method so that the states of our views are saved
         super.onSaveInstanceState(outState);
         // Save our own state now
         outState.putSerializable("Token", Token.getToken().getKey());
+
     }
 
+    LocationCallback mLocationCallback = new LocationCallback(){
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            for (Location location : locationResult.getLocations()) {
+                Log.i("MainAcitivty", "Location: " + location.getLatitude() + " " + location.getLongitude());
+                AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
+                Call<ResponseBody> register = service.returnLatLong(MyUserHolder.getInstance().getUser().getPk()
+                        ,location.getLatitude(),location.getLongitude());
+                register.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                    }
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+            }
+        };
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +129,22 @@ public class MainActivity extends AppCompatActivity{
             }
         });
         Log.d("Activity","create");
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(30000); // two minute interval
+        mLocationRequest.setFastestInterval(30000);
+
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
+            }
+        }
     }
 
     public void navigateToRestList(){
@@ -124,12 +176,6 @@ public class MainActivity extends AppCompatActivity{
         //APIclient.reset();
         Log.d("Activity","onDestroy");
     }
-
-
-
-
-
-
 
     private void setupViewPager() {
         viewPager = (NoSwipePager) findViewById(R.id.viewpager);

@@ -49,7 +49,7 @@ public class AuthAPIclient {
     static APIService mAPIService;
     private static OkHttpClient.Builder OKHttpBuilder=new OkHttpClient.Builder();
     private static Retrofit.Builder builder=new Retrofit.Builder().
-            baseUrl("http://192.168.2.6:8000/").
+            baseUrl("http://192.168.2.4:8000/").
             addConverterFactory(GsonConverterFactory.create());
 
     public static Retrofit retrofit() {
@@ -106,6 +106,15 @@ public class AuthAPIclient {
                 @Path("id") Integer id,
                 @Body Profile profile
         );
+
+        @FormUrlEncoded
+        @PUT("api/user/{id}/lat_long/")
+        Call<ResponseBody> returnLatLong(
+                @Path("id") Integer id,
+                @Field("latitude") double latitude,
+                @Field("longitude") double longitude
+        );
+
 
         @Multipart
         @PUT("api/user/{id}/profile/profile_pic_udate/")
