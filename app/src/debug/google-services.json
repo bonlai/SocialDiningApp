@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "873074426028",
+    "firebase_url": "https://gleaming-plate-193313.firebaseio.com",
+    "project_id": "gleaming-plate-193313",
+    "storage_bucket": "gleaming-plate-193313.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873074426028:android:16920f94247d1d49",
+        "android_client_info": {
+          "package_name": "com.bonlai.socialdiningapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "873074426028-rmdp6brtneh4ngj4sqi64tdo4359gcv3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bonlai.socialdiningapp",
+            "certificate_hash": "9bac93f7e51254407c5e9f2235d480dc07ec942b"
+          }
+        },
+        {
+          "client_id": "873074426028-nlr3k76r99l22d1urn2eapua0ac7htr7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8Lsj81oDfDhRdhWKG3c8MU8U8v6CNbtQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "873074426028-nlr3k76r99l22d1urn2eapua0ac7htr7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
