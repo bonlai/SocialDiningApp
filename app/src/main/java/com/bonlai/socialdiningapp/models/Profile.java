@@ -1,5 +1,7 @@
 package com.bonlai.socialdiningapp.models;
 
+import android.text.TextUtils;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -72,5 +74,13 @@ public class Profile {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean isCompleted(){
+        if(TextUtils.isEmpty(dob)||TextUtils.isEmpty(location)||
+            TextUtils.isEmpty(gender)||TextUtils.isEmpty(selfIntroduction)){
+            return false;
+        }
+        return true;
     }
 }

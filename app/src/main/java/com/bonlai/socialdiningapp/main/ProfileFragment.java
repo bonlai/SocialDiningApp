@@ -60,6 +60,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
     private TextView mDOB;
     private TextView mGender;
     private TextView mInterest;
+    private TextView mDistrict;
     private FloatingActionButton mEditButton;
     private Button mLogout;
     private RelativeLayout mBioHolder;
@@ -173,6 +174,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
         mGender=(TextView)rootView.findViewById(R.id.gender);
         mUsername=(TextView)rootView.findViewById(R.id.username);
         mInterest=(TextView)rootView.findViewById(R.id.interests);
+        mDistrict=(TextView)rootView.findViewById(R.id.active_district);
 
         mEditButton=(FloatingActionButton)rootView.findViewById(R.id.edit_pic);
         mLogout=(Button)rootView.findViewById(R.id.logout);
@@ -201,6 +203,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
         mBio.setText(mProfile.getSelfIntroduction());
         mDOB.setText(mProfile.getDob());
         mGender.setText(mProfile.getGender());
+        mDistrict.setText(mProfile.getLocation());
     }
 
     private void getInterestsList(int userId){

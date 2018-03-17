@@ -78,7 +78,6 @@
         <activity android:name=".detail.profileEdit.EditDOBActivity" />
         <activity android:name=".detail.profileEdit.EditHobbyActivity" />
         <activity android:name=".detail.profileEdit.OtherProfileActivity" />
-        <activity android:name=".detail.profileEdit.EditDistrictActivity" />
         <activity android:name=".detail.profileEdit.EditActiveDistrictActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"

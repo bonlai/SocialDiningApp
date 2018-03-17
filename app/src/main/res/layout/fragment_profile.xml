@@ -166,49 +166,6 @@
                 <include layout="@layout/item_divider" />
 
                 <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:padding="@dimen/activity_horizontal_margin">
-
-                    <ImageView
-                        android:id="@+id/ivContactItem3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                        android:src="@drawable/ic_phone_black" />
-
-                    <TextView
-                        android:id="@+id/contact_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/activity_horizontal_margin"
-                        android:layout_toEndOf="@id/ivContactItem3"
-
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:text="Telegram"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="#212121" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/contact_title"
-                        android:layout_marginStart="@dimen/activity_horizontal_margin"
-                        android:layout_marginTop="8dp"
-                        android:layout_toEndOf="@id/ivContactItem3"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="#727272" />
-
-
-                </RelativeLayout>
-
-                <include layout="@layout/item_divider" />
-
-                <RelativeLayout
                     android:id="@+id/DOB_holder"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -287,11 +244,12 @@
                         android:layout_toEndOf="@id/ivContactItem5"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Active area"
+                        android:text="Active district"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="#212121" />
 
                     <TextView
+                        android:id="@+id/active_district"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/tvNumber5"

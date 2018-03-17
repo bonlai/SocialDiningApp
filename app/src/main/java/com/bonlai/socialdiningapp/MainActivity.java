@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +16,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 
@@ -87,16 +89,6 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
- /*       if (savedInstanceState != null) {
-            String token = savedInstanceState.getString("Token");
-            Token.getToken().setKey(token);
-            APIclient.setAuthToken();
-        }*/
-        //load user detail(e.g. user id) to singleton class:MyUserHolder
-
-
-
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -107,11 +99,9 @@ public class MainActivity extends AppCompatActivity{
         setupBottomNavBehaviors();
         setupBottomNavStyle();
 
-        createFakeNotification();
+        //createFakeNotification();
 
         addBottomNavigationItems();
-        //set the initial fragment to be displayed
-        bottomNavigation.setCurrentItem(0);
 
         bottomNavigation.setOnTabSelectedListener(new AHBottomNavigation.OnTabSelectedListener() {
             @Override
@@ -147,6 +137,26 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    private void checkProfile(){
+        if(!MyUserHolder.getInstance().getUser().getProfile().isCompleted()){
+            bottomNavigation.hideBottomNavigation();
+            bottomNavigation.setCurrentItem(3);
+            viewPager.setCurrentItem(3);
+            bottomNavigation.setVisibility(View.GONE);
+            View container = findViewById(R.id.coordinator);
+            final Snackbar snackbar=Snackbar.make(container, "Please update your profile to continue", Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction("OK", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    snackbar.dismiss();
+                }
+            });
+            snackbar.show();
+        }else{
+            bottomNavigation.setVisibility(View.VISIBLE);
+            bottomNavigation.restoreBottomNavigation();
+        }
+    }
     public void navigateToRestList(){
         viewPager.setCurrentItem(2);
         bottomNavigation.setCurrentItem(2);
@@ -164,7 +174,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onResume() {
         // call the superclass method first
         super.onResume();
-
+        checkProfile();
         Log.d("Activity","onResume");
     }
 

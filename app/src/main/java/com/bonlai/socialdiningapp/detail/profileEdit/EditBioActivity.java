@@ -45,7 +45,6 @@ public class EditBioActivity extends AppCompatActivity {
                     int myUserId= MyUserHolder.getInstance().getUser().getPk();
                     Log.d("BIO",bio);
                     myProfile.setSelfIntroduction(bio);
-                    myProfile.setGender("Male");
                     Call<Profile> req = service.editProfile(myUserId,myProfile);
                     req.enqueue(new Callback<Profile>() {
                         @Override
