@@ -76,7 +76,7 @@ public class AuthAPIclient {
             @Override public Response intercept(Chain chain) throws IOException {
                 //Log.d("RETROFIT","add inter");
                 Request request = chain.request().newBuilder().addHeader("Authorization", "Token "+Token.getToken().getKey()).build();
-                Log.d("RETROFIT",Token.getToken().getKey());
+                //Log.d("RETROFIT",Token.getToken().getKey());
                 return chain.proceed(request);
             }
         });

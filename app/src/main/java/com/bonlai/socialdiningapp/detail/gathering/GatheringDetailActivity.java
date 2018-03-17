@@ -63,6 +63,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
     private Switch mJoin;
     private Button mStart;
     private Button mEdit;
+    private FloatingActionButton mMessage;
 
     private int myUserId;
 
@@ -122,6 +123,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
         mJoin = (Switch) findViewById(R.id.join);
         mStart=(Button)findViewById(R.id.start_button);
         mEdit=(Button)findViewById(R.id.edit_button);
+        mMessage=(FloatingActionButton)findViewById(R.id.message);
     }
 
     private void getCreater(){
@@ -166,6 +168,12 @@ public class GatheringDetailActivity extends AppCompatActivity {
                     }else{
                         mStart.setVisibility(View.GONE);
                         mEdit.setVisibility(View.GONE);
+                    }
+
+                    if(!(mGathering.getMember().contains(myUserId)||mGathering.getCreatedBy()==myUserId)){
+                        mMessage.setVisibility(View.GONE);
+                    }else{
+                        mMessage.setVisibility(View.VISIBLE);
                     }
 
                     mStart.setOnClickListener(new View.OnClickListener() {
