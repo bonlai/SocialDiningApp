@@ -118,7 +118,8 @@
             android:splitTrack="false"
             android:text="Join"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent" />
+            card_view:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible"/>
 
         <!--
         <ToggleButton

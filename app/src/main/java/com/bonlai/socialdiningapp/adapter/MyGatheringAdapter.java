@@ -152,9 +152,6 @@ public class MyGatheringAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
             });
 
-            if(mGatheringFiltered.get(position).getCreatedBy()==myUserId){
-                mholder.mJoin.setVisibility(View.GONE);
-            }
             //get user img
             Call<Profile> getUserImg = service.getProfile(mGathering.get(position).getCreatedBy());
             getUserImg.enqueue(new Callback<Profile>() {
@@ -181,7 +178,16 @@ public class MyGatheringAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             //set join button event
             final int gatheringId=mGatheringFiltered.get(position).getId();
-
+            Log.d("Join button out",mGatheringFiltered.get(position).getCreatedBy()+" "+
+                    mGatheringFiltered.get(position).getId());
+            Log.d("userid",""+myUserId);
+            boolean test=mGatheringFiltered.get(position).getCreatedBy()==myUserId;
+            Log.d("booelan",Boolean.toString(test));
+            if(mGatheringFiltered.get(position).getCreatedBy()==myUserId){
+                mholder.mJoin.setVisibility(View.INVISIBLE);
+            }else{
+                mholder.mJoin.setVisibility(View.VISIBLE);
+            }
             if(mGatheringFiltered.get(position).getMember().contains(myUserId)||mGatheringFiltered.get(position).getCreatedBy()==myUserId){
                 mholder.mJoin.setChecked(true);
             }else{
