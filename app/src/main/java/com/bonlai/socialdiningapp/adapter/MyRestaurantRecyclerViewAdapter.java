@@ -111,9 +111,14 @@ public class MyRestaurantRecyclerViewAdapter extends RecyclerView.Adapter<Recycl
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof ViewHolder) {
             ViewHolder mHolder=(ViewHolder)holder;
-            String imgPath = mRestaurant.get(position).getImage().get(0).getImage();
-            final int restaurantId=mRestaurant.get(position).getId();
+            String imgPath;
+            if(!mRestaurant.get(position).getImage().isEmpty()){
+                imgPath = mRestaurant.get(position).getImage().get(0).getImage();
+            }else{
+                imgPath = "http://192.168.2.4:8000/media/RestaurantImage/default.jpg";
+            }
             Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mHolder.mRestaurantImg);
+            final int restaurantId=mRestaurant.get(position).getId();
             mHolder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

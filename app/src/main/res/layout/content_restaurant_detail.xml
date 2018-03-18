@@ -68,6 +68,17 @@
                 card_view:layout_constraintStart_toEndOf="@+id/tagIC"
                 card_view:layout_constraintTop_toBottomOf="@+id/restaurant_name" />
 
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintStart_toEndOf="@+id/addressIC"
+                card_view:layout_constraintTop_toBottomOf="@+id/category" />
+
             <ImageView
                 android:id="@+id/addressIC"
                 android:layout_width="wrap_content"
@@ -113,16 +124,6 @@
                 card_view:layout_constraintStart_toStartOf="@+id/restaurant_img"
                 card_view:layout_constraintTop_toTopOf="@+id/restaurant_img" />
 
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintStart_toEndOf="@+id/addressIC"
-                card_view:layout_constraintTop_toBottomOf="@+id/category" />
 
             <TextView
                 android:id="@+id/textView"

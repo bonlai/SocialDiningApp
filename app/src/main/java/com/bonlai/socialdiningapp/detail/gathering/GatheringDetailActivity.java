@@ -293,9 +293,15 @@ public class GatheringDetailActivity extends AppCompatActivity {
     }
 
     private void updateRestaurant(Restaurant mRestaurant){
-        String imgPath = mRestaurant.getImage().get(0).getImage();
-        final int restaurantId=mRestaurant.getId();
+        String imgPath;
+        if(!mRestaurant.getImage().isEmpty()){
+            imgPath = mRestaurant.getImage().get(0).getImage();
+        }else{
+            imgPath = "http://192.168.2.4:8000/media/RestaurantImage/default.jpg";
+        }
         Picasso.with(this).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mRestaurantImg);
+        final int restaurantId=mRestaurant.getId();
+
         mRestaurantHolder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

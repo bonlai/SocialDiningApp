@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.bonlai.socialdiningapp.network.APIclient;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.Restaurant;
@@ -35,12 +36,14 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
     private int restaurantId;
     private Restaurant restaurant;
 
-    public ImageView mRestaurantImg;
-    public MaterialRatingBar mAvgRating;
-    public TextView mCategory;
-    public TextView mAddress;
-    public TextView mRestaurantName;
-    public TextView mCountNo;
+    private ImageView mRestaurantImg;
+    private MaterialRatingBar mAvgRating;
+    private TextView mCategory;
+    private TextView mAddress;
+    private TextView mRestaurantName;
+    private TextView mCountNo;
+    private FloatingActionButton mComment;
+    private boolean commentedBefore=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +55,8 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
 
         initUI();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.message);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mComment = (FloatingActionButton) findViewById(R.id.comment);
+        mComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ReviewDialogFragment viewDialogFragment = new ReviewDialogFragment();
@@ -90,9 +93,21 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
             @Override
             public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
                 if(response.isSuccessful()){
-                    List<Review> review=response.body();
+                    List<Review> reviews=response.body();
+                    int myUserId= MyUserHolder.getInstance().getUser().getPk();
+                    for(Review review:reviews){
+                        if(review.getUser().getId()==myUserId){
+                            commentedBefore=true;
+                            break;
+                        }
+                    }
+                    if(!commentedBefore){
+                        mComment.setVisibility(View.VISIBLE);
+                    }else{
+                        mComment.setVisibility(View.INVISIBLE);
+                    }
                     //Log.d("array lentgh",""+review.size());
-                    recyclerView.setAdapter(new MyCommentRecyclerViewAdapter(RestaurantDetailActivity.this,review));
+                    recyclerView.setAdapter(new MyCommentRecyclerViewAdapter(RestaurantDetailActivity.this,reviews));
                 }
             }
             @Override
@@ -122,9 +137,16 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
     }
 
     private void updateCard(){
-        String imgPath = restaurant.getImage().get(0).getImage();
-        final int restaurantId=restaurant.getId();
+        String imgPath;
+        if(!restaurant.getImage().isEmpty()){
+            imgPath =restaurant.getImage().get(0).getImage();
+        }else{
+            imgPath = "http://192.168.2.4:8000/media/RestaurantImage/default.jpg";
+        }
         Picasso.with(getApplicationContext()).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(mRestaurantImg);
+
+        final int restaurantId=restaurant.getId();
+
         double rating=restaurant.getAverageRate();
         mAvgRating.setRating((float)rating);
         mAvgRating.setIsIndicator(true);
@@ -174,18 +196,7 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
 
         @Override
         public void onBindViewHolder(final MyCommentRecyclerViewAdapter.ViewHolder holder, int position) {
- /*           //String imgPath = mReview.get(position).getImage().get(0).getImage();
-            final int restaurantId=mRestaurant.get(position).getId();
-            Picasso.with(context).load(imgPath).placeholder( R.drawable.progress_animation ).fit().centerCrop().into(holder.mRestaurantImg);
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent (context, RestaurantDetailActivity.class);
-                    intent.putExtra("restaurantId", restaurantId);
-                    context.startActivity(intent);
-                }
-            });*/
-            //Log.d("onbind",""+position);
+
             holder.mComment.setText(mReview.get(position).getComment());
             holder.mUsername.setText(mReview.get(position).getUser().getUsername());
 
