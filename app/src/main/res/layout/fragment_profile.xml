@@ -49,7 +49,7 @@
                         android:maxHeight="24dp"
                         android:maxWidth="24dp"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/ic_gender"
+                        android:src="@drawable/ic_bio"
                         android:tint="@color/colorAccent"/>
 
                     <TextView
@@ -137,7 +137,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                        android:src="@drawable/ic_bio" />
+                        android:src="@drawable/ic_biotext" />
 
                     <TextView
                         android:id="@+id/tvNumber1"
@@ -333,7 +333,8 @@
             android:clickable="true"
             app:layout_anchor="@id/profile_pic"
             app:layout_anchorGravity="bottom|right"
-            android:src="@drawable/ic_edit"/>
+            android:src="@drawable/ic_edit"
+            app:layout_behavior="com.bonlai.socialdiningapp.behaviour.FabBehaviour"/>
 
     </android.support.design.widget.CoordinatorLayout>
 
