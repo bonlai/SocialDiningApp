@@ -35,6 +35,20 @@
             tools:context="com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity"
             tools:showIn="@layout/activity_gathering_detail">
 
+            <TextView
+                android:id="@+id/is_start_flag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="IS STARTED"
+                android:textSize="24sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
@@ -42,10 +56,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="8dp"
                 card_view:cardCornerRadius="4dp"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent">
+                card_view:layout_constraintTop_toBottomOf="@+id/is_start_flag">
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"

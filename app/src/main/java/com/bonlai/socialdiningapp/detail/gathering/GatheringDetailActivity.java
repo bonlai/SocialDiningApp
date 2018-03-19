@@ -60,6 +60,8 @@ public class GatheringDetailActivity extends AppCompatActivity {
     private ImageView mCreaterImg;
     private TextView mDescription;
     private TextView mDateTime;
+    private TextView mIsStart;
+
     private Switch mJoin;
     private Button mStart;
     private Button mEdit;
@@ -115,6 +117,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
         mAddress=(TextView) findViewById(R.id.address);
         mRestaurantName=(TextView) findViewById(R.id.restaurant_name);
         mRestaurantHolder=(View)findViewById(R.id.restaurant_holder);
+        mIsStart=(TextView)findViewById(R.id.is_start_flag);
 
         mGatheringName = (TextView) findViewById(R.id.gathering_name);
         mCreaterImg = (ImageView) findViewById(R.id.creater_img);
@@ -155,6 +158,9 @@ public class GatheringDetailActivity extends AppCompatActivity {
             public void onResponse(Call<Gathering> call, Response<Gathering> response) {
                 if(response.isSuccessful()){
                     mGathering=response.body();
+                    if(mGathering.getIsStart()){
+                        mIsStart.setVisibility(View.VISIBLE);
+                    }
                     updateGathering();
                     for(Integer id:mGathering.getMember()){
                         Log.d("looping id ",""+id);
