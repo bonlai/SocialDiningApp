@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,8 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
     private TextView mAddress;
     private TextView mRestaurantName;
     private TextView mCountNo;
+    private TextView mPhone;
+    private TextView mMoney;
     private FloatingActionButton mComment;
     private boolean commentedBefore=false;
 
@@ -76,14 +79,16 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
 
     }
 
-    private void initUI(){
-        recyclerView=(RecyclerView)findViewById(R.id.list_view);
-        mRestaurantImg=(ImageView)findViewById(R.id.restaurant_img);
-        mAvgRating=(MaterialRatingBar)findViewById(R.id.average_rating);
-        mCategory=(TextView)findViewById(R.id.category);
-        mAddress=(TextView)findViewById(R.id.address);
-        mRestaurantName=(TextView)findViewById(R.id.restaurant_name);
-        mCountNo=(TextView)findViewById(R.id.count_no);
+    private void initUI() {
+        recyclerView = (RecyclerView) findViewById(R.id.list_view);
+        mRestaurantImg = (ImageView) findViewById(R.id.restaurant_img);
+        mAvgRating = (MaterialRatingBar) findViewById(R.id.average_rating);
+        mCategory = (TextView) findViewById(R.id.category);
+        mAddress = (TextView) findViewById(R.id.address);
+        mRestaurantName = (TextView) findViewById(R.id.restaurant_name);
+        mCountNo = (TextView) findViewById(R.id.count_no);
+        mPhone = (TextView) findViewById(R.id.phone);
+        mMoney = (TextView) findViewById(R.id.money);
     }
 
     private void getReview(){
@@ -155,6 +160,27 @@ public class RestaurantDetailActivity extends AppCompatActivity implements Revie
         mAddress.setText(restaurant.getAddress());
         mRestaurantName.setText(restaurant.getName());
         mCountNo.setText(""+restaurant.getReviewCount());
+
+        if(!TextUtils.isEmpty(restaurant.getPhone())){
+            mPhone.setText(""+restaurant.getPhone());
+        }
+
+        switch(restaurant.getPriceRange()){
+            case 0:
+                mMoney.setText("Below HK$70");
+                break;
+            case 1:
+                mMoney.setText("HK$71-300");
+                break;
+            case 2:
+                mMoney.setText("HK$301-800");
+                break;
+            case 3:
+                mMoney.setText("Above HK$801");
+                break;
+        }
+
+
     }
 
     @Override

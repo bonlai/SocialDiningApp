@@ -24,7 +24,10 @@ public class Restaurant {
     private Integer reviewCount;
     @SerializedName("image")
     private List<RestaurantImg> image = null;
-
+    @SerializedName("phone")
+    private String phone;
+    @SerializedName("price_range")
+    private Integer priceRange;
 
     public List<RestaurantImg> getImage() {
         return image;
@@ -80,6 +83,22 @@ public class Restaurant {
 
     public void setReviewCount(Integer reviewCount) {
         this.reviewCount = reviewCount;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Integer getPriceRange() {
+        return priceRange;
+    }
+
+    public void setPriceRange(Integer priceRange) {
+        this.priceRange = priceRange;
     }
 
 }
