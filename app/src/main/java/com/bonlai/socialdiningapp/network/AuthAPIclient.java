@@ -126,6 +126,14 @@ public class AuthAPIclient {
         Call<List<Gathering>> getMyGatheringList(
                 @Path("id") Integer id);
 
+        @GET("api/user/{id}/gathering/joined/")
+        Call<List<Gathering>> getJoinedGatheringList(
+                @Path("id") Integer id);
+
+        @GET("api/user/{id}/gathering/created/")
+        Call<List<Gathering>> getCreatedGatheringList(
+                @Path("id") Integer id);
+
         @GET("api/interest/")
         Call<List<Interest>> getInterestList();
 

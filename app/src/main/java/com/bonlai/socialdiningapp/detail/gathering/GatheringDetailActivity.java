@@ -20,7 +20,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bonlai.socialdiningapp.ChatActivity;
 import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.detail.profileEdit.OtherProfileActivity;
 import com.bonlai.socialdiningapp.detail.restaurant.RestaurantDetailActivity;
@@ -160,7 +159,24 @@ public class GatheringDetailActivity extends AppCompatActivity {
                     mGathering=response.body();
                     if(mGathering.getIsStart()){
                         mIsStart.setVisibility(View.VISIBLE);
+                        mJoin.setVisibility(View.GONE);
+                        mEdit.setVisibility(View.GONE);
+                        mStart.setVisibility(View.GONE);
+                    }else{
+                        if(mGathering.getCreatedBy()==myUserId){
+                            mJoin.setVisibility(View.GONE);
+                        }else{
+                            mStart.setVisibility(View.GONE);
+                            mEdit.setVisibility(View.GONE);
+                        }
                     }
+
+                    if(!(mGathering.getMember().contains(myUserId)||mGathering.getCreatedBy()==myUserId)){
+                        mMessage.setVisibility(View.GONE);
+                    }else{
+                        mMessage.setVisibility(View.VISIBLE);
+                    }
+
                     updateGathering();
                     for(Integer id:mGathering.getMember()){
                         Log.d("looping id ",""+id);
@@ -169,18 +185,6 @@ public class GatheringDetailActivity extends AppCompatActivity {
                     getRestaurantInfo(mGathering.getRestaurant());
                     getCreater();
 
-                    if(mGathering.getCreatedBy()==myUserId){
-                        mJoin.setVisibility(View.GONE);
-                    }else{
-                        mStart.setVisibility(View.GONE);
-                        mEdit.setVisibility(View.GONE);
-                    }
-
-                    if(!(mGathering.getMember().contains(myUserId)||mGathering.getCreatedBy()==myUserId)){
-                        mMessage.setVisibility(View.GONE);
-                    }else{
-                        mMessage.setVisibility(View.VISIBLE);
-                    }
 
                     mStart.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -269,6 +273,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
                 if(response.isSuccessful()){
                     mGathering.setIsStart(true);
                     Toast.makeText(GatheringDetailActivity.this, "Started the gathering",Toast.LENGTH_LONG).show();
+                    getGatheringInfo(GatheringDetailActivity.this);
                 }
             }
             @Override

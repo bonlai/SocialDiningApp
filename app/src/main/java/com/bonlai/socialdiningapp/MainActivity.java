@@ -17,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
@@ -193,7 +192,8 @@ public class MainActivity extends AppCompatActivity{
         pagerAdapter = new BottomBarAdapter(getSupportFragmentManager());
 
         pagerAdapter.addFragments(GatheringFragment.newInstance(Mode.ALL));
-        pagerAdapter.addFragments(GatheringFragment.newInstance(Mode.MY));
+        pagerAdapter.addFragments(GatheringFragment.newInstance(Mode.CREATED));
+        pagerAdapter.addFragments(GatheringFragment.newInstance(Mode.JOINED));
         pagerAdapter.addFragments(new RestaurantFragment());
         pagerAdapter.addFragments(ProfileFragment.newInstance(ProfileMode.MY));
 
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity{
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
             @Override public void onPageSelected(int position) {
                 supportInvalidateOptionsMenu();
-                if(position==3){
+                if(position==4){
                     getSupportActionBar().hide();
                 }else{
                     getSupportActionBar().show();
@@ -279,14 +279,17 @@ public class MainActivity extends AppCompatActivity{
      */
     private void addBottomNavigationItems() {
         AHBottomNavigationItem item1 = new AHBottomNavigationItem(R.string.tab_1, R.drawable.ic_all_gathering, R.color.bottomtab_1);
-        AHBottomNavigationItem item2 = new AHBottomNavigationItem(R.string.tab_2, R.drawable.ic_my_gathering, R.color.bottomtab_2);
-        AHBottomNavigationItem item3 = new AHBottomNavigationItem(R.string.tab_3, R.drawable.ic_restaurant, R.color.bottomtab_3);
-        AHBottomNavigationItem item4 = new AHBottomNavigationItem(R.string.tab_4, R.drawable.ic_profile, R.color.bottomtab_4);
+        AHBottomNavigationItem item2 = new AHBottomNavigationItem("Created", R.drawable.ic_my_gathering, R.color.bottomtab_2);
+        AHBottomNavigationItem item3 = new AHBottomNavigationItem(R.string.tab_2, R.drawable.ic_my_gathering, R.color.bottomtab_4);
+        AHBottomNavigationItem item4 = new AHBottomNavigationItem(R.string.tab_3, R.drawable.ic_restaurant, R.color.bottomtab_3);
+        AHBottomNavigationItem item5 = new AHBottomNavigationItem(R.string.tab_4, R.drawable.ic_profile, R.color.bottomtab_4);
+        //AHBottomNavigationItem item6 = new AHBottomNavigationItem(R.string.tab_4, R.drawable.ic_my_gathering, R.color.bottomtab_4);
 
         bottomNavigation.addItem(item1);
         bottomNavigation.addItem(item2);
         bottomNavigation.addItem(item3);
         bottomNavigation.addItem(item4);
+        bottomNavigation.addItem(item5);
     }
 
     /**

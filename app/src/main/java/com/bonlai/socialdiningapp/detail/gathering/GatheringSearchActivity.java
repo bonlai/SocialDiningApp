@@ -1,4 +1,4 @@
-package com.bonlai.socialdiningapp;
+package com.bonlai.socialdiningapp.detail.gathering;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+
+import com.bonlai.socialdiningapp.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

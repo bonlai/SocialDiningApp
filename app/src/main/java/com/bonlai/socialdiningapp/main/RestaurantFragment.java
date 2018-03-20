@@ -2,11 +2,9 @@ package com.bonlai.socialdiningapp.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bonlai.socialdiningapp.RestaurantSearchActivity;
+import com.bonlai.socialdiningapp.detail.restaurant.RestaurantSearchActivity;
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
 import com.bonlai.socialdiningapp.adapter.MyRestaurantRecyclerViewAdapter;
 import com.bonlai.socialdiningapp.detail.map.MapsActivity;

@@ -22,7 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.baoyz.widget.PullRefreshLayout;
-import com.bonlai.socialdiningapp.GatheringSearchActivity;
+import com.bonlai.socialdiningapp.detail.gathering.GatheringSearchActivity;
 import com.bonlai.socialdiningapp.MainActivity;
 import com.bonlai.socialdiningapp.adapter.MyGatheringAdapter;
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
@@ -46,7 +46,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
 
     public static enum Mode {
         ALL,
-        MY
+        PAST,
+        CREATED,
+        JOINED
     }
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -194,7 +196,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
             back.setVisible(false);
         }
 
-        if(mMode==Mode.MY){
+        if(mMode==Mode.ALL){
+            searchview.setVisible(false);
+        }else{
             search.setVisible(false);
 
             SearchView searchView=(SearchView)searchview.getActionView();
@@ -211,8 +215,6 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
                     return false;
                 }
             });
-        }else{
-            searchview.setVisible(false);
         }
 
         super.onCreateOptionsMenu(menu,inflater);
@@ -297,47 +299,86 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
         hasMoreData=true;
         mProgress.setVisibility(View.VISIBLE);
         mContainer.setVisibility(View.GONE);
+        AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
+        switch (mMode){
+            case ALL:
+                Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum++,queryOption);
+                Log.d("page no in load data",""+pageNum);
+                getGatheringList.enqueue(new Callback<List<Gathering>>() {
 
-        if(mMode==Mode.ALL){
-            AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
-            Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum++,queryOption);
-            Log.d("page no in load data",""+pageNum);
-            getGatheringList.enqueue(new Callback<List<Gathering>>() {
+                    @Override
+                    public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
+                        Log.d("fragment","called");
+                        myAdapter = new MyGatheringAdapter(getContext(), response.body(),GatheringFragment.this);
+                        recyclerView.setAdapter(myAdapter);
+                        // loadData complete
+                        mProgress.setVisibility(View.GONE);
+                        mContainer.setVisibility(View.VISIBLE);
+                        mPullRefresh.setRefreshing(false);
+                    }
+                    @Override
+                    public void onFailure(Call<List<Gathering>> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+                break;
+            case PAST:
+                Call<List<Gathering>> getMyGatheringList = service.getMyGatheringList(myUserId);
+                getMyGatheringList.enqueue(new Callback<List<Gathering>>() {
+                    @Override
+                    public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
 
-                @Override
-                public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
-                    Log.d("fragment","called");
-                    myAdapter = new MyGatheringAdapter(getContext(), response.body(),GatheringFragment.this);
-                    recyclerView.setAdapter(myAdapter);
-                    // loadData complete
-                    mProgress.setVisibility(View.GONE);
-                    mContainer.setVisibility(View.VISIBLE);
-                    mPullRefresh.setRefreshing(false);
-                }
-                @Override
-                public void onFailure(Call<List<Gathering>> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });
-        }else{
-            AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
-            Call<List<Gathering>> getGatheringList = service.getMyGatheringList(myUserId);
-            getGatheringList.enqueue(new Callback<List<Gathering>>() {
-                @Override
-                public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
+                        myAdapter = new MyGatheringAdapter(getContext(), response.body(),GatheringFragment.this);
+                        recyclerView.setAdapter(myAdapter);
+                        // loadData complete
+                        mProgress.setVisibility(View.GONE);
+                        mContainer.setVisibility(View.VISIBLE);
+                        mPullRefresh.setRefreshing(false);
+                    }
+                    @Override
+                    public void onFailure(Call<List<Gathering>> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+                break;
+            case JOINED:
+                Call<List<Gathering>> getJoinedGatheringList = service.getJoinedGatheringList(myUserId);
+                getJoinedGatheringList.enqueue(new Callback<List<Gathering>>() {
+                    @Override
+                    public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
 
-                    myAdapter = new MyGatheringAdapter(getContext(), response.body(),GatheringFragment.this);
-                    recyclerView.setAdapter(myAdapter);
-                    // loadData complete
-                    mProgress.setVisibility(View.GONE);
-                    mContainer.setVisibility(View.VISIBLE);
-                    mPullRefresh.setRefreshing(false);
-                }
-                @Override
-                public void onFailure(Call<List<Gathering>> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });
+                        myAdapter = new MyGatheringAdapter(getContext(), response.body(),GatheringFragment.this);
+                        recyclerView.setAdapter(myAdapter);
+                        // loadData complete
+                        mProgress.setVisibility(View.GONE);
+                        mContainer.setVisibility(View.VISIBLE);
+                        mPullRefresh.setRefreshing(false);
+                    }
+                    @Override
+                    public void onFailure(Call<List<Gathering>> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+                break;
+            case CREATED:
+                Call<List<Gathering>> getCreatedGatheringList = service.getCreatedGatheringList(myUserId);
+                getCreatedGatheringList.enqueue(new Callback<List<Gathering>>() {
+                    @Override
+                    public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
+
+                        myAdapter = new MyGatheringAdapter(getContext(), response.body(),GatheringFragment.this);
+                        recyclerView.setAdapter(myAdapter);
+                        // loadData complete
+                        mProgress.setVisibility(View.GONE);
+                        mContainer.setVisibility(View.VISIBLE);
+                        mPullRefresh.setRefreshing(false);
+                    }
+                    @Override
+                    public void onFailure(Call<List<Gathering>> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+                break;
         }
     }
 

@@ -82,9 +82,9 @@
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
-        <activity android:name=".ChatActivity" />
-        <activity android:name=".RestaurantSearchActivity" />
-        <activity android:name=".GatheringSearchActivity"></activity>
+        <activity android:name=".detail.gathering.ChatActivity" />
+        <activity android:name=".detail.restaurant.RestaurantSearchActivity" />
+        <activity android:name=".detail.gathering.GatheringSearchActivity"></activity>
     </application>
 
 </manifest>

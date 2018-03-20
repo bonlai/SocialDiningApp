@@ -1,4 +1,4 @@
-package com.bonlai.socialdiningapp;
+package com.bonlai.socialdiningapp.detail.gathering;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bonlai.socialdiningapp.R;
 import com.bonlai.socialdiningapp.models.ChatMessage;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 import com.firebase.ui.database.FirebaseListAdapter;
