@@ -281,7 +281,6 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
         Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum++,queryOption);
         Log.d("page no in load data",""+pageNum);
         getGatheringList.enqueue(new Callback<List<Gathering>>() {
-
             @Override
             public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
                 myAdapter.resetGatherings(response.body());
@@ -305,7 +304,6 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
                 Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum++,queryOption);
                 Log.d("page no in load data",""+pageNum);
                 getGatheringList.enqueue(new Callback<List<Gathering>>() {
-
                     @Override
                     public void onResponse(Call<List<Gathering>> call, Response<List<Gathering>> response) {
                         Log.d("fragment","called");
@@ -384,8 +382,6 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void loadMoreData(){
-        //myAdapter.showLoading();
-
         if(mMode==Mode.ALL){
             AuthAPIclient.APIService service=AuthAPIclient.getAPIService();
             Call<List<Gathering>> getGatheringList = service.getGatheringList(pageNum,queryOption);

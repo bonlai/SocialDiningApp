@@ -84,7 +84,8 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity android:name=".detail.gathering.ChatActivity" />
         <activity android:name=".detail.restaurant.RestaurantSearchActivity" />
-        <activity android:name=".detail.gathering.GatheringSearchActivity"></activity>
+        <activity android:name=".detail.gathering.GatheringSearchActivity" />
+        <activity android:name=".detail.gathering.PastGatheringActivity"></activity>
     </application>
 
 </manifest>

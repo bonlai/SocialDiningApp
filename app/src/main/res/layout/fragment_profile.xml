@@ -313,12 +313,18 @@
                     android:padding="@dimen/activity_horizontal_margin">
 
                     <Button
+                        android:id="@+id/past_record"
+                        style="@style/Widget.AppCompat.Button.Colored"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Past record" />
+
+                    <Button
                         android:id="@+id/logout"
                         style="@style/Widget.AppCompat.Button.Colored"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="logout" />
-
 
                 </LinearLayout>
             </LinearLayout>

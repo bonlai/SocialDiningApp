@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bonlai.socialdiningapp.detail.gathering.PastGatheringActivity;
 import com.bonlai.socialdiningapp.detail.profileEdit.GenderDialogFragment;
 import com.bonlai.socialdiningapp.models.Interest;
 import com.bonlai.socialdiningapp.network.AuthAPIclient;
@@ -63,6 +64,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
     private TextView mDistrict;
     private FloatingActionButton mEditButton;
     private Button mLogout;
+    private Button mPastRecord;
     private RelativeLayout mBioHolder;
     private RelativeLayout mHobbyHolder;
     private RelativeLayout mDOBHolder;
@@ -155,6 +157,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
 
         if(mMode!=ProfileMode.MY){
             mLogout.setVisibility(View.GONE);
+            mPastRecord.setVisibility(View.GONE);
             mEditButton.setVisibility(View.GONE);
         }
 
@@ -178,6 +181,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
 
         mEditButton=(FloatingActionButton)rootView.findViewById(R.id.edit_pic);
         mLogout=(Button)rootView.findViewById(R.id.logout);
+        mPastRecord=(Button)rootView.findViewById(R.id.past_record);
 
         mBioHolder = (RelativeLayout) rootView.findViewById(R.id.bio_holder);
         mHobbyHolder = (RelativeLayout) rootView.findViewById(R.id.hobby_holder);
@@ -193,6 +197,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
             mDistrictsHolder.setOnClickListener(this);
             mGenderHolder.setOnClickListener(this);
             mLogout.setOnClickListener(this);
+            mPastRecord.setOnClickListener(this);
         }
     }
 
@@ -394,6 +399,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
                 getActivity().finish();
                 break;
 
+            case R.id.past_record:
+                intent = new Intent(getContext(), PastGatheringActivity.class);;
+                startActivity(intent);
+                break;
         }
     }
 }

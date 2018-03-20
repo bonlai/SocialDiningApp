@@ -183,7 +183,8 @@ public class MyGatheringAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             Log.d("userid",""+myUserId);
             boolean test=mGatheringFiltered.get(position).getCreatedBy()==myUserId;
             Log.d("booelan",Boolean.toString(test));
-            if(mGatheringFiltered.get(position).getCreatedBy()==myUserId){
+
+            if(mGatheringFiltered.get(position).getCreatedBy()==myUserId||mGatheringFiltered.get(position).getIsStart()){
                 mholder.mJoin.setVisibility(View.INVISIBLE);
             }else{
                 mholder.mJoin.setVisibility(View.VISIBLE);
