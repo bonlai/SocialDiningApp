@@ -1,5 +1,7 @@
 package com.bonlai.socialdiningapp.detail.profileEdit;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,8 +38,6 @@ public class EditDOBActivity extends AppCompatActivity {
                 int month = datePicker.getMonth()+1;
                 int day = datePicker.getDayOfMonth();
                 String date=year + "-" + month + "-" + day;
-                Toast toast = Toast.makeText(getApplicationContext(), date, Toast.LENGTH_LONG);
-                toast.show();
                 setDOB(date);
             }
         });
@@ -49,7 +49,6 @@ public class EditDOBActivity extends AppCompatActivity {
         int myUserId= MyUserHolder.getInstance().getUser().getPk();
         //Log.d("BIO",bio);
         myProfile.setDob(DOB);
-        myProfile.setGender("Male");
         Call<Profile> req = service.editProfile(myUserId,myProfile);
         req.enqueue(new Callback<Profile>() {
             @Override
@@ -58,6 +57,8 @@ public class EditDOBActivity extends AppCompatActivity {
                 MyUserHolder.getInstance().getUser().setProfile(response.body());
                 Toast toast = Toast.makeText(getApplicationContext(), "Saved!", Toast.LENGTH_LONG);
                 toast.show();
+                Intent returnIntent = new Intent();
+                setResult(Activity.RESULT_OK,returnIntent);
                 finish();
             }
 

@@ -1,5 +1,7 @@
 package com.bonlai.socialdiningapp.detail.profileEdit;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,6 +55,8 @@ public class EditBioActivity extends AppCompatActivity {
                             MyUserHolder.getInstance().getUser().setProfile(response.body());
                             Toast toast = Toast.makeText(getApplicationContext(), "Saved!", Toast.LENGTH_LONG);
                             toast.show();
+                            Intent returnIntent = new Intent();
+                            setResult(Activity.RESULT_OK,returnIntent);
                             finish();
                         }
 

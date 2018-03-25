@@ -21,6 +21,8 @@
         android:id="@+id/datePicker"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:scaleX="1.1"
+        android:scaleY="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

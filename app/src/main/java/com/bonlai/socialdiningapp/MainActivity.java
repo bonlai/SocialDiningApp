@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         if(!MyUserHolder.getInstance().getUser().getProfile().isCompleted()){
             bottomNavigation.hideBottomNavigation();
             bottomNavigation.setCurrentItem(3);
-            viewPager.setCurrentItem(3);
+            viewPager.setCurrentItem(5);
             bottomNavigation.setVisibility(View.GONE);
             View container = findViewById(R.id.coordinator);
             final Snackbar snackbar=Snackbar.make(container, "Please update your profile to continue", Snackbar.LENGTH_INDEFINITE);

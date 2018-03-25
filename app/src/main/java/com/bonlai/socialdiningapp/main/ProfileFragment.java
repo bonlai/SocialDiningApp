@@ -79,6 +79,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
     private static final String ARG_MODE = "mode";
 
     final int INTEREST_EDIT = 100;
+    final int EDIT_PROFILE=102;
 
     @Override
     public void onGenderSelect(String Gender) {
@@ -165,7 +166,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-        //updateProfile();
+
     }
 
     private void initUI(View rootView ){
@@ -302,8 +303,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
             if(resultCode == Activity.RESULT_OK){
                 getInterestsList(myUserId);
             }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //Write your code if there's no result
+        }
+
+        if (requestCode == EDIT_PROFILE) {
+            if(resultCode == Activity.RESULT_OK){
+                mProfile=MyUserHolder.getInstance().getUser().getProfile();
+                updateProfile();
             }
         }
     }
@@ -350,19 +355,17 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
         switch (view.getId()) {
             case R.id.bio_holder:
                 intent = new Intent(getContext(), EditBioActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,EDIT_PROFILE);
                 break;
 
             case R.id.hobby_holder:
                 intent = new Intent(getContext(), EditHobbyActivity.class);
                 startActivityForResult(intent,INTEREST_EDIT);
-                //startActivity(intent);
                 break;
-
 
             case R.id.DOB_holder:
                 intent = new Intent(getContext(), EditDOBActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,EDIT_PROFILE);
                 break;
 
             case R.id.gender_holder:
@@ -373,7 +376,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
 
             case R.id.districts_holder:
                 intent = new Intent(getContext(), EditActiveDistrictActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,EDIT_PROFILE);
                 break;
 
             case R.id.edit_pic:
@@ -386,8 +389,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener
                 SharedPreferences settings = getActivity().getSharedPreferences(USER_CREDENTIAL, 0);
                 settings.edit().remove("TOKEN").commit();
                 Token.getToken().setKey(null);
-
-                //APIclient.reset();
 
                 intent = new Intent(getActivity(), LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
