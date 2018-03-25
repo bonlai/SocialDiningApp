@@ -66,7 +66,7 @@ public class CircleRadiusDialogFragment extends DialogFragment {
         window.setAttributes(lp);
 
         final TextView radiusIndicater=view.findViewById(R.id.radius_indicater);
-        radiusIndicater.setText(radius/1000+ "km");
+        radiusIndicater.setText((float)radius/1000+ "km");
 
         SeekBar seekBar=view.findViewById(R.id.seekBar);
         seekBar.setProgress((radius-500)/100);

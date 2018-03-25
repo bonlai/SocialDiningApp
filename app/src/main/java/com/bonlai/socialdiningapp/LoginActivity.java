@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity{
     private View mLoadingView;
     private View mLoginFormView;
     private Button mSignInButton;
+    private Button mRegister;
     private CheckBox mRememberMe;
 
     @Override
@@ -75,6 +76,7 @@ public class LoginActivity extends AppCompatActivity{
         mLoginProgressView = findViewById(R.id.login_progress);
         mLoadingView= findViewById(R.id.progress_bar);
         mSignInButton = (Button) findViewById(R.id.login_button);
+        mRegister= (Button) findViewById(R.id.register);
         mRememberMe = (CheckBox) findViewById(R.id.remember_me);
 
         mLoadingView.setVisibility(View.GONE);
@@ -110,6 +112,13 @@ public class LoginActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 attemptLogin();
+            }
+        });
+        mRegister.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -204,11 +213,6 @@ public class LoginActivity extends AppCompatActivity{
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
-    }
-
-    private void goToRegister(View view){
-        Intent intent = new Intent(this, RegisterActivity.class);
-        startActivity(intent);
     }
 
     private void toastNetworkError(){

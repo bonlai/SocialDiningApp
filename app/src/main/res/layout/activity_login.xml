@@ -93,11 +93,10 @@
                     />
 
                 <Button
-                    android:id="@+id/profile"
+                    android:id="@+id/register"
                     style="@style/Widget.AppCompat.Button.Colored"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:onClick="goToRegister"
                     android:text="@string/action_register" />
 
             </LinearLayout>

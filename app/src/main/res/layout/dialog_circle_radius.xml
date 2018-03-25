@@ -10,7 +10,8 @@
         android:id="@+id/radius_indicater"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center" />
+        android:gravity="center"
+        android:text="0.5 km" />
 
     <SeekBar
         android:id="@+id/seekBar"
