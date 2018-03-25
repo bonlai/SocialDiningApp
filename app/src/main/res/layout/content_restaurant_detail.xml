@@ -159,11 +159,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
                     android:text="Not given"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/phoneIC"
-                    app:layout_constraintTop_toBottomOf="@+id/textView" />
+                    app:layout_constraintTop_toTopOf="@+id/phoneIC" />
 
                 <ImageView
                     android:id="@+id/moneyIC"
@@ -183,10 +182,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/moneyIC"
-                    app:layout_constraintTop_toBottomOf="@+id/phone" />
+                    app:layout_constraintTop_toTopOf="@+id/moneyIC" />
 
             </android.support.constraint.ConstraintLayout>
 

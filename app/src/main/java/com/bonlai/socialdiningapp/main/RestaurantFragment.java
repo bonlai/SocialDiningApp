@@ -3,6 +3,7 @@ package com.bonlai.socialdiningapp.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -114,9 +115,11 @@ public class RestaurantFragment extends Fragment implements MyRestaurantRecycler
         if(returnedSearchResult){
             search.setVisible(false);
             back.setVisible(true);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Filtered Result");
         }else{
             search.setVisible(true);
             back.setVisible(false);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("");
         }
 
         super.onCreateOptionsMenu(menu,inflater);

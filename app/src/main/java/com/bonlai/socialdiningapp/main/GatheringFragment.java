@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.widget.PullRefreshLayout;
@@ -69,6 +70,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
     private PullRefreshLayout mPullRefresh;
     private ProgressBar mProgress;
     private RelativeLayout mContainer;
+    private TextView noRecord;
 
     private MyGatheringAdapter myAdapter;
     public GatheringFragment() {
@@ -112,6 +114,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
         recyclerView = (RecyclerView) rootView.findViewById(R.id.list_view);
         mProgress= (ProgressBar) rootView.findViewById(R.id.progress_bar);
         mContainer=(RelativeLayout) rootView.findViewById(R.id.container);
+        noRecord=(TextView) rootView.findViewById(R.id.no_record);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -191,9 +194,11 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
         if(returnedSearchResult){
             search.setVisible(false);
             back.setVisible(true);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Filtered Result");
         }else{
             search.setVisible(true);
             back.setVisible(false);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("");
         }
 
         if(mMode==Mode.ALL){
@@ -294,6 +299,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void loadData(){
+
         pageNum=1;
         hasMoreData=true;
         mProgress.setVisibility(View.VISIBLE);
@@ -312,6 +318,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
                         // loadData complete
                         mProgress.setVisibility(View.GONE);
                         mContainer.setVisibility(View.VISIBLE);
+                        if(response.body().isEmpty()){
+                            noRecord.setVisibility(View.VISIBLE);
+                        }
                         mPullRefresh.setRefreshing(false);
                     }
                     @Override
@@ -331,6 +340,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
                         // loadData complete
                         mProgress.setVisibility(View.GONE);
                         mContainer.setVisibility(View.VISIBLE);
+                        if(response.body().isEmpty()){
+                            noRecord.setVisibility(View.VISIBLE);
+                        }
                         mPullRefresh.setRefreshing(false);
                     }
                     @Override
@@ -350,6 +362,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
                         // loadData complete
                         mProgress.setVisibility(View.GONE);
                         mContainer.setVisibility(View.VISIBLE);
+                        if(response.body().isEmpty()){
+                            noRecord.setVisibility(View.VISIBLE);
+                        }
                         mPullRefresh.setRefreshing(false);
                     }
                     @Override
@@ -369,6 +384,9 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
                         // loadData complete
                         mProgress.setVisibility(View.GONE);
                         mContainer.setVisibility(View.VISIBLE);
+                        if(response.body().isEmpty()){
+                            noRecord.setVisibility(View.VISIBLE);
+                        }
                         mPullRefresh.setRefreshing(false);
                     }
                     @Override
