@@ -106,7 +106,6 @@ public class GatheringDetailActivity extends AppCompatActivity {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(layoutManager);
-
         Button addButton=(Button)findViewById(R.id.addNewGathering);
         addButton.setVisibility(View.GONE);
         

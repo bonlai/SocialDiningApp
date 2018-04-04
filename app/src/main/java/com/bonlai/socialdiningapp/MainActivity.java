@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (position == 1){
                     tabLayout.setVisibility(View.VISIBLE);
+                    tabLayout.getTabAt(0).select();
                 }else{
                     tabLayout.setVisibility(View.GONE);
                 }
