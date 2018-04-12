@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +21,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bonlai.socialdiningapp.LoginActivity;
 import com.bonlai.socialdiningapp.R;
+import com.bonlai.socialdiningapp.detail.profileEdit.EditBioActivity;
 import com.bonlai.socialdiningapp.detail.profileEdit.OtherProfileActivity;
 import com.bonlai.socialdiningapp.detail.restaurant.RestaurantDetailActivity;
 import com.bonlai.socialdiningapp.models.Gathering;
@@ -65,15 +68,18 @@ public class GatheringDetailActivity extends AppCompatActivity {
     private Button mStart;
     private Button mEdit;
     private FloatingActionButton mMessage;
+    private View container;
 
     private int myUserId;
 
     public static final String GATHERING_ID="gatheringId";
+    public static final String FROM_NOTIFICATION="fromNotification";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gathering_detail);
+        checkFromNoti();
         initUI();
         initVar();
         getGatheringInfo(this);
@@ -89,13 +95,24 @@ public class GatheringDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void checkFromNoti(){
+        boolean fromNoti = getIntent().getExtras().getBoolean(FROM_NOTIFICATION);
+        if(fromNoti){
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.putExtra(FROM_NOTIFICATION,true);
+            startActivity(intent);
+        }
+    }
+
     private void initVar(){
         mParticipants=new ArrayList<>();
         gatheringId = getIntent().getExtras().getInt(GATHERING_ID);
+
         myUserId= MyUserHolder.getInstance().getUser().getPk();
     }
 
     private void initUI(){
+        container=findViewById(R.id.container);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -164,9 +181,25 @@ public class GatheringDetailActivity extends AppCompatActivity {
                     }else{
                         if(mGathering.getCreatedBy()==myUserId){
                             mJoin.setVisibility(View.GONE);
+                            Snackbar.make(container, "Remember to press the start button after you started the gathering!", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("OK", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            // action triggered
+                                        }
+                                    })
+                                    .show();
                         }else{
                             mStart.setVisibility(View.GONE);
                             mEdit.setVisibility(View.GONE);
+                            Snackbar.make(container, "Remember to comment on the restaurant after gathering!", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("OK", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            // action triggered
+                                        }
+                                    })
+                                    .show();
                         }
                     }
 
@@ -424,4 +457,5 @@ public class GatheringDetailActivity extends AppCompatActivity {
             }
         }
     }
+
 }

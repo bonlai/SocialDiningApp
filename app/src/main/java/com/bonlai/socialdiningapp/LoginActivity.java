@@ -25,6 +25,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.bonlai.socialdiningapp.detail.gathering.GatheringDetailActivity.FROM_NOTIFICATION;
+
 /**
  * A login screen that offers login via email/password.
  */
@@ -196,7 +198,14 @@ public class LoginActivity extends AppCompatActivity{
             public void onResponse(Call<Profile> call, Response<Profile> response) {
                 if(response.isSuccessful()){
                     MyUserHolder.getInstance().getUser().setProfile(response.body());
-                    goToMain();
+                    if(getIntent().getExtras()!=null){
+                        boolean checkNoti = getIntent().getExtras().getBoolean(FROM_NOTIFICATION,false);
+                            if(checkNoti){
+                                finish();
+                            }
+                        }else{
+                        goToMain();
+                    }
                 }
             }
             @Override

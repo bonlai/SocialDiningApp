@@ -1,5 +1,7 @@
 package com.bonlai.socialdiningapp.main;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.widget.PullRefreshLayout;
+import com.bonlai.socialdiningapp.helpers.MyReceiver;
 import com.bonlai.socialdiningapp.detail.gathering.GatheringSearchActivity;
 import com.bonlai.socialdiningapp.MainActivity;
 import com.bonlai.socialdiningapp.adapter.MyGatheringAdapter;
@@ -32,6 +35,10 @@ import com.bonlai.socialdiningapp.detail.map.MapsActivity;
 import com.bonlai.socialdiningapp.models.Gathering;
 import com.bonlai.socialdiningapp.models.MyUserHolder;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,6 +197,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
         MenuItem search = menu.findItem(R.id.action_search);
         MenuItem back = menu.findItem(R.id.action_back);
         MenuItem searchview = menu.findItem(R.id.action_searchview);
+        MenuItem map = menu.findItem(R.id.action_map);
 
         if(returnedSearchResult){
             search.setVisible(false);
@@ -205,6 +213,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
             searchview.setVisible(false);
         }else{
             search.setVisible(false);
+            map.setVisible(false);
 
             SearchView searchView=(SearchView)searchview.getActionView();
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -366,6 +375,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
                             noRecord.setVisibility(View.VISIBLE);
                         }
                         mPullRefresh.setRefreshing(false);
+                        setNotification(response.body());
                     }
                     @Override
                     public void onFailure(Call<List<Gathering>> call, Throwable t) {
@@ -388,6 +398,7 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
                             noRecord.setVisibility(View.VISIBLE);
                         }
                         mPullRefresh.setRefreshing(false);
+                        setNotification(response.body());
                     }
                     @Override
                     public void onFailure(Call<List<Gathering>> call, Throwable t) {
@@ -395,6 +406,27 @@ public class GatheringFragment extends Fragment implements View.OnClickListener,
                     }
                 });
                 break;
+        }
+    }
+
+    private void setNotification(List<Gathering> gatherings){
+        for(Gathering g:gatherings){
+            Intent notifyIntent = new Intent(getActivity(),MyReceiver.class);
+            notifyIntent.putExtra("id", g.getId());
+            notifyIntent.putExtra("datetime", g.getStartDatetime());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast
+                    (getActivity(), g.getId(), notifyIntent,PendingIntent.FLAG_ONE_SHOT);
+            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+            DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            try {
+                Date d = f.parse(g.getStartDatetime());
+                Log.d("GatheringFrag","Set alarm"+d.getTime());
+                //Log.d("GatheringFrag","Set alarm"+System.currentTimeMillis());
+                alarmManager.set(AlarmManager.RTC,  d.getTime()-10000*60*30,pendingIntent);
+            } catch (ParseException e) {
+                //Handle exception here, most of the time you will just log it.
+                e.printStackTrace();
+            }
         }
     }
 
