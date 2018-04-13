@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
@@ -200,10 +201,13 @@ public class LoginActivity extends AppCompatActivity{
                     MyUserHolder.getInstance().getUser().setProfile(response.body());
                     if(getIntent().getExtras()!=null){
                         boolean checkNoti = getIntent().getExtras().getBoolean(FROM_NOTIFICATION,false);
+                        Log.d("Noti",String.valueOf(checkNoti));
                             if(checkNoti){
                                 finish();
+                            }else{
+                                goToMain();
                             }
-                        }else{
+                    }else{
                         goToMain();
                     }
                 }
