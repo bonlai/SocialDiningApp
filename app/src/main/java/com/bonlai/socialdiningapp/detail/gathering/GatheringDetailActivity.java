@@ -82,7 +82,6 @@ public class GatheringDetailActivity extends AppCompatActivity {
         checkFromNoti();
         initUI();
         initVar();
-        getGatheringInfo(this);
 
         FloatingActionButton message=(FloatingActionButton)findViewById(R.id.message);
         message.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +92,12 @@ public class GatheringDetailActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getGatheringInfo(this);
     }
 
     private void checkFromNoti(){
@@ -210,6 +215,7 @@ public class GatheringDetailActivity extends AppCompatActivity {
                     }
 
                     updateGathering();
+                    mParticipants.clear();
                     for(Integer id:mGathering.getMember()){
                         Log.d("looping id ",""+id);
                         getParticipants(id);
